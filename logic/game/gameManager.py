@@ -2,24 +2,25 @@ import pygame
 
 import graphics.gui as gui
 
-def init(self):
+def init():
     pygame.init()
     gui.init()
 
-def gameLoop(self):
+def gameLoop():
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            self.handleEvent(event)
-        self.update()
+            handleEvent(event)
+        update()
 
-def start(self):
-    self.gameLoop()
+def start():
+    gameLoop()
 
-def update(self):
-    pass
+def update():
+    gui.update()
+    pygame.display.update()
 
-def handleEvent(self, event):
-    self.gui.activeScreen.handleEvent(event)
+def handleEvent(event):
+    gui.handleEvent(event)

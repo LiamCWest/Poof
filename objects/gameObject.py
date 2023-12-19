@@ -1,4 +1,5 @@
 import pygame
+from utils import drawDebug as dd
 
 class GameObject:
     def __init__(self, pos, width, height, color, image = None):
@@ -6,13 +7,18 @@ class GameObject:
         self.width = width
         self.height = height
         self.color = color
-        self.image = image
+        print(image)
+        if image:
+            self.image = pygame.image.load(dd.verifyTexture(image))
+            self.imageRect = self.image.get_rect()
+        else:
+            self.image = None
         
     def draw(self, win):
         if self.image == None:
-            pygame.draw.rect(win, self.color, (self.pos.x, self.pos.y, self.width+self.pos.x, self.height+self.pos.y))
+            pygame.draw.rect(win, self.color, (self.pos.x, self.pos.y, self.width, self.height))
         else:
-            win.blit(self.image, (self.x, self.y))
+            win.blit(self.image, (self.pos.x, self.pos.y))
             
     def update(self):
         pass

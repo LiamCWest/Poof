@@ -15,7 +15,7 @@ class Board():
     def createTiles(self):
         for y in range(self.size.y):
             for x in range(self.size.x):
-                self.tiles.append(Tile(self, Vector2(x, y), self.tileSize, self.color))
+                self.tiles.append(Tile(self, Vector2(x, y), self.tileSize, self.color, image = None))
                 
     def draw(self, win):
         for tile in self.tiles:

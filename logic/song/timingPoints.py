@@ -1,4 +1,4 @@
-from ...utils.binarySearch import binarySearch
+from utils.binarySearch import binarySearch
 import math
 
 class timeSignature:
@@ -27,19 +27,23 @@ def getNextPoint(points, time):
 
 def getPreviousBeat(points, time, divisor):
     point = getPreviousPoint(points, time)
+    if point == None:
+        return None
     timeSinceLastPoint = time - point.time
     beatsElapsed = timeSinceLastPoint * divisor / point.beatLength
-    return math.floor(beatsElapsed) * point.beatLength + point.time
+    return math.floor(beatsElapsed) * point.beatLength / divisor + point.time
 
 def getNextBeat(points, time, divisor):
     point = getPreviousPoint(points, time)
+    if point == None:
+        return None
     timeSinceLastPoint = time - point.time
     beatsElapsed = timeSinceLastPoint * divisor / point.beatLength
-    return math.floor(beatsElapsed + 1) * point.beatLength + point.time
+    return math.floor(beatsElapsed + 1) * point.beatLength / divisor + point.time
 
-if __name__ == "__main__":
+def test():
     timingPoint1 = timingPoint(0, 120, timeSignature(4, 4))
     timingPoint2 = timingPoint(6, 130, timeSignature(7, 2))
     timingPoints = [timingPoint1, timingPoint2]
-    for i in range(10):
-        print(getPreviousPoint(timingPoints, i / 2), getNextPoint(timingPoints, i / 2))
+    beat = getNextBeat(timingPoints, 6.1, 1)
+    print(beat)

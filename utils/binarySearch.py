@@ -5,7 +5,6 @@ def strictBinarySearch(list, toSearch, compareFunc):
     startIndex = 0
 
     while list:
-        print(list)
         midIndex = len(list) // 2
         midValue = list[midIndex]
 
@@ -27,7 +26,6 @@ def binarySearch(list, toSearch, compareFunc):
     startIndex = 0
 
     while list:
-        print(list)
         midIndex = len(list) // 2
         midValue = list[midIndex]
         

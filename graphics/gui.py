@@ -25,7 +25,7 @@ def drawText(text, x, y, size, color):
     
 def clear():
     global screen
-    screen.fill((255, 255, 255))
+    screen.fill((55, 55, 55))
     
 def update():
     global activeScreen

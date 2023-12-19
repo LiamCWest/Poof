@@ -22,7 +22,6 @@ def draw():
 def startGame():
     hide()
     game.show()
-    game.start()
     
 def update():
     for object in objects:

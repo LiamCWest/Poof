@@ -1,5 +1,6 @@
 from graphics import gui
 from graphics.board import Board
+from objects.player import Player
 from utils.vector2 import Vector2
 import pygame
     
@@ -13,6 +14,7 @@ def update():
 def draw():
     global board
     board.draw(gui.screen)
+    player.draw(gui.screen)
 
 def handleEvent(event):
     if event.type == pygame.KEYDOWN:
@@ -22,7 +24,8 @@ def handleEvent(event):
         else:
             print(key)
 
-board = Board(Vector2(0, 0), Vector2(24, 20), 50, (0, 0, 0))
+board = Board(Vector2(0, 0), Vector2(24, 20), 50, (25, 25, 25))
+player = Player(board, Vector2(5, 4), 50, image = "player.png")
 
 keybinds = {
     "w": lambda: board.move(Vector2(0, 1)),

@@ -57,13 +57,19 @@ class Vector2:
     def multiply(self, other):
         return Vector2(self.x * other, self.y * other)
     
+    def add(self, other):
+        return Vector2(self.x + other, self.y + other)
+    
+    def sub(self, other):
+        return Vector2(self.x - other, self.y - other)
+    
     def normalize(self):
         length = self.length()
         if length == 0:
             return Vector2(0, 0)
         else:
             return Vector2(self.x / length, self.y / length)
-    
+
     def length(self):
         return (self.x**2 + self.y**2)**0.5
 

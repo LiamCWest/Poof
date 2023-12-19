@@ -22,7 +22,7 @@ def handleEvent(event):
         else:
             print(key)
 
-board = Board(Vector2(0, 0), Vector2(12, 10), 50, (0, 0, 0))
+board = Board(Vector2(0, 0), Vector2(24, 20), 50, (0, 0, 0))
 
 keybinds = {
     "w": lambda: board.move(Vector2(0, 1)),

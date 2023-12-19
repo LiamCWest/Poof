@@ -3,12 +3,12 @@ from utils.vector2 import Vector2
 
 class Board():
     def __init__(self, pos, size, tileSize, color):
-        self.pos = pos
+        self.pos = pos.add(tileSize*0.1)
         self.size = size
         self.tileSize = tileSize
         self.color = color
         self.tiles = []
-        self.targetPos = pos
+        self.targetPos = self.pos
         self.velocity = 1
         self.createTiles()
         
@@ -22,7 +22,7 @@ class Board():
             tile.draw(win)
             
     def move(self, direction):
-        self.targetPos += direction.multiply(self.tileSize)  # set target position
+        self.targetPos += direction.multiply(round(self.tileSize*1.1))  # set target position
 
     def update(self):
         if self.pos != self.targetPos:

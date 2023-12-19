@@ -1,7 +1,7 @@
 from objects.tiles.tile import Tile
 from utils.vector2 import Vector2
 
-class Board():
+class Board:
     def __init__(self, pos, size, tileSize, color):
         self.pos = pos.add(tileSize*0.1)
         self.size = size

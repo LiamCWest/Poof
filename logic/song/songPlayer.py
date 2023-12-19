@@ -39,3 +39,8 @@ def getPreviousBeat(divisor):
 def getNextBeat(divisor):
     global currentTimingPoints
     return timingPoints.getNextBeat(currentTimingPoints, getPos(), divisor)
+
+def test():
+    timingPoint1 = timingPoints.timingPoint(2.108, 170, timingPoints.timeSignature(4, 4))
+    load(r"C:\Users\dravi\Desktop\KEYBEATS-GD4\TESTFOLDER\MAPS\Abyss Of Destiny 2\Song.MP3", [timingPoint1])
+    play()

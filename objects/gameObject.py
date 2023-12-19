@@ -7,7 +7,6 @@ class GameObject:
         self.width = width
         self.height = height
         self.color = color
-        print(image)
         if image:
             self.image = pygame.image.load(dd.verifyTexture(image))
             self.imageRect = self.image.get_rect()

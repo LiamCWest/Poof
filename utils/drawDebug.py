@@ -1,5 +1,13 @@
 import pygame as pg
 
+def verifyTexture(filename):
+    try:
+        open(filename)
+        out = filename
+    except:
+        out = createDebugTexture("debug.png")
+    return out
+
 def createDebugTexture(filename, size = 8, c1 = (0,0,0), c2 = (255,0,255)):
     
     try:

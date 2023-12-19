@@ -8,6 +8,8 @@ class Board():
         self.tileSize = tileSize
         self.color = color
         self.tiles = []
+        self.targetPos = pos
+        self.velocity = 1
         self.createTiles()
         
     def createTiles(self):
@@ -20,6 +22,13 @@ class Board():
             tile.draw(win)
             
     def move(self, direction):
-        self.pos += direction.multiply(self.tileSize)
-        for tile in self.tiles:
-            tile.updatePos()
+        self.targetPos += direction.multiply(self.tileSize)  # set target position
+
+    def update(self):
+        if self.pos != self.targetPos:
+            direction = (self.targetPos - self.pos).normalize()
+            self.pos += direction.multiply(self.velocity)
+            if (self.targetPos - self.pos).length() < self.velocity:
+                self.pos = self.targetPos
+            for tile in self.tiles:
+                tile.updatePos()

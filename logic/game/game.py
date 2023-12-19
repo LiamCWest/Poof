@@ -8,7 +8,7 @@ def show():
     gui.clear()
     
 def update():
-    pass
+    board.update()
 
 def draw():
     global board

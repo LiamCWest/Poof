@@ -28,9 +28,9 @@ class Button:
         self.draw()
         cursorPos = pygame.mouse.get_pos()
         if self.x < cursorPos[0] < self.x + self.width and self.y < cursorPos[1] < self.y + self.height:
-                self.scale = self.scaler
+            self.scale = self.scaler
         else:
-                self.scale = 1
+            self.scale = 1
     
     def handleEvent(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:

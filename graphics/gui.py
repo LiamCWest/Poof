@@ -16,9 +16,9 @@ def setScreen(name):
     activeScreenName = name
     activeScreen = screens[activeScreenName] if activeScreenName != "none" else None
 
-def drawText(text, x, y, size, color):
+def drawText(text, x, y, size, color, font = "Arial"):
     global screen
-    font = pygame.font.SysFont("Arial", size)
+    font = pygame.font.SysFont(font, size)
     text_surface = font.render(text, True, color)
     text_rect = text_surface.get_rect(center=(x, y))
     screen.blit(text_surface, text_rect)

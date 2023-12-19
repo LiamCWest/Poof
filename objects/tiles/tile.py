@@ -7,9 +7,8 @@ class Tile(GameObject):
     def __init__(self, board, pos, size, color, image = None):
         self.board = board
         self.relPos = pos
-        x = self.relPos.x * board.tileSize + round(board.tileSize*self.relPos.x*0.1) + board.pos.x
-        y = self.relPos.y * board.tileSize + round(board.tileSize*self.relPos.y*0.1) + board.pos.y
-        GameObject.__init__(self, Vector2(x,y), size, size, color, image)
+        self.updatePos()
+        GameObject.__init__(self, self.pos, size, size, color, image)
         
     def updatePos(self):
         x = self.relPos.x * self.board.tileSize + round(self.board.tileSize*self.relPos.x*0.1) + self.board.pos.x

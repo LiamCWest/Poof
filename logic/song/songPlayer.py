@@ -1,5 +1,5 @@
 import pygame.mixer as mixer
-import timingPoints
+import logic.song.timingPoints as timingPoints
 
 currentTimingPoints = None
 
@@ -18,11 +18,25 @@ def pause():
     mixer.music.pause()
     
 def seek(time):
+    global lastPos
+    lastPos = None
     mixer.music.rewind()
     mixer.music.set_pos(time)
-    
+
+lastPos = None
 def getPos():
-    return mixer.music.get_pos()
+    global lastPos
+    currentPos = mixer.music.get_pos() / 1000
+    
+    if lastPos is None:
+        lastPos = currentPos
+        return currentPos
+    
+    if lastPos > currentPos:
+        return lastPos
+    
+    lastPos = currentPos
+    return currentPos
 
 def getPreviousPoint():
     global currentTimingPoints
@@ -42,5 +56,5 @@ def getNextBeat(divisor):
 
 def test():
     timingPoint1 = timingPoints.timingPoint(2.108, 170, timingPoints.timeSignature(4, 4))
-    load(r"C:\Users\dravi\Desktop\KEYBEATS-GD4\TESTFOLDER\MAPS\Abyss Of Destiny 2\Song.MP3", [timingPoint1])
+    load(r"D:\Files\Godot Projects\KEYBEATS GD4\TESTFOLDER\MAPS\Abyss Of Destiny 2\Song.MP3", [timingPoint1])
     play()

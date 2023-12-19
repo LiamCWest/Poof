@@ -26,20 +26,32 @@ def getNextPoint(points, time):
     return points[index + 1]
 
 def getPreviousBeat(points, time, divisor):
+    if len(points) == 0:
+        return None
+    
     point = getPreviousPoint(points, time)
     if point == None:
-        return None
+        point = points[0]
+        timeUntilFirstPoint = point.time - time
+        beatsWillBeElapsed = timeUntilFirstPoint * divisor / point.beatLength
+        return point.time - (math.ceil(beatsWillBeElapsed) * point.beatLength / divisor)
     timeSinceLastPoint = time - point.time
     beatsElapsed = timeSinceLastPoint * divisor / point.beatLength
     return math.floor(beatsElapsed) * point.beatLength / divisor + point.time
 
 def getNextBeat(points, time, divisor):
+    if len(points) == 0:
+        return None
+    
     point = getPreviousPoint(points, time)
     if point == None:
-        return None
+        point = points[0]
+        timeUntilFirstPoint = point.time - time
+        beatsWillBeElapsed = timeUntilFirstPoint * divisor / point.beatLength
+        return point.time - (math.floor(beatsWillBeElapsed) * point.beatLength / divisor)
     timeSinceLastPoint = time - point.time
     beatsElapsed = timeSinceLastPoint * divisor / point.beatLength
-    return math.floor(beatsElapsed + 1) * point.beatLength / divisor + point.time
+    return math.ceil(beatsElapsed) * point.beatLength / divisor + point.time
 
 def test():
     timingPoint1 = timingPoint(0, 120, timeSignature(4, 4))

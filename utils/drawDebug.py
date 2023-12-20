@@ -5,7 +5,7 @@ def verifyTexture(filename):
         open(filename)
         out = filename
     except:
-        out = createDebugTexture("debug.png")
+        out = createDebugTexture("textures/debug.png")
     return out
 
 def createDebugTexture(filename, size = 8, c1 = (0,0,0), c2 = (255,0,255)):

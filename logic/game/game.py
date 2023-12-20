@@ -36,4 +36,4 @@ def handleEvent(event):
     pass
 
 board = Board(Vector2(0, 0), Vector2(24, 20), 50, (25, 25, 25))
-player = Player(board, Vector2(5, 4), 50, image = "player.png")
+player = Player(board, Vector2(5, 4), 50)

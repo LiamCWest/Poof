@@ -2,7 +2,7 @@ from objects.gameObject import GameObject
 from utils.vector2 import Vector2
 
 class Player(GameObject):
-    def __init__(self, board, pos, size, color = (0,0,0), image = None):
+    def __init__(self, board, pos, size, color = (0,0,0), image = "textures/player.png"):
         self.board = board
         self.relPos = pos
         self.scale = 0.8

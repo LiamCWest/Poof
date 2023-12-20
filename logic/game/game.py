@@ -10,8 +10,6 @@ def show():
     gui.clear()
 
 def checkInput():
-    if input.keybinds["left"].songTimeLastPressed is not None:
-        print(input.keybinds["left"].songTimeLastPressed)
     if input.keybinds["left"].justPressed:
         board.move(Vector2(1, 0))
     

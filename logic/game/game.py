@@ -1,6 +1,7 @@
 from graphics import gui
 from graphics.board import Board
 from objects.player import Player
+from graphics.particleSystem.emitter import ParticleEmitter
 from utils.vector2 import Vector2
 import input.input as input
 import pygame

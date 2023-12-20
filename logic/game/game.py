@@ -11,16 +11,16 @@ def show():
     gui.clear()
 
 def checkInput():
-    if input.keybinds["left"].justPressed:
+    if input.buttonBindings["left"].justPressed:
         board.move(Vector2(1, 0))
     
-    if input.keybinds["right"].justPressed:
+    if input.buttonBindings["right"].justPressed:
         board.move(Vector2(-1, 0))
         
-    if input.keybinds["up"].justPressed:
+    if input.buttonBindings["up"].justPressed:
         board.move(Vector2(0, 1))
         
-    if input.keybinds["down"].justPressed:
+    if input.buttonBindings["down"].justPressed:
         board.move(Vector2(0, -1))
     
 def update():

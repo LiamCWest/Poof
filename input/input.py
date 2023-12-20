@@ -1,86 +1,159 @@
-from pynput import keyboard
+from pynput import keyboard, mouse
 import pygame
 import logic.song.songPlayer as songPlayer
 
-class Event:
-    def __init__(self, key):
-        self.key = key
-        
-        self.pressed = False
-        self.songTimeLastPressed = None
-        self.songTimeLastReleased = None
-        self.realTimeLastPressed = None
-        self.realTimeLastReleased = None
-        
-        self.__justPressed = False
-        self.__justReleased = False
-        
-    def getJustPressed(self):
-        toReturn = self.__justPressed
-        self.__justPressed = False
-        return toReturn
+def getSongTime():
+    return songPlayer.getPos() if songPlayer.getIsPlaying() else None
     
-    def setJustPressed(self, val):
-        self.__justPressed = val
-    
-    justPressed = property(fget=getJustPressed, fset=setJustPressed)
-    
-    def getJustReleased(self):
-        toReturn = self.__justReleased
-        self.__justReleased = False
-        return toReturn
-    
-    def setJustReleased(self, val):
-        self.__justReleased = val
-    
-    justReleased = property(fget=getJustReleased, fset=setJustReleased)
+def getRealTime():
+    ticks = pygame.time.get_ticks()
+    return ticks / 1000 if ticks != 0 else None
 
-keybinds = {
-    "left": Event("a"),
-    "up": Event("w"),
-    "right": Event("d"),
-    "down": Event("s"),
-    "dash": Event("shift"),
+class Event: #generic event
+    def __init__(self):
+        self.songTimeLastInvoked = None
+        self.realTimeLastInvoked = None
+        
+        self.__justInvoked = False
+        
+    def getJustInvoked(self):
+        toReturn = self.__justInvoked
+        self.__justInvoked = False
+        return toReturn
+    
+    def setJustInvoked(self, val):
+        self.__justInvoked = val
+    
+    justInvoked = property(fget=getJustInvoked, fset=setJustInvoked)
+    
+    def invoke(self):
+        self.justInvoked = True
+        self.songTimeLastInvoked = getSongTime()
+        self.realTimeLastInvoked = getRealTime()
+        
+    
+class ButtonEvent: #keyboard keys and mouse buttons
+    def __init__(self, button):
+        self.button = button
+        self.__pressEvent = Event()
+        self.__releaseEvent = Event()
+        self.pressed = False
+    
+    songTimeLastPressed = property(lambda self: self.__pressEvent.songTimeLastInvoked, lambda self, val: setattr(self.__pressEvent, 'songTimeLastInvoked', val))
+    realTimeLastPressed = property(lambda self: self.__pressEvent.realTimeLastInvoked, lambda self, val: setattr(self.__pressEvent, 'realTimeLastInvoked', val))
+    songTimeLastReleased = property(lambda self: self.__releaseEvent.songTimeLastInvoked, lambda self, val: setattr(self.__releaseEvent, 'songTimeLastInvoked', val))
+    realTimeLastReleased = property(lambda self: self.__releaseEvent.realTimeLastInvoked, lambda self, val: setattr(self.__releaseEvent, 'realTimeLastInvoked', val))
+    
+    justPressed = property(lambda self: self.__pressEvent.justInvoked, lambda self, val: self.__pressEvent.setJustInvoked(val))
+    justReleased = property(lambda self: self.__releaseEvent.justInvoked, lambda self, val: self.__releaseEvent.setJustInvoked(val))
+    
+    def press(self):
+        self.pressed = True
+        self.__pressEvent.invoke()
+    
+    def release(self):
+        self.pressed = False
+        self.__releaseEvent.invoke() 
+        
+class MouseMoveEvent(Event):
+    def __init__(self):
+        super().__init__()
+        self.x = None
+        self.y = None
+        
+    songTimeLastMoved = property(lambda self: self.songTimeLastInvoked, lambda self, val: setattr(self, "songTimeLastInvoked", val))
+    realTimeLastMoved = property(lambda self: self.realTimeLastInvoked, lambda self, val: setattr(self, "realTimeLastInvoked", val))
+    
+    justMoved = property(lambda self: self.justInvoked, lambda self, val: self.setJustInvoked(val))
+    
+    def move(self, x, y):
+        self.x = x
+        self.y = y
+        self.invoke()
+        
+class MouseScrollEvent(Event):
+    def __init__(self):
+        super().__init__()
+        self.dx = None
+        self.dy = None
+        
+    songTimeLastScrolled = property(lambda self: self.songTimeLastInvoked, lambda self, val: setattr(self, "songTimeLastInvoked", val))
+    realTimeLastScrolled = property(lambda self: self.realTimeLastInvoked, lambda self, val: setattr(self, "realTimeLastInvoked", val))
+    
+    justScrolled = property(lambda self: self.justInvoked, lambda self, val: self.setJustInvoked(val))
+    
+    def scroll(self, dx, dy):
+        self.dx = dx
+        self.dy = dy
+        self.invoke()
+        print(dx, dy)
+
+buttonBindings = {
+    "left": ButtonEvent("a"),
+    "up": ButtonEvent("w"),
+    "right": ButtonEvent("d"),
+    "down": ButtonEvent("s"),
+    "dash": ButtonEvent(keyboard.Key.shift),
+    "lmb": ButtonEvent(mouse.Button.left),
+    "mmb": ButtonEvent(mouse.Button.middle),
+    "rmb": ButtonEvent(mouse.Button.right)
 }
 
-def on_press(key):
-    global keybinds
-    
-    songTime = songPlayer.getPos() if songPlayer.getIsPlaying() else None
-        
-    ticks = pygame.time.get_ticks()
-    realTime = ticks / 1000 if ticks != 0 else None
-    
-    try: key = key.char
-    except AttributeError: pass
-    
-    for action, event in keybinds.items():
-        if key == event.key and not event.pressed:
-            event.songTimeLastPressed = songTime
-            event.realTimeLastPressed = realTime
-            event.pressed = True
-            event.justPressed = True
-            event.justReleased = False
+mousePos = MouseMoveEvent()
+mouseScroll = MouseScrollEvent()
 
-def on_release(key):
-    global keybinds
+def onKeyPress(key):
+    global buttonBindings
     
-    songTime = songPlayer.getPos() if songPlayer.getIsPlaying() else None
+    try: 
+        keyValue = key.char
+    except AttributeError:
+        keyValue = key
+    
+    for event in buttonBindings.values():
+        if keyValue == event.button and not event.pressed:
+            event.press()
+
+def onKeyRelease(key):
+    global buttonBindings
+    
+    try: 
+        keyValue = key.char
+    except AttributeError:
+        keyValue = key
+    
+    for event in buttonBindings.values():
+        if keyValue == event.button and event.pressed:
+            event.release()
+            
+def onMouseClick(x, y, button, pressed):
+    global buttonBindings
+    
+    for event in buttonBindings.values():
+        if button != event.button:
+            continue
         
-    ticks = pygame.time.get_ticks()
-    realTime = ticks / 1000 if ticks != 0 else None
+        if pressed == event.pressed:
+            continue
+        
+        if pressed:
+            event.press()
+        else:
+            event.release()
+            
+def onMouseMove(x, y):
+    global mousePos
     
-    try: key = key.char
-    except AttributeError: pass
+    mousePos.move(x, y)
     
-    for action, event in keybinds.items():
-        if key == event.key:
-            event.songTimeLastPressed = songTime
-            event.realTimeLastPressed = realTime
-            event.pressed = False
-            event.justReleased = True
-            event.justPressed = False
+def onMouseScroll(x, y, dx, dy):
+    global mouseScroll
+    
+    mouseScroll.scroll(dx, dy)
 
 def init():
-    listener = keyboard.Listener(on_press=on_press, on_release=on_release)
-    listener.start()
+    kbListener = keyboard.Listener(on_press=onKeyPress, on_release=onKeyRelease)
+    kbListener.start()
+    
+    mouseListener = mouse.Listener(on_click=onMouseClick, on_move=onMouseMove, on_scroll=onMouseScroll)
+    mouseListener.start()

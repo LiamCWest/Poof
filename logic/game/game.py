@@ -11,16 +11,16 @@ def show():
     gui.clear()
 
 def checkInput():
-    if input.buttonBindings["left"].justPressed:
+    if input.keyBindings["left"].justPressed:
         board.move(Vector2(1, 0))
     
-    if input.buttonBindings["right"].justPressed:
+    if input.keyBindings["right"].justPressed:
         board.move(Vector2(-1, 0))
         
-    if input.buttonBindings["up"].justPressed:
+    if input.keyBindings["up"].justPressed:
         board.move(Vector2(0, 1))
         
-    if input.buttonBindings["down"].justPressed:
+    if input.keyBindings["down"].justPressed:
         board.move(Vector2(0, -1))
     
 def update():
@@ -31,9 +31,6 @@ def draw():
     global board
     board.draw(gui.screen)
     player.draw(gui.screen)
-
-def handleEvent(event):
-    pass
 
 board = Board(Vector2(0, 0), Vector2(24, 20), 50, (25, 25, 25))
 player = Player(board, Vector2(5, 4), 50, image = "player.png")

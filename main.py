@@ -1,5 +1,3 @@
-import pygame
-
 from logic.game import gameManager
 
 def main():

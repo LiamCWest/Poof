@@ -14,7 +14,7 @@ def gameLoop():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            handleEvent(event)
+            input.handleEvent(event)
         update()
 
 def start():
@@ -23,6 +23,3 @@ def start():
 def update():
     gui.update()
     pygame.display.update()
-
-def handleEvent(event):
-    gui.handleEvent(event)

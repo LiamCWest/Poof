@@ -11,10 +11,6 @@ def hide():
     gui.setScreen("none")
     gui.clear()
 
-def handleEvent(event):
-    for object in objects:
-        object.handleEvent(event)
-
 def draw():
     for object in objects:
         object.draw()

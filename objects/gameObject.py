@@ -24,6 +24,3 @@ class GameObject:
             
     def update(self):
         pass
-    
-    def handleEvent(self, event):
-        pass

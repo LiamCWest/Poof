@@ -36,7 +36,3 @@ def draw():
     global activeScreen
     clear()
     if activeScreen: activeScreen.draw()
-    
-def handleEvent(event):
-    global activeScreen
-    if activeScreen: activeScreen.handleEvent(event)

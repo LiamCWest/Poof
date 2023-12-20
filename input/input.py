@@ -86,14 +86,16 @@ class MouseScrollEvent(Event):
         self.dx = dx
         self.dy = dy
         self.invoke()
-        print(dx, dy)
 
-buttonBindings = {
+keyBindings = {
     "left": ButtonEvent("a"),
     "up": ButtonEvent("w"),
     "right": ButtonEvent("d"),
     "down": ButtonEvent("s"),
     "dash": ButtonEvent(keyboard.Key.shift),
+}
+
+mouseBindings = {
     "lmb": ButtonEvent(mouse.Button.left),
     "mmb": ButtonEvent(mouse.Button.middle),
     "rmb": ButtonEvent(mouse.Button.right)
@@ -103,33 +105,33 @@ mousePos = MouseMoveEvent()
 mouseScroll = MouseScrollEvent()
 
 def onKeyPress(key):
-    global buttonBindings
+    global keyBindings
     
     try: 
         keyValue = key.char
     except AttributeError:
         keyValue = key
     
-    for event in buttonBindings.values():
+    for event in keyBindings.values():
         if keyValue == event.button and not event.pressed:
             event.press()
 
 def onKeyRelease(key):
-    global buttonBindings
+    global keyBindings
     
     try: 
         keyValue = key.char
     except AttributeError:
         keyValue = key
     
-    for event in buttonBindings.values():
+    for event in keyBindings.values():
         if keyValue == event.button and event.pressed:
             event.release()
             
 def onMouseClick(x, y, button, pressed):
-    global buttonBindings
+    global mouseBindings
     
-    for event in buttonBindings.values():
+    for event in mouseBindings.values():
         if button != event.button:
             continue
         
@@ -141,10 +143,10 @@ def onMouseClick(x, y, button, pressed):
         else:
             event.release()
             
-def onMouseMove(x, y):
-    global mousePos
-    
-    mousePos.move(x, y)
+def handleEvent(event):
+    global mouseBindings
+    if event.type == pygame.MOUSEMOTION:
+        mousePos.move(event.pos[0], event.pos[1])
     
 def onMouseScroll(x, y, dx, dy):
     global mouseScroll
@@ -155,5 +157,5 @@ def init():
     kbListener = keyboard.Listener(on_press=onKeyPress, on_release=onKeyRelease)
     kbListener.start()
     
-    mouseListener = mouse.Listener(on_click=onMouseClick, on_move=onMouseMove, on_scroll=onMouseScroll)
+    mouseListener = mouse.Listener(on_click=onMouseClick, on_scroll=onMouseScroll)
     mouseListener.start()

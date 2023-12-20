@@ -36,15 +36,14 @@ class Event:
     justReleased = property(fget=getJustReleased, fset=setJustReleased)
 
 keybinds = {
-    "left": Event("'a'"),
-    "up": Event("'w'"),
-    "right": Event("'d'"),
-    "down": Event("'s'"),
-    "dash": Event("'shift'"),
+    "left": Event("a"),
+    "up": Event("w"),
+    "right": Event("d"),
+    "down": Event("s"),
+    "dash": Event("shift"),
 }
 
 def on_press(key):
-    print(key)
     global keybinds
     
     songTime = songPlayer.getPos() if songPlayer.getIsPlaying() else None
@@ -52,9 +51,11 @@ def on_press(key):
     ticks = pygame.time.get_ticks()
     realTime = ticks / 1000 if ticks != 0 else None
     
+    try: key = key.char
+    except AttributeError: pass
+    
     for action, event in keybinds.items():
-        if str(key) == event.key and not event.pressed:
-            print("pressed")
+        if key == event.key and not event.pressed:
             event.songTimeLastPressed = songTime
             event.realTimeLastPressed = realTime
             event.pressed = True
@@ -62,7 +63,6 @@ def on_press(key):
             event.justReleased = False
 
 def on_release(key):
-    print(key)
     global keybinds
     
     songTime = songPlayer.getPos() if songPlayer.getIsPlaying() else None
@@ -70,8 +70,11 @@ def on_release(key):
     ticks = pygame.time.get_ticks()
     realTime = ticks / 1000 if ticks != 0 else None
     
+    try: key = key.char
+    except AttributeError: pass
+    
     for action, event in keybinds.items():
-        if str(key) == event.key:
+        if key == event.key:
             event.songTimeLastPressed = songTime
             event.realTimeLastPressed = realTime
             event.pressed = False

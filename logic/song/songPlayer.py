@@ -23,7 +23,7 @@ def seek(time):
     mixer.music.rewind()
     mixer.music.set_pos(time)
 
-lastPos = None
+lastPos = None #for whatever reason, the time returned by music.get_pos() can sometimes go backwards, so this makes it not do that
 def getPos():
     global lastPos
     currentPos = mixer.music.get_pos() / 1000
@@ -37,6 +37,9 @@ def getPos():
     
     lastPos = currentPos
     return currentPos
+
+def getIsPlaying():
+    return mixer.music.get_busy()
 
 def getPreviousPoint():
     global currentTimingPoints

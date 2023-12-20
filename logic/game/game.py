@@ -2,13 +2,30 @@ from graphics import gui
 from graphics.board import Board
 from objects.player import Player
 from utils.vector2 import Vector2
+import input.input as input
 import pygame
     
 def show():
     gui.setScreen("game")
     gui.clear()
+
+def checkInput():
+    if input.keybinds["left"].songTimeLastPressed is not None:
+        print(input.keybinds["left"].songTimeLastPressed)
+    if input.keybinds["left"].justPressed:
+        board.move(Vector2(1, 0))
+    
+    if input.keybinds["right"].justPressed:
+        board.move(Vector2(-1, 0))
+        
+    if input.keybinds["up"].justPressed:
+        board.move(Vector2(0, 1))
+        
+    if input.keybinds["down"].justPressed:
+        board.move(Vector2(0, -1))
     
 def update():
+    checkInput()
     board.update()
 
 def draw():
@@ -17,19 +34,7 @@ def draw():
     player.draw(gui.screen)
 
 def handleEvent(event):
-    if event.type == pygame.KEYDOWN:
-        key = pygame.key.name(event.key)
-        if key in keybinds:
-            keybinds[key]()
-        else:
-            print(key)
+    pass
 
 board = Board(Vector2(0, 0), Vector2(24, 20), 50, (25, 25, 25))
 player = Player(board, Vector2(5, 4), 50, image = "player.png")
-
-keybinds = {
-    "w": lambda: board.move(Vector2(0, 1)),
-    "a": lambda: board.move(Vector2(1, 0)),
-    "s": lambda: board.move(Vector2(0, -1)),
-    "d": lambda: board.move(Vector2(-1, 0)),
-}

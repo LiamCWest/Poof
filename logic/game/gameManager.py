@@ -1,10 +1,12 @@
 import pygame
 
 import graphics.gui as gui
+import input.input as input
 
 def init():
     pygame.init()
     gui.init()
+    input.init()
 
 def gameLoop():
     while True:

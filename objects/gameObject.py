@@ -10,7 +10,7 @@ class GameObject:
         self.color = color
         self.imageScale = Vector2(1,1)
         if image:
-            self.image = pygame.image.load(dd.verifyTexture(image))
+            self.image = pygame.image.load(dd.verifyTexture(image)).convert()
             self.imageRect = self.image.get_rect()
             self.imageScale = Vector2(self.width / self.imageRect.width, self.height / self.imageRect.height)
         else:

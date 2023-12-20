@@ -1,6 +1,6 @@
-from tile import Tile
+from objects.tiles.tile import Tile
 
 class Platform(Tile):
     
-    def __init__(self, board, pos, size, color, image = None):
-        super.init(board, pos, size, color, image)
+    def __init__(self, board, pos, size, color, image = "textures/platform.png"):
+        Tile.__init__(self, board, pos, size, color, image = image)

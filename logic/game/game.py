@@ -28,9 +28,11 @@ def update():
     board.update()
 
 def draw():
-    global board
+    global board, player
     board.draw(gui.screen)
     player.draw(gui.screen)
 
-board = Board(Vector2(0, 0), Vector2(24, 20), 50, (25, 25, 25))
-player = Player(board, Vector2(5, 4), 50)
+def addBaseObjects():
+    global board, player
+    board = Board(Vector2(0, 0), Vector2(24, 20), 50, (25, 25, 25))
+    player = Player(board, Vector2(5, 4), 50)

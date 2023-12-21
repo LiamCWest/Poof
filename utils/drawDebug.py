@@ -22,6 +22,7 @@ def createDebugTexture(filename, size = 8, c1 = (0,0,0), c2 = (255,0,255)):
         pg.draw.rect(surface,c2,(half,0,half,half))
         pg.draw.rect(surface,c2,(0,half,half,half))
         
+        print(filename)
         pg.image.save(surface, filename)
         
         try:

@@ -1,16 +1,17 @@
 import pygame
 from utils import drawDebug as dd
 from utils.vector2 import Vector2
+from images import images
 
 class GameObject:
-    def __init__(self, pos, width, height, color, image = None):
+    def __init__(self, pos, width, height, color, imageName = None):
         self.pos = pos
         self.width = width
         self.height = height
         self.color = color
         self.imageScale = Vector2(1,1)
-        if image:
-            self.image = pygame.image.load(dd.verifyTexture(image)).convert()
+        if imageName:
+            self.image = images.images[imageName]
             self.imageRect = self.image.get_rect()
             self.imageScale = Vector2(self.width / self.imageRect.width, self.height / self.imageRect.height)
         else:

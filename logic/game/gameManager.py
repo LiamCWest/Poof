@@ -1,11 +1,13 @@
 import pygame
 
 import graphics.gui as gui
-import input.input as input
+from input import input
+from images import images
 
 def init():
     pygame.init()
     gui.init()
+    images.init()
     input.init()
 
 def gameLoop():

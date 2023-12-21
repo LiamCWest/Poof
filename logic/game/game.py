@@ -7,7 +7,10 @@ import input.input as input
 import pygame
     
 def show():
-    gui.setScreen("game")
+    addBaseObjects()
+    update()
+    
+def hide():
     gui.clear()
 
 def checkInput():

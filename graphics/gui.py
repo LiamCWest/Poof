@@ -3,20 +3,27 @@ import pygame
 from ui import mainMenu
 from logic.game import game
 
+screens = None
 def init():
     global screen, screens, activeScreen, activeScreenName
     screen = pygame.display.set_mode((640, 480))
     screen.fill((255, 255, 255))
     
-    game.addBaseObjects()
-    
     screens = {"main": mainMenu, "game": game}
-    screens["main"].show()
-    
+    setScreen("main")
+
+activeScreen = None
+activeScreenName = None
 def setScreen(name):
     global activeScreen, activeScreenName
+    
+    if activeScreen:
+        activeScreen.hide()
+    
     activeScreenName = name
-    activeScreen = screens[activeScreenName] if activeScreenName != "none" else None
+    activeScreen = screens[activeScreenName]
+    
+    activeScreen.show()
 
 def drawText(text, x, y, size, color, font = "Arial"):
     global screen

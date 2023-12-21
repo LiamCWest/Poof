@@ -4,11 +4,10 @@ from ui.text import Text
 from logic.game import game
 
 def show():
-    gui.setScreen("main")
     gui.clear()
+    update()
 
 def hide():
-    gui.setScreen("none")
     gui.clear()
 
 def draw():
@@ -19,7 +18,7 @@ def draw():
 
 def startGame():
     hide()
-    game.show()
+    gui.setScreen("game")
     
 def update():
     for object in objects:

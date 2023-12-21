@@ -28,3 +28,6 @@ class Emitter:
     def draw(self, win):
         for particle in self.particles:
             particle.draw(win)
+
+    def reset(self):
+        self.particles = []

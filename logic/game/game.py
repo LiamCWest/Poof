@@ -30,15 +30,12 @@ def checkInput():
 def update():
     checkInput()
     board.update()
-    emitter.update()
 
 def draw():
     board.draw(gui.screen)
     player.draw(gui.screen)
-    emitter.draw(gui.screen)
 
 def addBaseObjects():
     global board, player, emitter
     board = Board(Vector2(0, 0), Vector2(24, 20), 50, (25, 25, 25))
     player = Player(board, Vector2(5, 4), 50)
-    emitter = ShapedEmitter(Polygon([(0,0), (0,100), (100,0), (100,100)]) , Vector2(100, 100), Vector2(1,1), 10, 100)

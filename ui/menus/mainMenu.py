@@ -30,5 +30,5 @@ def settings():
     gui.setScreen("settings")
         
 title = "Main Menu"
-objects = [Button("Start", 100, 175, 100, 50, (0, 255, 0), (255, 0, 0), startGame), Button("Settings", 100, 250, 100, 50, (0, 255, 0), (255, 0 ,0), settings),Button("Quit", 100, 325, 100, 50, (0, 255, 0), (255, 0, 0), quit)]
+objects = [Button("Start", 100, 175, 100, 50, (0, 255, 0), (255, 0, 0), startGame, particles=True), Button("Settings", 100, 250, 100, 50, (0, 255, 0), (255, 0 ,0), settings),Button("Quit", 100, 325, 100, 50, (0, 255, 0), (255, 0, 0), quit)]
 texts = [Text(title, 200, 100, (255, 0, 0), 50)]

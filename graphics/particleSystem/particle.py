@@ -1,26 +1,33 @@
-import random
 import pygame
 
-from utils.vector2 import Vector2
+from graphics.animation import Animation, AnimEvent, lerp
+import input.input as input
 
 class Particle:
-    def __init__(self, pos, lifetime, size, color):
+    def __init__(self, pos, vel, lifetime, size, color):
         self.pos = pos
-        self.vel = Vector2(random.uniform(-1, 1), random.uniform(-1, 1))
+        self.vel = vel
         self.color = color
         self.size = size
         self.lifetime = lifetime
         self.maxLifetime = lifetime
+        self.moveStartedTime = input.getRealTime()
+        self.moveStartedPos = self.pos
+        self.targetPos = self.pos + self.vel.multiply(self.lifetime)
+        
+        moveEvent = AnimEvent(0, lifetime, self.updatePos)
+        self.moveAnim = Animation([moveEvent], self.moveStartedTime, "oneShot", lifetime)
         
     def update(self):
-        if self.lifetime <= 0:
-            return
-        self.pos += self.vel
-        self.lifetime -= 0.01
+        if self.pos != self.targetPos and self.moveAnim is not None:
+            self.moveAnim.updateTime(input.getRealTime())
+    
+    def updatePos(self, currentTime):
+        self.pos.x = lerp(self.moveStartedPos.x, self.targetPos.x, 0, self.lifetime, currentTime)
+        self.pos.y = lerp(self.moveStartedPos.y, self.targetPos.y, 0, self.lifetime, currentTime)
+        print(self.pos.x, self.pos.y)
         
     def draw(self, screen):
-        if self.lifetime <= 0:
-            return
         color = colorFade(self.color, self.lifetime, self.maxLifetime)
         pygame.draw.circle(screen, color, (self.pos.x, self.pos.y), self.size)
         

@@ -1,6 +1,6 @@
 import pygame
 
-from ui import mainMenu
+from ui.menus import mainMenu, settingsMenu
 from logic.game import game
 
 screen = None
@@ -12,7 +12,7 @@ def init():
     screen = pygame.display.set_mode((640, 480))
     screen.fill((255, 255, 255))
     
-    screens = {"main": mainMenu, "game": game}
+    screens = {"main": mainMenu, "game": game, "settings": settingsMenu}
     setScreen("main")
 
 def setScreen(name):

@@ -41,7 +41,6 @@ class Board:
     def updatePos(self, currentTime):
         self.pos.x = lerp(self.moveStartedPos.x, self.targetPos.x, 0, self.moveLength, currentTime)
         self.pos.y = lerp(self.moveStartedPos.y, self.targetPos.y, 0, self.moveLength, currentTime)
-        print(self.pos.x, self.pos.y)
     
     def move(self, direction):
         self.targetPos += direction.multiply(round(self.tileSize*1.1))  # set target position

@@ -1,4 +1,7 @@
+import random
+
 from graphics.particleSystem.particle import Particle
+from utils.vector2 import Vector2
 
 class ParticleEmitter:
     def __init__(self, pos, rate, maxParticles, particleLifetime, particleSize, particleColor, timeEmitting = -1):
@@ -13,9 +16,9 @@ class ParticleEmitter:
         
         self.particles = []
         
-    def update(self, deltaTime):
-        if self.maxTimeEmitting != -1 or self.timeEmitting < self.maxTimeEmitting:
-            self.timeEmitting += deltaTime
+    def update(self):
+        if self.maxTimeEmitting == -1 or self.timeEmitting < self.maxTimeEmitting:
+            # self.timeEmitting += deltaTime
             for particle in self.particles:
                 particle.update()
                 if particle.lifetime <= 0:
@@ -23,8 +26,11 @@ class ParticleEmitter:
                     
             if len(self.particles) < self.maxParticles:
                 for i in range(self.rate):
-                    self.particles.append(Particle(self.pos, self.particleLifetime, self.particleSize, self.particleColor))
-                
+                    self.particles.append(self.makeParticle())
+
+    def makeParticle(self):
+        return Particle(self.pos, Vector2(random.uniform(-1, 1), random.uniform(-1, 1)),self.particleLifetime, self.particleSize, self.particleColor)
+
     def draw(self, screen):
         for particle in self.particles:
             particle.draw(screen)

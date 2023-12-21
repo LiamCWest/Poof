@@ -4,7 +4,7 @@ import input.input as input
 from graphics import gui
 
 class Button:
-    def __init__(self, text, x, y, width, height, color, textColor, onClick):
+    def __init__(self, text, x, y, width, height, color, textColor, onClick, z = 0):
         self.text = text
         self.x = x
         self.y = y
@@ -12,7 +12,8 @@ class Button:
         self.height = height
         self.color = color
         self.scale = 1
-        self.scaler = 1.5
+        self.scaler = 1.25
+        self.z = z
         
         self.textColor = textColor
         self.onClick = onClick

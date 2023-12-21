@@ -4,11 +4,12 @@ from utils.vector2 import Vector2
 from images import images
 
 class GameObject:
-    def __init__(self, pos, width, height, color, imageName = None):
+    def __init__(self, pos, width, height, color, imageName = None, z = 0):
         self.pos = pos
         self.width = width
         self.height = height
         self.color = color
+        self.z = z
         self.imageScale = Vector2(1,1)
         if imageName:
             self.image = images.images[imageName]
@@ -25,3 +26,6 @@ class GameObject:
             
     def update(self):
         pass
+    
+    def getz(self):
+        return self.z

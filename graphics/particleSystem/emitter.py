@@ -16,9 +16,9 @@ class ParticleEmitter:
         
         self.particles = []
         
-    def update(self, deltaTime):
-        if self.maxTimeEmitting != -1 or self.timeEmitting < self.maxTimeEmitting:
-            self.timeEmitting += deltaTime
+    def update(self):
+        if self.maxTimeEmitting == -1 or self.timeEmitting < self.maxTimeEmitting:
+            # self.timeEmitting += deltaTime
             for particle in self.particles:
                 particle.update()
                 if particle.lifetime <= 0:
@@ -26,10 +26,10 @@ class ParticleEmitter:
                     
             if len(self.particles) < self.maxParticles:
                 for i in range(self.rate):
-                    self.makeParticle()
+                    self.particles.append(self.makeParticle())
 
     def makeParticle(self):
-        self.particles.append(Particle(self.pos, Vector2(random.uniform(-1, 1), random.uniform(-1, 1)),self.particleLifetime, self.particleSize, self.particleColor))
+        return Particle(self.pos, Vector2(random.uniform(-1, 1), random.uniform(-1, 1)),self.particleLifetime, self.particleSize, self.particleColor)
 
     def draw(self, screen):
         for particle in self.particles:

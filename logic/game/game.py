@@ -29,13 +29,15 @@ def checkInput():
 def update():
     checkInput()
     board.update()
+    emitter.update()
 
 def draw():
-    global board, player
     board.draw(gui.screen)
     player.draw(gui.screen)
+    emitter.draw(gui.screen)
 
 def addBaseObjects():
-    global board, player
+    global board, player, emitter
     board = Board(Vector2(0, 0), Vector2(24, 20), 50, (25, 25, 25))
     player = Player(board, Vector2(5, 4), 50)
+    emitter = ParticleEmitter(Vector2(50, 50), 1, 100, 100, 5, (255, 0, 0))

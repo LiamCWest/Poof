@@ -12,7 +12,7 @@ class Button:
         self.height = height
         self.color = color
         self.scale = 1
-        self.scaler = 1.5
+        self.scaler = 1.25
         
         self.textColor = textColor
         self.onClick = onClick

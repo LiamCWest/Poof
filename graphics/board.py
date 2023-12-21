@@ -2,11 +2,11 @@ from objects.tiles.tile import Tile
 from utils.vector2 import Vector2
 from objects.tiles.platform import Platform
 from objects.tiles.rest import Rest
-from graphics.animation import Animation, AnimEvent, lerp
+from graphics.animation import *
 import input.input as input
 
 class Board:
-    moveLength = 0.5
+    moveLength = 0.15
     def __init__(self, pos, size, tileSize, color):
         self.pos = pos.add(tileSize*0.1)
         self.size = size
@@ -39,12 +39,12 @@ class Board:
                 tile.draw(win)
     
     def updatePos(self, currentTime):
-        self.pos.x = lerp(self.moveStartedPos.x, self.targetPos.x, 0, self.moveLength, currentTime)
-        self.pos.y = lerp(self.moveStartedPos.y, self.targetPos.y, 0, self.moveLength, currentTime)
+        self.pos.x = easeOutPow(self.moveStartedPos.x, self.targetPos.x, 0, self.moveLength, 2, currentTime)
+        self.pos.y = easeOutPow(self.moveStartedPos.y, self.targetPos.y, 0, self.moveLength, 2, currentTime)
     
     def move(self, direction):
         self.targetPos += direction.multiply(round(self.tileSize*1.1))  # set target position
-        self.moveStartedPos = self.pos
+        self.moveStartedPos = self.pos.copy()
         self.moveAnim.restart(input.getRealTime())
 
     def update(self):

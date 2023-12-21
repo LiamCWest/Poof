@@ -25,7 +25,6 @@ class Particle:
     def updatePos(self, currentTime):
         self.pos.x = lerp(self.moveStartedPos.x, self.targetPos.x, 0, self.lifetime, currentTime)
         self.pos.y = lerp(self.moveStartedPos.y, self.targetPos.y, 0, self.lifetime, currentTime)
-        print(self.pos.x, self.pos.y)
         
     def draw(self, screen):
         color = colorFade(self.color, self.lifetime, self.maxLifetime)

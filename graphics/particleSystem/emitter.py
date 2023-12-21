@@ -1,36 +1,29 @@
-import random
-
 from graphics.particleSystem.particle import Particle
 from utils.vector2 import Vector2
+import random
 
-class ParticleEmitter:
-    def __init__(self, pos, rate, maxParticles, particleLifetime, particleSize, particleColor, timeEmitting = -1):
-        self.pos = pos
-        self.rate = rate
-        self.maxParticles = maxParticles
-        self.particleLifetime = particleLifetime
-        self.particleSize = particleSize
-        self.particleColor = particleColor
-        self.maxTimeEmitting = timeEmitting
-        self.timeEmitting = 0
-        
+class Emitter:
+    def __init__(self, position, velocity, emitRate, lifeTime):
+        self.position = position
+        self.velocity = velocity
+        self.emitRate = emitRate
+        self.lifeTime = lifeTime
         self.particles = []
-        
-    def update(self):
-        if self.maxTimeEmitting == -1 or self.timeEmitting < self.maxTimeEmitting:
-            # self.timeEmitting += deltaTime
-            for particle in self.particles:
-                particle.update()
-                if particle.lifetime <= 0:
-                    self.particles.remove(particle)
-                    
-            if len(self.particles) < self.maxParticles:
-                for i in range(self.rate):
-                    self.particles.append(self.makeParticle())
+
+    def emit(self):
+        if len(self.particles) < self.emitRate:
+            self.particles.append(self.makeParticle())
 
     def makeParticle(self):
-        return Particle(self.pos, Vector2(random.uniform(-1, 1), random.uniform(-1, 1)),self.particleLifetime, self.particleSize, self.particleColor)
+        return Particle(self.position, Vector2(random.uniform(-1, 1), random.uniform(-1, 1)) * self.velocity, self.lifeTime)
 
-    def draw(self, screen):
+    def update(self):
+        self.emit()
         for particle in self.particles:
-            particle.draw(screen)
+            particle.update()
+            if particle.lifeTime <= 0:
+                self.particles.remove(particle)
+            
+    def draw(self, win):
+        for particle in self.particles:
+            particle.draw(win)

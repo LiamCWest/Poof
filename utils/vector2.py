@@ -72,6 +72,16 @@ class Vector2:
 
     def length(self):
         return (self.x**2 + self.y**2)**0.5
+    
+    def toTuple(self):
+        return (self.x, self.y)
+    
+    def invert(self):
+        return Vector2(-self.x, -self.y)
+    
+    @classmethod
+    def from_tuple(cls, tuple):
+        return cls(*tuple)
 
 UP = Vector2(0, -1)
 DOWN = Vector2(0, 1)

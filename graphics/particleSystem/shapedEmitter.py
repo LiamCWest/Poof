@@ -1,12 +1,12 @@
-from particleSystem.particle import Particle
-from particleSystem.emitter import Emitter
+from graphics.particleSystem.particle import Particle
+from graphics.particleSystem.emitter import Emitter
 
 class ShapedEmitter(Emitter):
-    def __init__(self, shape, pos, rate, maxParticles, particleLifetime, particleSize, particleColor, timeEmitting = -1):
-        Emitter.__init__(self, pos, rate, maxParticles, particleLifetime, particleSize, particleColor, timeEmitting)
+    def __init__(self, shape, pos, velocity, emitRate, lifeTime):
+        Emitter.__init__(self, pos, velocity, emitRate, lifeTime)
         self.shape = shape
         
     def makeParticle(self):
-        pos = self.shape.random_point_on_edge()
-        vel = self.shape.normal_at(pos).multiply(2)
-        self.particles.append(Particle(pos, vel, self.particleLifetime, self.particleSize, self.particleColor))
+        pos = self.shape.randomPointOnEdge()
+        vel = self.shape.dirAt(pos) * self.velocity
+        return Particle(pos + self.position, vel, self.lifeTime)

@@ -48,7 +48,7 @@ class Board:
         self.moveAnim.restart(input.getRealTime())
 
     def update(self):
-        if self.pos != self.targetPos and self.moveAnim is not None:
+        if self.pos != self.targetPos:
             self.moveAnim.updateTime(input.getRealTime())
             
             for tile in self.tiles:

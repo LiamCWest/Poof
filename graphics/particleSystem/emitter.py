@@ -12,7 +12,10 @@ class Emitter:
 
     def emit(self):
         if len(self.particles) < self.emitRate:
-            self.particles.append(Particle(self.position, Vector2(random.uniform(-1, 1), random.uniform(-1, 1)) * self.velocity, self.lifeTime))
+            self.particles.append(self.makeParticle())
+
+    def makeParticle(self):
+        return Particle(self.position, Vector2(random.uniform(-1, 1), random.uniform(-1, 1)) * self.velocity, self.lifeTime)
 
     def update(self):
         self.emit()

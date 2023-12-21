@@ -3,7 +3,10 @@ import pygame
 from ui import mainMenu
 from logic.game import game
 
+screen = None
 screens = None
+activeScreen = None
+activeScreenName = None
 def init():
     global screen, screens, activeScreen, activeScreenName
     screen = pygame.display.set_mode((640, 480))
@@ -12,8 +15,6 @@ def init():
     screens = {"main": mainMenu, "game": game}
     setScreen("main")
 
-activeScreen = None
-activeScreenName = None
 def setScreen(name):
     global activeScreen, activeScreenName
     

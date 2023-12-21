@@ -62,3 +62,6 @@ class Animation:
     
     def restart(self, timeSourceTime):
         self.skipToTime(0, timeSourceTime)
+        
+def lerp(startValue, endValue, startTime, endTime, currentTime):
+    return (currentTime - startTime) * ((endValue - startValue) / (endTime - startTime)) + startValue

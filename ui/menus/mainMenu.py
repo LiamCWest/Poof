@@ -11,6 +11,7 @@ def hide():
     gui.clear()
 
 def draw():
+    objects.sort(key = lambda x : x.z)
     for object in objects:
         object.draw()
     for text in texts:

@@ -8,7 +8,7 @@ import input.input as input
 class Board:
     moveLength = 0.15
     def __init__(self, pos, size, tileSize, color):
-        self.pos = pos.add(tileSize*0.1)
+        self.pos = pos
         self.size = size
         self.tileSize = tileSize
         self.color = color
@@ -44,7 +44,7 @@ class Board:
         self.pos.y = easeOutPow(self.moveStartedPos.y, self.targetPos.y, 0, self.moveLength, 2, currentTime)
     
     def move(self, direction):
-        self.targetPos += direction.multiply(round(self.tileSize*1.1))  # set target position
+        self.targetPos += direction.multiply(self.tileSize)  # set target position
         self.moveStartedPos = self.pos.copy()
         self.moveAnim.restart(input.getRealTime())
 

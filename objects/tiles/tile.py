@@ -14,11 +14,11 @@ class Tile(GameObject):
         
     def updatePos(self):
         if hasattr(self, "image") and self.image:
-            x = self.relPos.x * self.board.tileSize + round(self.board.tileSize*self.relPos.x*0.1) + self.board.pos.x + (self.board.tileSize//2 - self.imageScale.x*self.image.get_width()//2)
-            y = self.relPos.y * self.board.tileSize + round(self.board.tileSize*self.relPos.y*0.1) + self.board.pos.y + (self.board.tileSize//2 - self.imageScale.y*self.image.get_height()//2)
+            x = self.relPos.x * self.board.tileSize + self.board.pos.x + (self.board.tileSize//2 - self.imageScale.x*self.image.get_width()//2)
+            y = self.relPos.y * self.board.tileSize + self.board.pos.y + (self.board.tileSize//2 - self.imageScale.y*self.image.get_height()//2)
         else:
-            x = self.relPos.x * self.board.tileSize + round(self.board.tileSize*self.relPos.x*0.1) + self.board.pos.x + (self.board.tileSize//2 - self.width//2)
-            y = self.relPos.y * self.board.tileSize + round(self.board.tileSize*self.relPos.y*0.1) + self.board.pos.y + (self.board.tileSize//2 - self.height//2)
+            x = self.relPos.x * self.board.tileSize + self.board.pos.x + (self.board.tileSize//2 - self.width//2)
+            y = self.relPos.y * self.board.tileSize + self.board.pos.y + (self.board.tileSize//2 - self.height//2)
         self.pos = Vector2(x,y)
         
     def appear(self, duration):

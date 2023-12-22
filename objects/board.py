@@ -2,6 +2,7 @@ from objects.tiles.tile import Tile
 from utils.vector2 import Vector2
 from objects.tiles.platform import Platform
 from objects.tiles.rest import Rest
+from objects.tiles.wall import Wall
 from graphics.animation import *
 import input.input as input
 
@@ -26,13 +27,16 @@ class Board:
     def createTiles(self):
         for y in range(self.size.y):
             for x in range(self.size.x):
-                r = (x+y) % 3
-                if r == 0:
-                    self.tiles.append(Platform(self, Vector2(x, y), self.tileSize, self.color))
-                if r == 1:
-                    self.tiles.append(Tile(self, Vector2(x, y), self.tileSize, self.color))
-                if r == 2:
-                    self.tiles.append(Rest(self, Vector2(x, y), self.tileSize, self.color))
+                if y == 0 and x == 0:
+                    self.tiles.append(Wall(self, Vector2(x, y), self.tileSize, self.color))
+                else:
+                    r = (x+y) % 3
+                    if r == 0:
+                        self.tiles.append(Platform(self, Vector2(x, y), self.tileSize, self.color))
+                    if r == 1:
+                        self.tiles.append(Tile(self, Vector2(x, y), self.tileSize, self.color))
+                    if r == 2:
+                        self.tiles.append(Rest(self, Vector2(x, y), self.tileSize, self.color))
                 
     def draw(self, win):
         for tile in self.tiles:

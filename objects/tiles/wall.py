@@ -1,4 +1,4 @@
-from objects.tiles import Tile
+from objects.tiles.tile import Tile
 
 class Wall(Tile):
     def __init__(self, board, pos, size, color, imageName = "wall"):

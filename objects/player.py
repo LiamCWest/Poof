@@ -2,6 +2,7 @@ import math
 
 from objects.gameObject import GameObject
 from utils.vector2 import Vector2
+from objects.tiles.wall import Wall
 
 class Player(GameObject):
     def __init__(self, board, pos, size, color = (0,0,0), imageName = "player"):
@@ -20,3 +21,15 @@ class Player(GameObject):
 
     def move(self, direction):
         self.relPos += direction
+        
+    def getNextPos(self, direction):
+        return self.relPos + direction
+    
+    def canMove(self, direction):
+        nextPos = self.getNextPos(direction)
+        if nextPos.x < 0 or nextPos.x > self.board.size.x or nextPos.y < 0 or nextPos.y > self.board.size.y:
+            return False
+        nextTile = self.board.tiles[nextPos.x + nextPos.y*self.board.size.x]
+        if type(nextTile) == Wall or not nextTile.exists:
+            return False
+        return True

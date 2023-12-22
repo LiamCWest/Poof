@@ -9,6 +9,7 @@ class Tile(GameObject):
         self.relPos = pos
         self.width = size
         self.height = size
+        self.exists = True
         self.updatePos()
         GameObject.__init__(self, self.pos, size, size, color, imageName)
         
@@ -30,9 +31,11 @@ class Tile(GameObject):
                 self.imageScale = Vector2(self.size/self.image.get_width(), self.size/self.image.get_height())
             self.updatePos()
         
-        animEvent = AnimEvent(0, duration, appearAnim)
-        anim = Animation([animEvent], input.getRealTime(), "oneShot", duration)
-        self.board.addAnimation(anim)
+        if not self.exists:
+            self.exists = True
+            animEvent = AnimEvent(0, duration, appearAnim)
+            anim = Animation([animEvent], input.getRealTime(), "oneShot", duration)
+            self.board.addAnimation(anim)
 
     def disappear(self, duration):
         def disappearAnim(currentTime):
@@ -41,9 +44,10 @@ class Tile(GameObject):
             self.height = self.size
             if self.image:
                 self.imageScale = Vector2(self.size/self.image.get_width(), self.size/self.image.get_height())
-            # print(self.imageScale.x, self.imageScale.y)
             self.updatePos()
             
-        animEvent = AnimEvent(0, duration, disappearAnim)
-        anim = Animation([animEvent], input.getRealTime(), "oneShot", duration)
-        self.board.addAnimation(anim)
+        if self.exists:
+            self.exists = False
+            animEvent = AnimEvent(0, duration, disappearAnim)
+            anim = Animation([animEvent], input.getRealTime(), "oneShot", duration)
+            self.board.addAnimation(anim)

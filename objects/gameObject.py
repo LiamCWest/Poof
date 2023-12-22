@@ -12,7 +12,8 @@ class GameObject:
         self.z = z
         self.imageScale = Vector2(1,1)
         if imageName:
-            self.image = images.images[imageName]
+            try: self.image = images.images[imageName]
+            except KeyError: self.image = images.images["debug"]
             self.imageRect = self.image.get_rect()
             self.imageScale = Vector2(self.width / self.imageRect.width, self.height / self.imageRect.height)
         else:

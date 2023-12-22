@@ -25,8 +25,9 @@ def checkInput():
         move(Vector2(0, -1))
     
 def move(direction):
-    player.move(direction.invert())
-    board.move(direction)
+    if player.canMove(direction.invert()):
+        board.move(direction)
+        player.move(direction.invert())
 
 def update():
     checkInput()

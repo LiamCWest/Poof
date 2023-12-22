@@ -1,3 +1,5 @@
+import math
+
 from objects.gameObject import GameObject
 from utils.vector2 import Vector2
 
@@ -12,6 +14,9 @@ class Player(GameObject):
         GameObject.__init__(self, self.pos, self.width, self.height, color, imageName)
         
     def updatePos(self):
-        x = self.relPos.x * self.board.tileSize + round(self.board.tileSize*self.relPos.x*0.1) + self.board.pos.x + (self.board.tileSize//2 - self.width//2)
-        y = self.relPos.y * self.board.tileSize + round(self.board.tileSize*self.relPos.y*0.1) + self.board.pos.y + (self.board.tileSize//2 - self.height//2)
+        x = self.board.tileSize*self.relPos.x*1.1 + (self.board.tileSize/2 - self.width/2) + self.board.pos.x
+        y = self.board.tileSize*self.relPos.y*1.1 + (self.board.tileSize/2 - self.height/2) + self.board.pos.y
         self.pos = Vector2(x,y)
+
+    def move(self, direction):
+        self.relPos += direction

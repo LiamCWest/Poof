@@ -13,17 +13,21 @@ def hide():
 
 def checkInput():
     if input.keyBindings["left"].justPressed:
-        board.move(Vector2(1, 0))
+        move(Vector2(1, 0))
     
     if input.keyBindings["right"].justPressed:
-        board.move(Vector2(-1, 0))
+        move(Vector2(-1, 0))
         
     if input.keyBindings["up"].justPressed:
-        board.move(Vector2(0, 1))
+        move(Vector2(0, 1))
         
     if input.keyBindings["down"].justPressed:
-        board.move(Vector2(0, -1))
+        move(Vector2(0, -1))
     
+def move(direction):
+    player.move(direction.invert())
+    board.move(direction)
+
 def update():
     checkInput()
     board.update()

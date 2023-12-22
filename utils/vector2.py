@@ -51,6 +51,9 @@ class Vector2:
     def __ge__(self, other):
         return Vector2(self.x >= other.x, self.y >= other.y)
     
+    def __str__(self):
+        return f"Vector2({self.x}, {self.y})"
+    
     def copy(self):
         return Vector2(self.x, self.y)
     

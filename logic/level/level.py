@@ -1,5 +1,6 @@
+from Poof.objects import tile
 from objects.board import Board
-from objects.tiles import tile, rest, wall, platform
+from objects.tiles import rest, wall, platform
 from utils.vector2 import Vector2
 from graphics.animation import *
 from input import input

@@ -1,11 +1,12 @@
 from graphics import gui
-from objects.board import Board
+from objects.tile import Tile
 from objects.player import Player
 from utils.vector2 import Vector2
 import input.input as input
     
+player = None
+
 def show():
-    addBaseObjects()
     update()
     
 def hide():
@@ -25,15 +26,8 @@ def checkInput():
         board.move(Vector2(0, -1))
     
 def update():
-    checkInput()
-    board.update()
+    draw()
 
 def draw():
     board.draw(gui.screen)
     player.draw(gui.screen)
-
-def addBaseObjects():
-    global board, player, emitter
-    board = Board(Vector2(0, 0), Vector2(24, 20), 50, (25, 25, 25))
-    player = Player(board, Vector2(5, 4), 50)
-    board.tiles[5].disappear(1)

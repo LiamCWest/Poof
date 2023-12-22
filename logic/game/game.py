@@ -1,12 +1,8 @@
 from graphics import gui
-from graphics.board import Board
+from objects.board import Board
 from objects.player import Player
-from graphics.particleSystem.emitter import Emitter
-from graphics.particleSystem.shapedEmitter import ShapedEmitter
 from utils.vector2 import Vector2
 import input.input as input
-from utils.polygon import Polygon
-import time
     
 def show():
     addBaseObjects()

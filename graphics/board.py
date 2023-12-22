@@ -16,6 +16,7 @@ class Board:
         self.targetPos = self.pos
         self.moveStartedTime = input.getRealTime()
         self.moveStartedPos = self.pos
+        self.animations = []
         
         moveEvent = AnimEvent(0, self.moveLength, self.updatePos)
         self.moveAnim = Animation([moveEvent], self.moveStartedTime, "oneShot", self.moveLength)
@@ -53,3 +54,14 @@ class Board:
             
             for tile in self.tiles:
                 tile.updatePos()
+        self.updateAnimations()
+                
+    def addAnimation(self, anim):
+        self.animations.append(anim)
+        
+    def removeAnimation(self, anim):
+        self.animations.remove(anim)
+        
+    def updateAnimations(self):
+        for anim in self.animations:
+            anim.updateTime(input.getRealTime())

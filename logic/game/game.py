@@ -6,6 +6,7 @@ from graphics.particleSystem.shapedEmitter import ShapedEmitter
 from utils.vector2 import Vector2
 import input.input as input
 from utils.polygon import Polygon
+import time
     
 def show():
     addBaseObjects()
@@ -39,3 +40,4 @@ def addBaseObjects():
     global board, player, emitter
     board = Board(Vector2(0, 0), Vector2(24, 20), 50, (25, 25, 25))
     player = Player(board, Vector2(5, 4), 50)
+    board.tiles[5].disappear(1)

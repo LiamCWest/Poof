@@ -1,7 +1,6 @@
 from images import images
 import pygame
 from utils.vector2 import Vector2
-from objects.tiles.wall import Wall
 
 class Player:
     offset = Vector2(5, 4)

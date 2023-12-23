@@ -57,6 +57,9 @@ class Vector2:
     def multiply(self, other):
         return Vector2(self.x * other, self.y * other)
     
+    def divide(self, other):
+        return Vector2(self.x / other, self.y / other)
+    
     def add(self, other):
         return Vector2(self.x + other, self.y + other)
     

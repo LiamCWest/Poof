@@ -1,7 +1,7 @@
 from images import images
 import pygame
 from utils.vector2 import Vector2
-from graphics.animation import Animation, AnimEvent, lerp
+from objects.player import Player
 
 class Tile:
     def __init__(self, pos, color, appearedTime = None, disappearedTime = None, type = None):
@@ -45,5 +45,5 @@ class Tile:
         scale **= 5
         
         size = self.getTypeSize().multiply(scale).toTuple()
-        pos = ((self.pos - playerPos) * self.getTypeSize() + self.getTypeSize().multiply(1 - scale).divide(2)).toTuple()
+        pos = ((self.pos - playerPos + Player.offset) * self.getTypeSize() + self.getTypeSize().multiply(1 - scale).divide(2)).toTuple()
         win.blit(pygame.transform.scale(self.getTypeImage(), size), pos)

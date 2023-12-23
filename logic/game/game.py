@@ -31,8 +31,6 @@ def checkInput():
         
     if input.keyBindings["down"].justPressed:
         level.player.pos += Vector2(0, 1)
-    
-        move(Vector2(0, -1))
 
 def update():
     checkInput()

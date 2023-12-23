@@ -1,12 +1,7 @@
-class superc:
-    def __init__(self, value):
-        self.thing = value
+dict1 = {"a": 1}
+dict2 = {"a": dict1["a"] for _ in range(1)}
+print(dict2["a"])
 
-class subc:
-    def __init__(self, value):
-        self.renamedThing = value
-        super().__init__()
-        
-        print(self.thing)
-        
-i = subc(3)
+print(dict2["a"])
+dict1["a"] = 2
+print(dict2["a"])

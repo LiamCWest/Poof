@@ -20,8 +20,6 @@ class Animation:
         else:
             self.length = length
         
-        self.eventsRunning = []
-        
     def updateTime(self, timeSourceTime):
         firstUpdate = self.animTime is None
         

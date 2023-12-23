@@ -1,11 +1,19 @@
 from graphics import gui
-from objects.board import Board
+from objects.tile import Tile
 from objects.player import Player
 from utils.vector2 import Vector2
+from logic.level.level import Level
 import input.input as input
-    
+
+tiles = [
+    Tile(Vector2(0, 0), None, 1, 2, "platform"),
+    Tile(Vector2(0, 1), None, 2, 3, "rest"),
+    Tile(Vector2(0, 2), None, 3, 4, "wall"),
+    Tile(Vector2(0, 3), None, 4, 5, "platform"),
+]
+level = Level(tiles, 1, 1)
+
 def show():
-    addBaseObjects()
     update()
     
 def hide():
@@ -13,32 +21,22 @@ def hide():
 
 def checkInput():
     if input.keyBindings["left"].justPressed:
-        move(Vector2(1, 0))
+        level.player.pos += Vector2(-1, 0)
     
     if input.keyBindings["right"].justPressed:
-        move(Vector2(-1, 0))
+        level.player.pos += Vector2(1, 0)
         
     if input.keyBindings["up"].justPressed:
-        move(Vector2(0, 1))
+        level.player.pos += Vector2(0, -1)
         
     if input.keyBindings["down"].justPressed:
-        move(Vector2(0, -1))
+        level.player.pos += Vector2(0, 1)
     
-def move(direction):
-    if player.canMove(direction.invert()):
-        board.move(direction)
-        player.move(direction.invert())
+        move(Vector2(0, -1))
 
 def update():
     checkInput()
-    board.update()
-
+    draw()
+    
 def draw():
-    board.draw(gui.screen)
-    player.draw(gui.screen)
-
-def addBaseObjects():
-    global board, player, emitter
-    board = Board(Vector2(0, 0), Vector2(24, 20), 50, (25, 25, 25))
-    player = Player(board, Vector2(5, 4), 50)
-    board.tiles[5].disappear(1)
+    level.update(gui.screen, input.getRealTime())

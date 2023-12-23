@@ -49,6 +49,9 @@ def getNextPoint():
     global currentTimingPoints
     return timingPoints.getNextPoint(currentTimingPoints, getPos())
 
+def getNthPoint():
+    global currentTimingPoints
+
 def getPreviousBeat(divisor):
     global currentTimingPoints
     return timingPoints.getPreviousBeat(currentTimingPoints, getPos(), divisor)
@@ -57,7 +60,11 @@ def getNextBeat(divisor):
     global currentTimingPoints
     return timingPoints.getNextBeat(currentTimingPoints, getPos(), divisor)
 
+def getBeatByIndex(index, divisor):
+    global currentTimingPoints
+    return timingPoints.getBeatByIndex(currentTimingPoints, index, divisor)
+
 def test():
-    timingPoint1 = timingPoints.timingPoint(2.108, 170, timingPoints.timeSignature(4, 4))
+    timingPoint1 = timingPoints.TimingPoint(2.108, 170, timingPoints.TimeSignature(4, 4))
     load(r"D:\Files\Godot Projects\KEYBEATS GD4\TESTFOLDER\MAPS\Abyss Of Destiny 2\Song.MP3", [timingPoint1])
     play()

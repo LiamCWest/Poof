@@ -4,11 +4,11 @@ from utils.vector2 import Vector2
 from objects.player import Player
 
 class Tile:
-    def __init__(self, pos, color, appearedTime = None, disappearedTime = None, type = None):
+    def __init__(self, pos, color, appearedTime = None, disappearTime = None, type = None):
         self.pos = pos
         self.color = color
         self.appearedTime = appearedTime
-        self.disappearedTime = disappearedTime
+        self.disappearTime = disappearTime
         self.type = type
     
     def getTypeImage(self): #not using a dictionary because of copy by reference shenanigans
@@ -35,14 +35,14 @@ class Tile:
         elif time <= self.appearedTime:
             timeIntoAppearAnim = time - (self.appearedTime - appearLength)
             scale = self.getScaleFromAppearAnimTime(timeIntoAppearAnim, appearLength)
-        elif time < self.disappearedTime - disappearLength:
+        elif time < self.disappearTime:
             scale = 1
-        elif time <= self.disappearedTime:
-            timeIntoDisappearAnim = time - (self.disappearedTime - disappearLength)
+        elif time <= self.disappearTime + disappearLength:
+            timeIntoDisappearAnim = time - self.disappearTime
             scale = self.getScaleFromDisappearAnimTime(timeIntoDisappearAnim, disappearLength)
         else:
             scale = 0
-        scale **= 5
+        scale **= 5 #temp
         
         size = self.getTypeSize().multiply(scale).toTuple()
         pos = ((self.pos - playerPos + Player.offset) * self.getTypeSize() + self.getTypeSize().multiply(1 - scale).divide(2)).toTuple()

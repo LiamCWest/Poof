@@ -1,12 +1,12 @@
 from utils.binarySearch import binarySearch
 import math
 
-class timeSignature:
+class TimeSignature:
     def __init__(self, num, denom):
         self.num = num
         self.denom = denom
 
-class timingPoint:
+class TimingPoint:
     def __init__(self, time, bpm, timeSignature):
         self.time = time
         self.bpm = bpm
@@ -39,7 +39,7 @@ def getPreviousBeat(points, time, divisor):
     beatsElapsed = timeSinceLastPoint * divisor / point.beatLength
     return math.floor(beatsElapsed) * point.beatLength / divisor + point.time
 
-def getNextBeat(points, time, divisor):
+def getNextBeat(points, time, divisor): #TODO: Make sure none of these getBeat functions have subtle errors
     if len(points) == 0:
         return None
     
@@ -53,9 +53,25 @@ def getNextBeat(points, time, divisor):
     beatsElapsed = timeSinceLastPoint * divisor / point.beatLength
     return math.ceil(beatsElapsed) * point.beatLength / divisor + point.time
 
+def getBeatByIndex(points, index, divisor):
+    if len(points) == 0:
+        return None
+    
+    beatsRemaining = index
+    for i in range(len(points) - 1):
+        timeInPoint = points[i + 1].time - points[i].time
+        beatsInPoint = math.floor(timeInPoint * divisor / points[i].beatLength)
+        beatsRemaining -= beatsInPoint
+        
+        if beatsRemaining < 0:
+            beatsRemaining += beatsInPoint
+            return points[i].time + math.floor(beatsRemaining * points[i].beatLength / divisor)
+    print("rem:", beatsRemaining)
+    return points[len(points) - 1].time + beatsRemaining * points[len(points) - 1].beatLength / divisor
+
 def test():
-    timingPoint1 = timingPoint(0, 120, timeSignature(4, 4))
-    timingPoint2 = timingPoint(6, 130, timeSignature(7, 2))
+    timingPoint1 = TimingPoint(0, 120, TimeSignature(4, 4))
+    timingPoint2 = TimingPoint(6, 130, TimeSignature(7, 2))
     timingPoints = [timingPoint1, timingPoint2]
     beat = getNextBeat(timingPoints, 6.1, 1)
     print(beat)

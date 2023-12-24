@@ -25,9 +25,7 @@ class Animation:
         else:
             self.length = max(max(i.endTime for i in events), length)
         
-    def updateTime(self, timeSourceTime):
-        firstUpdate = self.animTime is None
-        
+    def updateTime(self, timeSourceTime):        
         oldAnimTime = self.animTime
         
         animTimeUnrepeated = float(timeSourceTime) - self.timeSourceStartTime
@@ -38,12 +36,11 @@ class Animation:
                 self.animTime = abs(animTimeUnrepeated % (self.length * 2) - self.length)
             case _:
                 self.animTime = animTimeUnrepeated
-        
-        if oldAnimTime == self.animTime:
-            return
-
-        if firstUpdate:
-            oldAnimTime = self.animTime
+                
+        if oldAnimTime is None:
+            oldAnimTime = 0.
+            if oldAnimTime == self.animTime:
+                oldAnimTime = math.nextafter(0., -1.)
         
         if self.animTime > oldAnimTime:
             for i in self.tree.overlap(math.nextafter(oldAnimTime, float("inf")), self.animTime):

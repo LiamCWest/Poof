@@ -41,13 +41,16 @@ class Animation:
             oldAnimTime = 0.
             if oldAnimTime == self.animTime:
                 oldAnimTime = math.nextafter(0., -1.)
+                
+        if self.animTime == oldAnimTime:
+            return
         
         if self.animTime > oldAnimTime:
             for i in self.tree.overlap(math.nextafter(oldAnimTime, float("inf")), self.animTime):
                 if self.animTime <= i.end:
                     continue
                 i.data(i.end - i.begin)
-        elif self.animTime < oldAnimTime:
+        else:
             for i in self.tree.overlap(self.animTime, oldAnimTime):
                 if self.animTime >= i.begin:
                     continue

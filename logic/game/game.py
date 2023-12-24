@@ -14,9 +14,6 @@ def show():
     global tiles, level
     songPlayer.load(r"Song.MP3", [TimingPoint(2.108, 170, TimeSignature(4, 4))])
     
-    for i in range(10):
-        print(songPlayer.getBeatByIndex(i, 1))
-    
     tiles = [
         Tile(Vector2(0, 0), None, 0, songPlayer.getBeatByIndex(0, 1), "platform"),
         Tile(Vector2(0, 1), None, songPlayer.getBeatByIndex(0, 1), songPlayer.getBeatByIndex(1, 1), "platform"),
@@ -37,12 +34,10 @@ time = 0.
 def checkInput():
     global time
     if input.keyBindings["left"].justPressed:
-        time -= 0.1
-        #level.player.move(Vector2(-1, 0), songPlayer.getPos())
+        level.player.move(Vector2(-1, 0), songPlayer.getPos())
     
-    if input.keyBindings["right"].justPressed:
-        time += 0.1
-        #level.player.move(Vector2(1, 0), songPlayer.getPos())
+    if input.keyBindings["moveTileForwards"].justPressed:
+        level.player.move(Vector2(1, 0), songPlayer.getPos())
         
     if input.keyBindings["up"].justPressed:
         level.player.move(Vector2(0, -1), songPlayer.getPos())
@@ -55,4 +50,4 @@ def update():
     draw()
     
 def draw():
-    level.update(gui.screen, time)
+    level.update(gui.screen, songPlayer.getPos())

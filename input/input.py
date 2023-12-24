@@ -33,8 +33,9 @@ class Event: #generic event
         
     
 class ButtonEvent: #keyboard keys and mouse buttons
-    def __init__(self, button):
-        self.button = button
+    def __init__(self, bindings, modifiers = None):
+        self.bindings = bindings if isinstance(bindings, tuple) else (bindings,)
+        self.modifiers = modifiers if isinstance(modifiers, tuple) else (modifiers,)
         self.__pressEvent = Event()
         self.__releaseEvent = Event()
         self.pressed = False
@@ -86,62 +87,102 @@ class MouseScrollEvent(Event):
         self.dx = dx
         self.dy = dy
         self.invoke()
+        
+modifierBindings = {
+    "shift": ButtonEvent("Key.shift"),
+    "ctrl": ButtonEvent("Key.ctrl"),
+    "alt": ButtonEvent("Key.alt"),
+}
 
 keyBindings = {
-    "left": ButtonEvent("a"),
-    "up": ButtonEvent("w"),
-    "right": ButtonEvent("d"),
-    "down": ButtonEvent("s"),
-    "dash": ButtonEvent(keyboard.Key.shift),
+    #In game bindings
+    "left": ButtonEvent("'a'"),
+    "up": ButtonEvent("'w'"),
+    "right": ButtonEvent("'d'"),
+    "down": ButtonEvent("'s'"),
+    "dash": ButtonEvent("Key.shift"),
+    
+    #Editor bindings
+    "moveTileLeft": ButtonEvent("<37>"),
+    "moveTileUp": ButtonEvent("<38>"),
+    "moveTileRight": ButtonEvent("<39>"),
+    "moveTileDown": ButtonEvent("<40>"),
+    "increaseTileLength": ButtonEvent("<38>", "shift"),
+    "decreaseTileLength": ButtonEvent("<40>", "shift"),
+    "moveTileBackwards": ButtonEvent("<37>", "shift"),
+    "moveTileForwards": ButtonEvent("<39>", "shift"),
 }
 
 mouseBindings = {
-    "lmb": ButtonEvent(mouse.Button.left),
-    "mmb": ButtonEvent(mouse.Button.middle),
-    "rmb": ButtonEvent(mouse.Button.right)
+    "lmb": ButtonEvent("Button.left"),
+    "mmb": ButtonEvent("Button.middle"),
+    "rmb": ButtonEvent("Button.right")
 }
 
 mousePos = MouseMoveEvent()
 mouseScroll = MouseScrollEvent()
 
+def toKeyStr(key):
+    global kbListener
+    return str(kbListener.canonical(key))
+
 def onKeyPress(key):
-    global keyBindings
+    global keyBindings, modifierBindings
     
-    try: 
-        keyValue = key.char
-    except AttributeError:
-        keyValue = key
+    keyStr = toKeyStr(key)
+        
+    for event in modifierBindings.values():
+        if any(map(lambda i: keyStr == i, event.bindings)) and not event.pressed:
+            event.press()
     
     for event in keyBindings.values():
-        if keyValue == event.button and not event.pressed:
-            event.press()
+        if any(map(lambda i: keyStr == i, event.bindings)) and not event.pressed:
+            if event.modifiers == (None,) or all(map(lambda i: modifierBindings[i].pressed, event.modifiers)):
+                event.press()
 
 def onKeyRelease(key):
-    global keyBindings
+    global keyBindings, modifierBindings
     
-    try: 
-        keyValue = key.char
-    except AttributeError:
-        keyValue = key
+    keyStr = toKeyStr(key)
+
+    for event in modifierBindings.values():
+        if any(map(lambda i: keyStr == i, event.bindings)) and event.pressed:
+            event.release()
     
     for event in keyBindings.values():
-        if keyValue == event.button and event.pressed:
+        if event.modifiers != (None,) and not all(map(lambda i: modifierBindings[i].pressed, event.modifiers)):
             event.release()
+        
+        if any(map(lambda i: keyStr == i, event.bindings)) and event.pressed:
+            event.release()
+            
+def toMouseStr(button):
+    return str(button)
             
 def onMouseClick(x, y, button, pressed):
     global mouseBindings
+    buttonStr = toMouseStr(button)
     
-    for event in mouseBindings.values():
-        if button != event.button:
-            continue
-        
-        if pressed == event.pressed:
-            continue
-        
-        if pressed:
-            event.press()
-        else:
-            event.release()
+    def onMousePress(buttonStr):
+        global mouseBindings
+        for event in mouseBindings.values():
+            if any(map(lambda i: buttonStr == i, event.bindings)) and not event.pressed:
+                if event.modifiers == (None,) or all(map(lambda i: modifierBindings[i].pressed, event.modifiers)):
+                    event.press()
+                
+    def onMouseRelease(buttonStr):
+        global mouseBindings
+        for event in mouseBindings.values():
+            if event.modifiers != (None,) and not all(map(lambda i: modifierBindings[i].pressed, event.modifiers)):
+                event.release()
+            
+            if any(map(lambda i: buttonStr == i, event.bindings)) and event.pressed:
+                event.release()
+                
+    if pressed:
+        onMousePress(button)
+    else:
+        onMouseRelease(button)
             
 def handleEvent(event):
     global mouseBindings
@@ -153,7 +194,10 @@ def onMouseScroll(x, y, dx, dy):
     
     mouseScroll.scroll(dx, dy)
 
+kblistener = None
+mouseListener = None
 def init():
+    global kbListener, mouseListener
     kbListener = keyboard.Listener(on_press=onKeyPress, on_release=onKeyRelease)
     kbListener.start()
     

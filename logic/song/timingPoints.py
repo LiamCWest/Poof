@@ -66,7 +66,6 @@ def getBeatByIndex(points, index, divisor):
         if beatsRemaining < 0:
             beatsRemaining += beatsInPoint
             return points[i].time + math.floor(beatsRemaining * points[i].beatLength / divisor)
-    print("rem:", beatsRemaining)
     return points[len(points) - 1].time + beatsRemaining * points[len(points) - 1].beatLength / divisor
 
 def test():

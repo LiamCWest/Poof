@@ -34,16 +34,16 @@ def hide():
 
 def checkInput():
     if input.keyBindings["left"].justPressed:
-        level.player.pos += Vector2(-1, 0)
+        level.player.move(Vector2(-1, 0), songPlayer.getPos())
     
     if input.keyBindings["right"].justPressed:
-        level.player.pos += Vector2(1, 0)
+        level.player.move(Vector2(1, 0), songPlayer.getPos())
         
     if input.keyBindings["up"].justPressed:
-        level.player.pos += Vector2(0, -1)
+        level.player.move(Vector2(0, -1), songPlayer.getPos())
         
     if input.keyBindings["down"].justPressed:
-        level.player.pos += Vector2(0, 1)
+        level.player.move(Vector2(0, 1), songPlayer.getPos())
 
 def update():
     checkInput()

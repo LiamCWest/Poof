@@ -15,7 +15,9 @@ class Level:
     def update(self, win, time):
         self.win = win
         
+        self.player.updatePos(time)
+        
         for i in self.tiles:
-            i.draw(win, self.player.pos, self.appearLength, self.disappearLength, time)
+            i.draw(win, self.player.visiblePos, self.appearLength, self.disappearLength, time)
 
         self.player.draw(win)

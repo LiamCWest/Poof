@@ -7,7 +7,7 @@ from utils.vector2 import Vector2
 from utils.polygon import Polygon
 
 class Button:
-    def __init__(self, text, x, y, width, height, color, textColor, onClick, z = 0, particles = False):
+    def __init__(self, text, x, y, width, height, color, textColor, onClick, onRelease = lambda: None,z = 0, particles = False):
         self.text = text
         self.x = x
         self.y = y
@@ -18,6 +18,8 @@ class Button:
         self.scaler = 1.25
         self.z = z
         self.particles = particles
+        self.held = False
+        self.onRelease = onRelease
         
         if self.particles:
             shape = Polygon([(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
@@ -25,7 +27,7 @@ class Button:
         
         self.textColor = textColor
         self.onClick = onClick
-    
+
     def draw(self):
         x = self.x - (self.width * (self.scale - 1) / 2)
         y = self.y - (self.height * (self.scale - 1) / 2)
@@ -48,7 +50,12 @@ class Button:
         if self.isOver(input.mousePos.x, input.mousePos.y):
             if input.mouseBindings["lmb"].justPressed:
                 self.onClick()
+                self.held = True
             self.scale = self.scaler
         else:
             self.scale = 1
+        if self.held and input.mouseBindings["lmb"].justReleased:
+            self.onRelease()
+            self.held = False
+
         self.draw()

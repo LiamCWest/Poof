@@ -1,15 +1,6 @@
-from pynput import keyboard
-
-def on_activate():
-    print('Global hotkey activated!')
-
-def for_canonical(f):
-    return lambda k: f(l.canonical(k))
-
-hotkey = keyboard.HotKey(
-    keyboard.HotKey.parse('<ctrl>+<alt>+r'),
-    on_activate)
-with keyboard.Listener(
-        on_press=for_canonical(hotkey.press),
-        on_release=for_canonical(hotkey.release)) as l:
-    l.join()
+from graphics.animation import *
+a1 = AnimEvent(-1, 2, lambda x : print("a1:", x))
+anim = Animation([a1], 0)
+anim.updateTime(3)
+anim.updateTime(0)
+anim.updateTime(3)

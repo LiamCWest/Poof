@@ -180,9 +180,9 @@ def onMouseClick(x, y, button, pressed):
                 event.release()
                 
     if pressed:
-        onMousePress(button)
+        onMousePress(buttonStr)
     else:
-        onMouseRelease(button)
+        onMouseRelease(buttonStr)
             
 def handleEvent(event):
     global mouseBindings

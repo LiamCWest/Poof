@@ -12,7 +12,7 @@ level = None
 
 def show():
     global tiles, level
-    songPlayer.load(r"D:\Files\Python Projects\Poof\Poof\Song.MP3", [TimingPoint(2.108, 170, TimeSignature(4, 4))])
+    songPlayer.load(r"Song.MP3", [TimingPoint(2.108, 170, TimeSignature(4, 4))])
     
     for i in range(10):
         print(songPlayer.getBeatByIndex(i, 1))

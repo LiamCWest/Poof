@@ -5,7 +5,7 @@ from graphics.animation import *
 
 class Player:
     offset = Vector2(5, 4)
-    moveTime = 0.15
+    moveTime = 0.075
     def __init__(self, pos):
         self.pos = pos
         self.visiblePos = pos

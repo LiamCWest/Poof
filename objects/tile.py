@@ -30,18 +30,37 @@ class Tile:
         return 1 - (timeIntoDisappearAnim / disappearLength)    
 
     def draw(self, win, playerPos, appearLength, disappearLength, time):
-        if time < self.appearedTime - appearLength: #this will be replaced with a proper animation once theres a good time to do that
-            scale = 0
-        elif time <= self.appearedTime:
-            timeIntoAppearAnim = time - (self.appearedTime - appearLength)
-            scale = self.getScaleFromAppearAnimTime(timeIntoAppearAnim, appearLength)
-        elif time < self.disappearTime:
+        if self.appearedTime is None and self.disappearedTime is None: #TODO: make tiles animate with a proper animation
             scale = 1
-        elif time <= self.disappearTime + disappearLength:
-            timeIntoDisappearAnim = time - self.disappearTime
-            scale = self.getScaleFromDisappearAnimTime(timeIntoDisappearAnim, disappearLength)
+        elif self.appearedTime is None:
+            if time < self.disappearTime:
+                scale = 1
+            elif time <= self.disappearTime + disappearLength:
+                timeIntoDisappearAnim = time - self.disappearTime
+                scale = self.getScaleFromDisappearAnimTime(timeIntoDisappearAnim, disappearLength)
+            else:
+                scale = 0
+        elif self.disappearTime is None:
+            if time < self.appearedTime - appearLength:
+                scale = 0
+            elif time <= self.appearedTime:
+                timeIntoAppearAnim = time - (self.appearedTime - appearLength)
+                scale = self.getScaleFromAppearAnimTime(timeIntoAppearAnim, appearLength)
+            else:
+                scale = 1
         else:
-            scale = 0
+            if time < self.appearedTime - appearLength:
+                scale = 0
+            elif time <= self.appearedTime:
+                timeIntoAppearAnim = time - (self.appearedTime - appearLength)
+                scale = self.getScaleFromAppearAnimTime(timeIntoAppearAnim, appearLength)
+            elif time < self.disappearTime:
+                scale = 1
+            elif time <= self.disappearTime + disappearLength:
+                timeIntoDisappearAnim = time - self.disappearTime
+                scale = self.getScaleFromDisappearAnimTime(timeIntoDisappearAnim, disappearLength)
+            else:
+                scale = 0
         scale **= 5 #temp
         
         size = self.getTypeSize().multiply(scale).toTuple()

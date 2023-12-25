@@ -33,19 +33,3 @@ class Scrollbar:
     def valUpdate(self):
         self.perc = round((self.bar.y-self.y)/(self.length-self.valueSize), 1)
         self.value = round(self.perc * (len(self.values)-1))
-    
-def test():
-    pygame.init()
-    screen = pygame.display.set_mode((800, 600))
-    clock = pygame.time.Clock()
-    
-    scrollbar = Scrollbar(100, 100, 20, 200, "vertical")
-    
-    while True:
-        clock.tick(60)
-        screen.fill((0, 0, 0))
-        
-        scrollbar.update()
-        scrollbar.draw(screen)
-        
-        pygame.display.flip()

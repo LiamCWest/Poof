@@ -24,7 +24,7 @@ class Level:
     def start(self, time):
         self.tileAnim.restart(time)
     
-    def update(self, win, time):
+    def draw(self, win, time):
         self.win = win
         
         self.player.updateVisiblePos(time)

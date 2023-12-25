@@ -30,7 +30,7 @@ def update():
     checkInput()
     for button in toolbarButtons:
         button.update()
-    level.update(songPlayer.getPos())
+    level.draw(gui.screen, songPlayer.getPos())
     
     global lastMousePos
     if selected == "move" and input.mouseBindings["lmb"].down:

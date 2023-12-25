@@ -50,4 +50,4 @@ def update():
     draw()
     
 def draw():
-    level.update(gui.screen, songPlayer.getPos())
+    level.draw(gui.screen, songPlayer.getPos())

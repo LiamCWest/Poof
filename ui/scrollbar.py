@@ -13,9 +13,10 @@ class Scrollbar:
         self.fg = fg
         self.values = values
         self.valueSize = valueSize if valueSize != None else self.length/len(self.values)
-        self.bar = Button("", self.x, self.y, self.width, self.valueSize, self.fg, self.fg, lambda: None) #fix
+        self.bar = Button("", self.x, self.y, self.width, self.valueSize, self.fg, self.fg, lambda: None)
         
         self.value = 0
+        self.perc = 0
         
     def draw(self, screen): #TODO: orientation fix
         pygame.draw.rect(screen, self.bg, (self.x, self.y, self.width, self.length))
@@ -27,8 +28,11 @@ class Scrollbar:
             newY = input.mousePos.y - self.valueSize//2
             if newY > self.y and newY < self.y+self.length-self.valueSize:
                 self.bar.y = newY
-                self.value = (self.length-self.bar.y)/self.length # NOT CORRECT
-                print(self.value)
+                self.valUpdate()
+
+    def valUpdate(self):
+        self.perc = round((self.bar.y-self.y)/(self.length-self.valueSize), 1)
+        self.value = round(self.perc * (len(self.values)-1))
     
 def test():
     pygame.init()

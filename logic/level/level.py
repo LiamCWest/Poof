@@ -9,6 +9,7 @@ class Level:
         self.tiles = tiles
         self.appearLength = appearLength
         self.disappearLength = disappearLength
+        self.pos = Vector2(0, 0)
         
         self.player = Player(Vector2(0, 0))
     
@@ -18,6 +19,9 @@ class Level:
         self.player.updatePos(time)
         
         for i in self.tiles:
-            i.draw(win, self.player.visiblePos, self.appearLength, self.disappearLength, time)
+            i.draw(win, self.player.visiblePos, self.appearLength, self.disappearLength, time, levelPos = self.pos)
 
         self.player.draw(win)
+        
+    def move(self, delta):
+        self.pos += delta

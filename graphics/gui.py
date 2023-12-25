@@ -1,6 +1,7 @@
 import pygame
 
 from ui.menus import mainMenu, settingsMenu
+import logic.level.levelEditor as levelEditor
 from logic.game import game
 
 screen = None
@@ -12,7 +13,7 @@ def init():
     screen = pygame.display.set_mode((640, 480))
     screen.fill((255, 255, 255))
     
-    screens = {"main": mainMenu, "game": game, "settings": settingsMenu}
+    screens = {"main": mainMenu, "game": game, "settings": settingsMenu, "levelEditor": levelEditor}
     setScreen("main")
 
 def setScreen(name):

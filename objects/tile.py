@@ -11,6 +11,9 @@ class Tile:
         self.disappearTime = disappearTime
         self.type = type
     
+    def isOver(self, pos):
+        return self.pos >= pos and self.pos <= pos + self.getTypeSize()
+    
     def getTypeImage(self): #not using a dictionary because of copy by reference shenanigans
         match self.type:
             case "platform":
@@ -29,7 +32,7 @@ class Tile:
     def getScaleFromDisappearAnimTime(self, timeIntoDisappearAnim, disappearLength): #temp, to be replaced with proper animation
         return 1 - (timeIntoDisappearAnim / disappearLength)    
 
-    def draw(self, win, playerPos, appearLength, disappearLength, time):
+    def draw(self, win, playerPos, appearLength, disappearLength, time, levelPos = Vector2(0, 0)):
         if self.appearedTime is None and self.disappearedTime is None: #TODO: make tiles animate with a proper animation
             scale = 1
         elif self.appearedTime is None:
@@ -64,5 +67,5 @@ class Tile:
         scale **= 5 #temp
         
         size = self.getTypeSize().multiply(scale).toTuple()
-        pos = ((self.pos - playerPos + Player.offset) * self.getTypeSize() + self.getTypeSize().multiply(1 - scale).divide(2)).toTuple()
+        pos = ((self.pos - playerPos + Player.offset) * self.getTypeSize() + self.getTypeSize().multiply(1 - scale).divide(2) + levelPos).toTuple()
         win.blit(pygame.transform.scale(self.getTypeImage(), size), pos)

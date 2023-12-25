@@ -14,6 +14,9 @@ def unload():
 def play():
     mixer.music.play()
     
+def unpause():
+    mixer.music.unpause()
+    
 def pause():
     mixer.music.pause()
     

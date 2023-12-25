@@ -16,7 +16,18 @@ def select(option):
     selected = option
     toolbarButtons[selected].color = (255, 0, 0)
 
+def checkInput():
+    global playing
+    if input.keyBindings["play"].justPressed:
+        if playing:
+            songPlayer.pause()
+            playing = False
+        else:
+            songPlayer.unpause()
+            playing = True
+
 def update():
+    checkInput()
     for button in toolbarButtons:
         button.update()
     level.update(songPlayer.getPos())
@@ -26,7 +37,6 @@ def update():
         currentMousePos = Vector2(input.mousePos.x, input.mousePos.y)
         level.move(currentMousePos - lastMousePos)
         lastMousePos = currentMousePos
-        print(level.pos)
     else:
         lastMousePos = Vector2(input.mousePos.x, input.mousePos.y)
         
@@ -72,6 +82,8 @@ def show():
     lastMousePos = Vector2(input.mousePos.x, input.mousePos.y)
     
     songPlayer.play()
+    global playing
+    playing = True
     update()
 
 def load(level):
@@ -85,3 +97,4 @@ toolbarButtons = []
 toolbarPos = Vector2(0, 0)
 buttonSize = 50
 selected = "move"
+playing = False

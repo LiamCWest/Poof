@@ -112,6 +112,7 @@ keyBindings = {
     "decreaseTileLength": ButtonEvent("<40>", "shift"),
     "moveTileBackwards": ButtonEvent("<37>", "shift"),
     "moveTileForwards": ButtonEvent("<39>", "shift"),
+    "play": ButtonEvent("'k'"),
 }
 
 mouseBindings = {

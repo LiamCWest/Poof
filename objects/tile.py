@@ -3,13 +3,17 @@ import pygame
 from utils.vector2 import Vector2
 from objects.player import Player
 
+
 class Tile:
     def __init__(self, pos, color, appearedTime = None, disappearTime = None, type = None):
         self.pos = pos
         self.color = color
-        self.appearedTime = appearedTime
+        self.scale = 0
+        self.appearedTime = appearedTime        
         self.disappearTime = disappearTime
         self.type = type
+        
+        self.inputs = []
     
     def isOver(self, pos):
         return self.pos >= pos and self.pos <= pos + self.getTypeSize()

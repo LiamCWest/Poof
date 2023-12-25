@@ -28,5 +28,8 @@ class Player:
         self.pos += diff
         self.moveAnim.restart(time)
         
-    def updatePos(self, time):
+    def updateVisiblePos(self, time):
         self.moveAnim.updateTime(time)
+        
+    def calculatePos(tileAnim, time):
+        pass

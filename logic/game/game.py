@@ -25,30 +25,29 @@ def show():
     level = Level(tiles, 1, 1)
     
     songPlayer.play()
+    level.start(songPlayer.getPos())
+    
     update()
     
 def hide():
     gui.clear()
 
-time = 0.
 def checkInput():
-    global time
     if input.keyBindings["left"].justPressed:
-        level.player.move(Vector2(-1, 0), songPlayer.getPos())
+        level.player.move(Vector2(-1, 0), input.keyBindings["left"].songTimeLastPressed)
     
     if input.keyBindings["right"].justPressed:
-        level.player.move(Vector2(1, 0), songPlayer.getPos())
+        level.player.move(Vector2(1, 0), input.keyBindings["right"].songTimeLastPressed)
         
     if input.keyBindings["up"].justPressed:
-        level.player.move(Vector2(0, -1), songPlayer.getPos())
+        level.player.move(Vector2(0, -1), input.keyBindings["up"].songTimeLastPressed)
         
     if input.keyBindings["down"].justPressed:
-        level.player.move(Vector2(0, 1), songPlayer.getPos())
+        level.player.move(Vector2(0, 1), input.keyBindings["down"].songTimeLastPressed)
 
 def update():
     checkInput()
-    level.update(songPlayer.getPos())
     draw()
     
 def draw():
-    level.draw(gui.screen, songPlayer.getPos())
+    level.update(gui.screen, songPlayer.getPos())

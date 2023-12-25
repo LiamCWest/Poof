@@ -73,4 +73,3 @@ def test():
     timingPoint2 = TimingPoint(6, 130, TimeSignature(7, 2))
     timingPoints = [timingPoint1, timingPoint2]
     beat = getNextBeat(timingPoints, 6.1, 1)
-    print(beat)

@@ -36,4 +36,4 @@ title = "Main Menu"
 objects = [Button("Start", 100, 175, 100, 50, (0, 255, 0), (255, 0, 0), startGame, particles=True), Button("Settings", 100, 250, 100, 50, (0, 255, 0), (255, 0 ,0), settings),Button("Quit", 100, 325, 100, 50, (0, 255, 0), (255, 0, 0), quit)]
 texts = [Text(title, 200, 100, (255, 0, 0), 50)]
 #testing stuff here
-scrollbar = Scrollbar(500, 50, 10, 200, "", [0,1,2,3])
+scrollbar = Scrollbar(400, 50, 10, 200, "h", [0,1,2,3])

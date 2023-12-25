@@ -34,12 +34,13 @@ class Vector2:
         return Vector2(abs(self.x), abs(self.y))
     
     def __eq__(self, other):
-        return Vector2(self.x == other.x, self.y == other.y)
+        return self.x == other.x and self.y == other.y
     
     def __ne__(self, other):
-        return Vector2(self.x != other.x, self.y != other.y)
+        return self.x != other.x or self.y != other.y
     
-    def __lt__(self, other):
+    #all don't make sense for vector2s
+    '''def __lt__(self, other):
         return Vector2(self.x < other.x, self.y < other.y)
     
     def __le__(self, other):
@@ -49,7 +50,7 @@ class Vector2:
         return Vector2(self.x > other.x, self.y > other.y)
     
     def __ge__(self, other):
-        return Vector2(self.x >= other.x, self.y >= other.y)
+        return Vector2(self.x >= other.x, self.y >= other.y)'''
     
     def __str__(self):
         return f"Vector2({self.x}, {self.y})"

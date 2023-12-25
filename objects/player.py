@@ -9,6 +9,7 @@ class Player:
     def __init__(self, pos):
         self.pos = pos
         self.visiblePos = pos
+        self.levelPos = Vector2(0, 0)
         
         self.moveStartPos = pos
         self.moveStartTime = 0
@@ -20,7 +21,7 @@ class Player:
         size = Vector2(50, 50)
         img = images.images["player"]
         
-        win.blit(pygame.transform.scale(img, size.toTuple()), (size * self.offset).toTuple())
+        win.blit(pygame.transform.scale(img, size.toTuple()), (size * self.offset + self.levelPos).toTuple())
         
     def move(self, diff, time):
         self.moveStartPos = self.visiblePos.copy()

@@ -1,13 +1,28 @@
 from utils.vector2 import Vector2
 import random
+import pygame
 
 class Polygon:
-    def __init__(self, points):
+    def __init__(self, points, color = (0,0,0)):
+        self.pos = Vector2(0,0)
         self.points = points
+        self.color = color
+        self.calc()
+
+    def calc(self):
         self.edges = []
         self.normals = []
         self.calcEdges()
         self.calcNormals()
+
+    def draw(self, screen):
+        points = []
+        for i in range(len(self.points)):
+            points.append((Vector2.from_tuple(self.points[i]) + self.pos).toTuple())
+        pygame.draw.polygon(screen, self.color, points)
+        
+    def move(self, delta):
+        self.pos += delta
         
     def calcEdges(self):
         for i in range(len(self.points)):

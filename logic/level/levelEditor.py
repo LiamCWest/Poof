@@ -48,18 +48,18 @@ def update():
                 break
     
     if selected == "platform" and input.mouseBindings["lmb"].justPressed:
-        level.tiles.append(Tile(getGridPos(input.mousePos), None, songPlayer.getTime(), songPlayer.getTime() + 1, "platform"))
+        level.addTile(Tile(getGridPos(input.mousePos), None, songPlayer.getTime(), songPlayer.getTime() + 1, "platform"))
     
     if selected == "wall" and input.mouseBindings["lmb"].justPressed:
-        level.tiles.append(Tile(getGridPos(input.mousePos), None, songPlayer.getTime(), songPlayer.getTime() + 1, "wall"))
+        level.addTile(Tile(getGridPos(input.mousePos), None, songPlayer.getTime(), songPlayer.getTime() + 1, "wall"))
         
     if selected == "rest" and input.mouseBindings["lmb"].justPressed:
-        level.tiles.append(Tile(getGridPos(input.mousePos), None, songPlayer.getTime(), songPlayer.getTime() + 1, "rest"))
+        level.addTile(Tile(getGridPos(input.mousePos), None, songPlayer.getTime(), songPlayer.getTime() + 1, "rest"))
     
 def draw():
     for button in toolbarButtons:
         button.draw(gui.screen)
-    level.draw(gui.screen, songPlayer.getPos())
+    level.draw(gui.screen, songPlayer.getPos(), False, True)
 
 def show():
     for i, option in enumerate(toolbarOptions):

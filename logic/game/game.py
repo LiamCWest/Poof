@@ -47,7 +47,8 @@ def checkInput():
 
 def update():
     checkInput()
+    level.update(songPlayer.getPos())
     draw()
     
 def draw():
-    level.update(gui.screen, songPlayer.getPos())
+    level.draw(gui.screen, songPlayer.getPos())

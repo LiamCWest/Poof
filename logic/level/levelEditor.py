@@ -19,13 +19,16 @@ def select(option):
 def update():
     for button in toolbarButtons:
         button.update()
-    level.update(gui.screen, songPlayer.getTime())
+    level.update(songPlayer.getPos())
     
+    global lastMousePos
     if selected == "move" and input.mouseBindings["lmb"].down:
-        global lastMousePos
-        currentMousePos = input.mousePos
+        currentMousePos = Vector2(input.mousePos.x, input.mousePos.y)
         level.move(currentMousePos - lastMousePos)
         lastMousePos = currentMousePos
+        print(level.pos)
+    else:
+        lastMousePos = Vector2(input.mousePos.x, input.mousePos.y)
         
     if selected == "select" and input.mouseBindings["lmb"].justPressed:
         for tile in level.tiles:
@@ -45,7 +48,8 @@ def update():
     
 def draw():
     for button in toolbarButtons:
-        button.draw()
+        button.draw(gui.screen)
+    level.draw(gui.screen, songPlayer.getPos())
 
 def show():
     for i, option in enumerate(toolbarOptions):
@@ -64,6 +68,9 @@ def show():
     
     level = Level(tiles, 1, 1)
     
+    global lastMousePos
+    lastMousePos = Vector2(input.mousePos.x, input.mousePos.y)
+    
     songPlayer.play()
     update()
 
@@ -77,3 +84,4 @@ toolbarOptions = ["move", "select", "platform", "wall", "rest", "save", "load"]
 toolbarButtons = []
 toolbarPos = Vector2(0, 0)
 buttonSize = 50
+selected = "move"

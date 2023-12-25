@@ -3,7 +3,7 @@ from ui.button import Button
 import input.input as input
 
 class Scrollbar:
-    def __init__(self, x, y, width, length, orientation, values, valueSize = None, bg = (0, 0, 0), fg = (255, 255, 255)):
+    def __init__(self, x, y, width, length, orientation, values, valueSize = None, bg = (0, 0, 0), fg = (255, 255, 255), z = 0):
         self.x = x
         self.y = y
         self.width = width
@@ -15,6 +15,7 @@ class Scrollbar:
         self.fg = fg
         self.values = values
         self.valueSize = valueSize if valueSize != None else self.length/len(self.values)
+        self.z = z
         bW = self.width if self.orientation == "v" else self.valueSize
         bH = self.valueSize if self.orientation == "v" else self.width
         self.bar = Button("", self.x, self.y, bW, bH, self.fg, self.fg, lambda: None)
@@ -24,7 +25,7 @@ class Scrollbar:
         
     def draw(self, screen):
         pygame.draw.rect(screen, self.bg, (self.x, self.y, self.W, self.H))
-        self.bar.draw()
+        self.bar.draw(screen)
     
     def update(self):
         self.bar.update()

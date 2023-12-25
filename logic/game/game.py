@@ -36,7 +36,7 @@ def checkInput():
     if input.keyBindings["left"].justPressed:
         level.player.move(Vector2(-1, 0), songPlayer.getPos())
     
-    if input.keyBindings["moveTileForwards"].justPressed:
+    if input.keyBindings["right"].justPressed:
         level.player.move(Vector2(1, 0), songPlayer.getPos())
         
     if input.keyBindings["up"].justPressed:

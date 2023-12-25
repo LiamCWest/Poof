@@ -1,7 +1,7 @@
 from graphics import gui
 from ui.button import Button
 from ui.text import Text
-from logic.game import game
+from ui.scrollbar import Scrollbar
 
 def show():
     gui.clear()
@@ -13,7 +13,7 @@ def hide():
 def draw():
     objects.sort(key = lambda x : x.z)
     for object in objects:
-        object.draw()
+        object.draw(gui.screen)
     for text in texts:
         text.draw()
 
@@ -28,7 +28,15 @@ def update():
 def settings():
     hide()
     gui.setScreen("settings")
+    
+def levelEditor():
+    hide()
+    gui.setScreen("levelEditor")
         
 title = "Main Menu"
-objects = [Button("Start", 100, 175, 100, 50, (0, 255, 0), (255, 0, 0), startGame, particles=True), Button("Settings", 100, 250, 100, 50, (0, 255, 0), (255, 0 ,0), settings),Button("Quit", 100, 325, 100, 50, (0, 255, 0), (255, 0, 0), quit)]
+objects = [Button("Start", 100, 175, 100, 50, (0, 255, 0), (255, 0, 0), startGame, particles=True),
+           Button("Settings", 100, 250, 100, 50, (0, 255, 0), (255, 0 ,0), settings),
+           Button("Level Editor", 100, 325, 100, 50, (0, 255, 0), (255, 0, 0), levelEditor),
+           Button("Quit", 100, 400, 100, 50, (0, 255, 0), (255, 0, 0), quit),
+           Scrollbar(400, 50, 10, 200, "h", [0,1,2,3])]
 texts = [Text(title, 200, 100, (255, 0, 0), 50)]

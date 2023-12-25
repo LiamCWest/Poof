@@ -47,6 +47,7 @@ class ButtonEvent: #keyboard keys and mouse buttons
     
     justPressed = property(lambda self: self.__pressEvent.justInvoked, lambda self, val: self.__pressEvent.setJustInvoked(val))
     justReleased = property(lambda self: self.__releaseEvent.justInvoked, lambda self, val: self.__releaseEvent.setJustInvoked(val))
+    down = property(lambda self: self.pressed)
     
     def press(self):
         self.pressed = True
@@ -111,6 +112,7 @@ keyBindings = {
     "decreaseTileLength": ButtonEvent("<40>", "shift"),
     "moveTileBackwards": ButtonEvent("<37>", "shift"),
     "moveTileForwards": ButtonEvent("<39>", "shift"),
+    "play": ButtonEvent("'k'"),
 }
 
 mouseBindings = {

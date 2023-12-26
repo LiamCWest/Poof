@@ -4,12 +4,16 @@ import logic.song.timingPoints as timingPoints
 currentTimingPoints = None
 
 def load(songPath, timingPoints):
-    global currentTimingPoints
+    global currentTimingPoints, song
     mixer.music.load(filename=songPath)
+    song = mixer.Sound(songPath)
     currentTimingPoints = timingPoints
 
 def unload():
     mixer.music.unload()
+    
+def getSongLength():
+    return song.get_length()
     
 def play():
     mixer.music.play()
@@ -25,6 +29,7 @@ def seek(time):
     lastPos = None
     mixer.music.rewind()
     mixer.music.set_pos(time)
+    print(getPos(), time)
 
 lastPos = None #for whatever reason, the time returned by music.get_pos() can sometimes go backwards, so this makes it not do that
 def getPos():

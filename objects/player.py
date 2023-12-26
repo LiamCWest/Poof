@@ -1,6 +1,7 @@
 from images import images
 import pygame
 from utils.vector2 import Vector2
+from utils.binarySearch import binarySearch
 from graphics.animation import *
 
 class Player:
@@ -59,18 +60,17 @@ class Player:
     def calculateVisiblePos(self, level, searchTime, startTime):
         currentPos = self.calculatePos(level, searchTime, startTime)
         
-        if len(self.moves) > 1:
-            lastMoveTime = self.moves[-1][1]
-            lastMovePos = self.calculatePos(level, self.moves[-2][1], startTime)
-        elif len(self.moves) == 1:
-            lastMoveTime = self.moves[0][1]
-            lastMovePos = Vector2(0, 0)
-        else:
+        moveJustMadeIndex = binarySearch(self.moves, searchTime, lambda x, y: x - y[1])
+        if moveJustMadeIndex is None or moveJustMadeIndex < 0:
             lastMoveTime = 0
             lastMovePos = Vector2(0, 0)
+        elif moveJustMadeIndex == 0:
+            lastMoveTime = self.moves[moveJustMadeIndex][1]
+            lastMovePos = Vector2(0, 0)
+        elif moveJustMadeIndex > 0:
+            lastMoveTime = self.moves[moveJustMadeIndex][1]
+            lastMovePos = self.calculatePos(level, self.moves[moveJustMadeIndex - 1][1], startTime)
         
-        print(currentPos, lastMovePos, searchTime, lastMoveTime)
-        
-        x = easeOutPow(lastMovePos.x, currentPos.x, lastMoveTime, lastMoveTime + self.moveTime, 1, min(searchTime, lastMoveTime + self.moveTime))
-        y = easeOutPow(lastMovePos.y, currentPos.y, lastMoveTime, lastMoveTime + self.moveTime, 1, min(searchTime, lastMoveTime + self.moveTime))
+        x = easeOutPow(lastMovePos.x, currentPos.x, lastMoveTime, lastMoveTime + self.moveTime, 2, min(searchTime, lastMoveTime + self.moveTime))
+        y = easeOutPow(lastMovePos.y, currentPos.y, lastMoveTime, lastMoveTime + self.moveTime, 2, min(searchTime, lastMoveTime + self.moveTime))
         return Vector2(x, y)

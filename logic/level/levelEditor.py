@@ -28,6 +28,7 @@ def checkInput():
 
 def update():
     checkInput()
+    print(getGridPos(Vector2(input.mousePos.x, input.mousePos.y)))
     for button in toolbarButtons:
         button.update()
     level.draw(gui.screen, songPlayer.getPos())
@@ -89,8 +90,11 @@ def show():
 def load(level):
     pass
 
-def getGridPos(tilePos):
-    pass
+def getGridPos(pos):
+    return getRelGridPos(pos) - getRelGridPos(level.pos)
+
+def getRelGridPos(pos):
+    return Vector2(int(pos.x/level.tileSize.x), int(pos.y/level.tileSize.y))
 
 toolbarOptions = ["move", "select", "platform", "wall", "rest", "save", "load"]
 toolbarButtons = []

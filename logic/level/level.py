@@ -27,6 +27,7 @@ class Level:
         self.player = Player(Vector2(0, 0))
         
     def addTile(self, tile):
+        tile.pos -= self.player.offset
         self.tiles.append(tile)
         startTime = tile.appearedTime - self.appearLength
         endTime = tile.disappearTime + self.disappearLength

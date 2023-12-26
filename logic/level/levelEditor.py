@@ -6,15 +6,18 @@ from objects.tile import Tile
 from logic.song.timingPoints import TimingPoint, TimeSignature
 import logic.song.songPlayer as songPlayer
 import graphics.gui as gui
+from utils.polygon import Polygon
+from ui.scrollbar import Scrollbar
 
 def addOption(option, func, i):
     global toolbarButtons
-    toolbarButtons.append(Button(option, toolbarPos.x + i*buttonSize, toolbarPos.y, buttonSize, buttonSize, (0, 255, 0), (255, 0, 0), func))
+    toolbarButtons.append(Button(option, toolbarPos.x + i*(buttonSize*1.1), toolbarPos.y, buttonSize, buttonSize, (100, 100, 255), (0, 0, 0), func, textSize = 15, scaler=1.1))
 
 def select(option):
     global selected
+    toolbarButtons[toolbarOptions.index(selected)].color = (100, 100, 255)
     selected = option
-    toolbarButtons[selected].color = (255, 0, 0)
+    toolbarButtons[toolbarOptions.index(selected)].color = (50, 50, 255)
 
 def checkInput():
     global playing
@@ -28,43 +31,46 @@ def checkInput():
 
 def update():
     checkInput()
-    print(getGridPos(Vector2(input.mousePos.x, input.mousePos.y)))
     for button in toolbarButtons:
         button.update()
+    scrollbar.update()
     level.draw(gui.screen, songPlayer.getPos())
-    
-    global lastMousePos
-    if selected == "move" and input.mouseBindings["lmb"].down:
-        currentMousePos = Vector2(input.mousePos.x, input.mousePos.y)
-        level.move(currentMousePos - lastMousePos)
-        lastMousePos = currentMousePos
-    else:
-        lastMousePos = Vector2(input.mousePos.x, input.mousePos.y)
+    if not posIn(input.mousePos, (toolbarPos.x, toolbarPos.y, len(toolbarOptions)*(buttonSize*1.1) +100, buttonSize*1.1)):
+        global lastMousePos
+        if selected == "move" and input.mouseBindings["lmb"].down:
+            currentMousePos = Vector2(input.mousePos.x, input.mousePos.y)
+            level.move(currentMousePos - lastMousePos)
+            lastMousePos = currentMousePos
+        else:
+            lastMousePos = Vector2(input.mousePos.x, input.mousePos.y)
+            
+        if selected == "select" and input.mouseBindings["lmb"].justPressed:
+            global selectedTile
+            selectedTile = getGridPos(input.mousePos)
         
-    if selected == "select" and input.mouseBindings["lmb"].justPressed:
-        for tile in level.tiles:
-            if tile.isOver(input.mousePos):
-                global selectedTile
-                selectedTile = getGridPos(tile.pos)
-                break
-    
-    if selected == "platform" and input.mouseBindings["lmb"].justPressed:
-        level.addTile(Tile(getGridPos(input.mousePos), None, songPlayer.getTime(), songPlayer.getTime() + 1, "platform"))
-    
-    if selected == "wall" and input.mouseBindings["lmb"].justPressed:
-        level.addTile(Tile(getGridPos(input.mousePos), None, songPlayer.getTime(), songPlayer.getTime() + 1, "wall"))
+        if selected == "platform" and input.mouseBindings["lmb"].justPressed:
+            level.addTile(Tile(getGridPos(input.mousePos), None, songPlayer.getPos(), songPlayer.getPos(), "platform"))
         
-    if selected == "rest" and input.mouseBindings["lmb"].justPressed:
-        level.addTile(Tile(getGridPos(input.mousePos), None, songPlayer.getTime(), songPlayer.getTime() + 1, "rest"))
+        if selected == "wall" and input.mouseBindings["lmb"].justPressed:
+            level.addTile(Tile(getGridPos(input.mousePos), None, songPlayer.getPos(), songPlayer.getPos(), "wall"))
+            
+        if selected == "rest" and input.mouseBindings["lmb"].justPressed:
+            level.addTile(Tile(getGridPos(input.mousePos), None, songPlayer.getPos(), songPlayer.getPos(), "rest"))
+    
+def posIn(pos, rect):
+    return pos.x > rect[0] and pos.x < rect[0] + rect[2] and pos.y > rect[1] and pos.y < rect[1] + rect[3]
     
 def draw():
     level.draw(gui.screen, songPlayer.getPos(), False, True)
+    toolbar.draw(gui.screen)
     for button in toolbarButtons:
         button.draw(gui.screen)
+    scrollbar.draw(gui.screen)
 
 def show():
     for i, option in enumerate(toolbarOptions):
         addOption(option, lambda x=option: select(x), i)
+    select("move")
 
     global tiles, level
     songPlayer.load(r"Song.MP3", [TimingPoint(2.108, 170, TimeSignature(4, 4))])
@@ -98,7 +104,12 @@ def getRelGridPos(pos):
 
 toolbarOptions = ["move", "select", "platform", "wall", "rest", "save", "load"]
 toolbarButtons = []
-toolbarPos = Vector2(0, 0)
-buttonSize = 50
+buttonSize = 55
+toolbarPos = Vector2(buttonSize*0.1, buttonSize*0.1)
 selected = "move"
 playing = False
+toolbar = Polygon([(toolbarPos.x, toolbarPos.y), 
+                   (toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + 100, toolbarPos.y), 
+                   (toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + 100, toolbarPos.y + buttonSize*1.1), 
+                   (toolbarPos.x, toolbarPos.y + buttonSize*1.1)], (25, 25, 100))
+scrollbar = Scrollbar(toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1), toolbarPos.y+buttonSize/2-10, 20, 100, "h", [i for i in range(100)], 10)

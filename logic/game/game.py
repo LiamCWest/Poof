@@ -50,4 +50,7 @@ def update():
     draw()
     
 def draw():
-    level.draw(gui.screen, songPlayer.getPos())
+    if level.draw(gui.screen, songPlayer.getPos()) == "Dead":
+        songPlayer.pause()
+        while True:
+            continue

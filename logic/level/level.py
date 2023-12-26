@@ -50,11 +50,12 @@ class Level:
         for tile in self.tiles:
             tile.levelPos = self.pos
         self.player.levelPos = self.pos
-        
+                
         for line in self.grid:
-            line.move(delta)
+            line.pos = ((line.pos + delta) % self.tileSize) - self.tileSize
         
     def genGrid(self, size, lineSize):
+        size += self.tileSize
         width = math.ceil(size.x/self.tileSize.x)
         height = math.ceil(size.y/self.tileSize.y)
         columns = []

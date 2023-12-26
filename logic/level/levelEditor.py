@@ -57,9 +57,9 @@ def update():
         level.addTile(Tile(getGridPos(input.mousePos), None, songPlayer.getTime(), songPlayer.getTime() + 1, "rest"))
     
 def draw():
+    level.draw(gui.screen, songPlayer.getPos(), False, True)
     for button in toolbarButtons:
         button.draw(gui.screen)
-    level.draw(gui.screen, songPlayer.getPos(), False, True)
 
 def show():
     for i, option in enumerate(toolbarOptions):

@@ -91,10 +91,10 @@ def load(level):
     pass
 
 def getGridPos(pos):
-    return getRelGridPos(pos) - getRelGridPos(level.pos)
+    return (getRelGridPos(pos) - getRelGridPos(level.pos)).floor()
 
 def getRelGridPos(pos):
-    return Vector2(int(pos.x/level.tileSize.x), int(pos.y/level.tileSize.y))
+    return Vector2(pos.x/level.tileSize.x, pos.y/level.tileSize.y)
 
 toolbarOptions = ["move", "select", "platform", "wall", "rest", "save", "load"]
 toolbarButtons = []

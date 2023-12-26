@@ -23,13 +23,19 @@ def unpause():
     
 def pause():
     mixer.music.pause()
-    
-def seek(time):
+
+def seek(position):
     global lastPos
-    lastPos = None
-    mixer.music.rewind()
-    mixer.music.set_pos(time)
-    print(getPos(), time)
+    last_playing_state = mixer.music.get_busy()
+    mixer.music.stop()
+    mixer.music.play()
+    mixer.music.set_pos(position)
+    lastPos = position
+    if last_playing_state:
+        mixer.music.unpause()
+    else:
+        mixer.music.pause()
+    print(getPos(), position)
 
 lastPos = None #for whatever reason, the time returned by music.get_pos() can sometimes go backwards, so this makes it not do that
 def getPos():

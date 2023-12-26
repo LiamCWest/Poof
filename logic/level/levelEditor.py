@@ -35,10 +35,9 @@ def update():
         button.update()
     global lastPercent
     scrollbar.update()
-    songLen = 10 #songPlayer.getSongLength()
-    # if scrollbar.perc != lastPercent: 
-    songPlayer.seek(songLen * scrollbar.perc)
-    # else: scrollbar.move(songPlayer.getPos()/songLen)
+    songLen = songPlayer.getSongLength()
+    if scrollbar.perc != lastPercent: songPlayer.seek(songLen * scrollbar.perc)
+    else: scrollbar.move(songPlayer.getPos()/songLen)
     lastPercent = scrollbar.perc
     
     level.draw(gui.screen, songPlayer.getPos())

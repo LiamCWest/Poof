@@ -31,7 +31,7 @@ class Animation:
     def getEventsAt(self, time):
         return self.tree.at(time)
         
-    def updateTime(self, timeSourceTime):        
+    def updateTime(self, timeSourceTime, *args):        
         oldAnimTime = self.animTime
         
         animTimeUnrepeated = float(timeSourceTime) - self.timeSourceStartTime
@@ -55,15 +55,15 @@ class Animation:
             for i in self.tree.overlap(math.nextafter(oldAnimTime, float("inf")), self.animTime):
                 if self.animTime <= i.end:
                     continue
-                i.data[0](i.end - i.begin)
+                i.data[0](i.end - i.begin, *args)
         else:
             for i in self.tree.overlap(self.animTime, oldAnimTime):
                 if self.animTime >= i.begin:
                     continue
-                i.data[0](0.)
+                i.data[0](0., *args)
         
         for i in self.tree.at(self.animTime):
-            i.data[0](self.animTime - i.begin)
+            i.data[0](self.animTime - i.begin, *args)
     
     def skipToTime(self, animTime, timeSourceTime):
         self.animTime = animTime

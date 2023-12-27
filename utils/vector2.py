@@ -1,3 +1,5 @@
+import math
+
 class Vector2:
     def __init__(self, x ,y):
         self.x = x
@@ -85,6 +87,12 @@ class Vector2:
     
     def invert(self):
         return Vector2(-self.x, -self.y)
+    
+    def round(self):
+        return Vector2(round(self.x), round(self.y))
+    
+    def floor(self):
+        return Vector2(math.floor(self.x), math.floor(self.y))
     
     @classmethod
     def from_tuple(cls, tuple):

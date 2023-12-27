@@ -27,6 +27,13 @@ class Scrollbar:
         pygame.draw.rect(screen, self.bg, (self.x, self.y, self.W, self.H))
         self.bar.draw(screen)
     
+    def move(self, perc):
+        if self.orientation == "v":
+            self.bar.y = self.y + perc*(self.length-self.valueSize)
+        else:
+            self.bar.x = self.x + perc*(self.length-self.valueSize)
+        self.valUpdate()
+    
     def update(self):
         self.bar.update()
         if self.bar.held:

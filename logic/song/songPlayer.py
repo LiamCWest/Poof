@@ -4,12 +4,16 @@ import logic.song.timingPoints as timingPoints
 currentTimingPoints = None
 
 def load(songPath, timingPoints):
-    global currentTimingPoints
+    global currentTimingPoints, song
     mixer.music.load(filename=songPath)
+    song = mixer.Sound(songPath)
     currentTimingPoints = timingPoints
 
 def unload():
     mixer.music.unload()
+    
+def getSongLength():
+    return song.get_length()
     
 def play():
     global lastPos
@@ -75,7 +79,7 @@ def getNextBeat(divisor):
 
 def getBeatByIndex(index, divisor):
     global currentTimingPoints
-    return timingPoints.getBeatByIndex(currentTimingPoints, index, divisor)
+    return timingPoints.getBeatByIndex(currentTimingPoints, index, divisor) if divisor != 0 else 0
 
 def test():
     timingPoint1 = timingPoints.TimingPoint(2.108, 170, timingPoints.TimeSignature(4, 4))

@@ -18,7 +18,7 @@ class Player:
         size = Vector2(50, 50)
         img = images.images["player"]
         
-        win.blit(pygame.transform.scale(img, size.toTuple()), (size * self.offset).toTuple())
+        win.blit(pygame.transform.scale(img, size.toTuple()), (size * self.offset + self.levelPos).toTuple())
         
     def move(self, diff, time):
         self.moves.append((diff, time))

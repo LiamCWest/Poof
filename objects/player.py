@@ -14,11 +14,11 @@ class Player:
         self.moves = [] #Tuple of (diff, time)
         self.deathTime = None
         
-    def draw(self, win):
+    def draw(self, win): 
         size = Vector2(50, 50)
         img = images.images["player"]
         
-        win.blit(pygame.transform.scale(img, size.toTuple()), (size * self.offset + self.levelPos).toTuple())
+        win.blit(pygame.transform.scale(img, size.toTuple()), (size * self.offset).toTuple())
         
     def move(self, diff, time):
         self.moves.append((diff, time))

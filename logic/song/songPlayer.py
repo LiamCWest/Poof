@@ -8,6 +8,12 @@ def load(songPath, timingPoints):
     mixer.music.load(filename=songPath)
     song = mixer.Sound(songPath)
     currentTimingPoints = timingPoints
+    
+    oldVolume = getVolume()
+    setVolume(0)
+    play()
+    unpause()
+    setVolume(oldVolume)
 
 def unload():
     mixer.music.unload()

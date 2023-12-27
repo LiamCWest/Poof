@@ -1,3 +1,4 @@
+from objects.tile import Tile
 from ui.button import Button
 from utils.vector2 import Vector2
 import input.input as input
@@ -23,13 +24,12 @@ def select(option):
 def checkInput():
     global level
     if input.keyBindings["play"].justPressed:
-        if level.playing:
+        if songPlayer.getIsPlaying():
             songPlayer.pause()
-            level.playing = False
         else:
             songPlayer.unpause()
-            level.playing = True
 
+levelPos = Vector2(0, 0)
 def update():
     checkInput()
     for button in toolbarButtons:
@@ -40,41 +40,46 @@ def update():
     if scrollbar.perc != lastPercent: songPlayer.seek(songLen * scrollbar.perc)
     else: scrollbar.move(songPlayer.getPos()/songLen)
     lastPercent = scrollbar.perc
-    
-    level.draw(gui.screen, songPlayer.getPos())
-    if not posIn(input.mousePos, (toolbarPos.x, toolbarPos.y, len(toolbarOptions)*(buttonSize*1.1) +100, buttonSize*1.1)):
-        global lastMousePos
+
+    if not posIn(input.mousePos.pos, (toolbarPos.x, toolbarPos.y, len(toolbarOptions)*(buttonSize*1.1) +100, buttonSize*1.1)):
+        global lastMousePos, levelPos
         if selected == "move" and input.mouseBindings["lmb"].down:
-            currentMousePos = Vector2(input.mousePos.x, input.mousePos.y)
-            level.move(currentMousePos - lastMousePos)
+            currentMousePos = input.mousePos.pos
+            levelPos += (currentMousePos - lastMousePos).divide(59)
             lastMousePos = currentMousePos
         else:
-            lastMousePos = Vector2(input.mousePos.x, input.mousePos.y)
+            lastMousePos = input.mousePos.pos
             
         if selected == "select" and input.mouseBindings["lmb"].justPressed:
             global selectedTile
-            selectedTile = getGridPos(input.mousePos)
+            selectedTile = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
         
         if selected == "platform" and input.mouseBindings["lmb"].justPressed:
-            level.addTile([getGridPos(input.mousePos), None, songPlayer.getPos(), songPlayer.getPos(), "platform"])
+            level.addTile(Tile(level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos), None, songPlayer.getPos(), songPlayer.getPos(), "platform"))
         
         if selected == "wall" and input.mouseBindings["lmb"].justPressed:
-            level.addTile([getGridPos(input.mousePos), None, songPlayer.getPos(), songPlayer.getPos(), "wall"])
+            level.addTile(Tile(level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos), None, songPlayer.getPos(), songPlayer.getPos(), "wall"))
             
         if selected == "rest" and input.mouseBindings["lmb"].justPressed:
-            level.addTile([getGridPos(input.mousePos), None, songPlayer.getPos(), songPlayer.getPos(), "rest"])
+            level.addTile(Tile(level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos), None, songPlayer.getPos(), songPlayer.getPos(), "rest"))
     
 def posIn(pos, rect):
     return pos.x > rect[0] and pos.x < rect[0] + rect[2] and pos.y > rect[1] and pos.y < rect[1] + rect[3]
     
 def draw():
-    level.draw(gui.screen, songPlayer.getPos(), False, True)
+    global levelPos
+    level.draw(gui.screen, songPlayer.getPos(), levelPos, level.tileSize, False)
     toolbar.draw(gui.screen)
     for button in toolbarButtons:
         button.draw(gui.screen)
     scrollbar.draw(gui.screen)
 
+tiles = None
+level = None
+lastMousePos = Vector2(0, 0)
 def show():
+    global tiles, level, lastMousePos
+    
     for i, option in enumerate(toolbarModes):
         addOption(option, lambda x=option: select(x), i)
     for option in toolbarB:
@@ -82,23 +87,20 @@ def show():
         addOption(option, toolbarFuncs[option], i)
     select("move")
 
-    global tiles, level
-    songPlayer.load("Song.MP3", [TimingPoint(2.108, 170, TimeSignature(4, 4))]) #temp
+    songPlayer.load(r"Song.MP3", [TimingPoint(2.108, 170, TimeSignature(4, 4))]) #Temp
+    
     tiles = [
-        [Vector2(0, 0), None, songPlayer.getBeatByIndex(0, 0), songPlayer.getBeatByIndex(0, 1), "platform"],
-        [Vector2(0, 1), None, songPlayer.getBeatByIndex(0, 1), songPlayer.getBeatByIndex(1, 1), "platform"],
-        [Vector2(0, 2), None, songPlayer.getBeatByIndex(1, 1), songPlayer.getBeatByIndex(2, 1), "platform"],
-        [Vector2(1, 2), None, songPlayer.getBeatByIndex(2, 1), songPlayer.getBeatByIndex(3, 1), "platform"],
-        [Vector2(2, 2), None, songPlayer.getBeatByIndex(3, 1), songPlayer.getBeatByIndex(4, 1), "platform"],
+        Tile(Vector2(0, 0), None, 0, songPlayer.getBeatByIndex(0, 1), "platform"),
+        Tile(Vector2(0, 1), None, songPlayer.getBeatByIndex(0, 1), songPlayer.getBeatByIndex(1, 1), "platform"),
+        Tile(Vector2(0, 2), None, songPlayer.getBeatByIndex(1, 1), songPlayer.getBeatByIndex(2, 1), "platform"),
+        Tile(Vector2(1, 2), None, songPlayer.getBeatByIndex(2, 1), songPlayer.getBeatByIndex(3, 1), "platform"),
+        Tile(Vector2(2, 2), None, songPlayer.getBeatByIndex(3, 1), songPlayer.getBeatByIndex(4, 1), "platform"),
     ]
-    songPlayer.unload() #temp
+    songPlayer.unload() #Temp
     
-    level = Level(tiles, 1, 1, "Song.MP3")
+    level = Level(tiles, 1, 1, "Song.MP3", [TimingPoint(2.108, 170, TimeSignature(4, 4))], Vector2(0, 0), 0)
     
-    global lastMousePos
-    lastMousePos = Vector2(input.mousePos.x, input.mousePos.y)
-    
-    level.play()
+    lastMousePos = input.mousePos.pos
     
     update()
 

@@ -11,55 +11,52 @@ import hashlib
 
 class Level:
     deathTimeBuffer = 0.25
-    def __init__(self, tiles, appearLength, disappearLength, songPath, timingPoints):
+    def __init__(self, tiles, appearLength, disappearLength, songPath, timingPoints, playerStartPos = None, playerStartTime = None):
         self.win = None
         self.appearLength = appearLength
         self.disappearLength = disappearLength
         
-        tileEvents = []
-        for tile in tiles:
-            startTime = tile.appearedTime - self.appearLength
-            endTime = tile.disappearTime + self.disappearLength
-            callback = lambda t, win, playerPos, tile=tile: tile.draw(win, playerPos, self.appearLength, self.disappearLength, t + tile.appearedTime - appearLength)
-            data = tile
-            tileEvents.append(AnimEvent(startTime, endTime, callback, data))
+        tileEvents = [self.createEventFromTile(tile) for tile in tiles]
         self.tileAnim = Animation(tileEvents, 0)
         self.pos = Vector2(0, 0)
         self.tileSize = Vector2(50, 50)
         self.grid = self.genGrid(Vector2(gui.screen.get_size()[0], gui.screen.get_size()[1]), 5)
         
-        self.player = Player(Vector2(0, 0), 0)
+        self.playerStartPos = playerStartPos
+        self.playerStartTime = playerStartTime
+        self.player = self.createPlayer(self.playerStartPos, self.playerStartTime)
         
         self.songPath = songPath
         self.timingPoints = timingPoints
         songPlayer.load(self.songPath, self.timingPoints)
-        
-    def start(self):
+    
+    def createEventFromTile(self, tile):
+        startTime = tile.appearedTime - self.appearLength
+        endTime = tile.disappearTime + self.disappearLength
+        callback = lambda t, win, topLeftPos, tileSize, tile=tile: tile.draw(win, topLeftPos, tileSize, self.appearLength, self.disappearLength, t + tile.appearedTime - self.appearLength)
+        data = tile
+        return AnimEvent(startTime, endTime, callback, data)
+    
+    def addTile(self, tile):
+        self.tileAnim.addEvent(self.createEventFromTile(tile))
+    
+    def createPlayer(self, playerStartPos, playerStartTime):
+        if playerStartPos is not None and playerStartTime is not None:
+            return Player(playerStartPos, playerStartTime)
+        return None
+    
+    def restart(self):
         self.pos = Vector2(0, 0)
-        self.player = Player(Vector2(0, 0), 0)
+        
+        self.player = self.createPlayer(self.playerStartPos, self.playerStartTime)
         
         songPlayer.play()
-        self.tileAnim.restart(songPlayer.getPos())
+        self.tileAnim.restart(songPlayer.getPos())        
     
-    def draw(self, win, timeSourceTime):        
-        pos = self.player.calculatePos(self, timeSourceTime)
-        if isinstance(pos, Vector2):
-            self.tileAnim.updateTime(timeSourceTime, win, self.player.calculateVisiblePos(self, timeSourceTime))
+    def draw(self, win, timeSourceTime, topLeftPos, tileSize, drawPlayer = True):
+        self.tileAnim.updateTime(timeSourceTime, win, topLeftPos, tileSize)
+        if self.player is not None and drawPlayer:
             self.player.draw(win)
-        else:
-            if pos[1] + self.deathTimeBuffer < timeSourceTime: #A buffer so you don't die unfairly if you have input delay
-                self.start()
-            else:
-                self.tileAnim.updateTime(timeSourceTime, win, self.player.calculateVisiblePos(self, timeSourceTime))
-        
-    def move(self, delta):
-        self.pos += delta
-        for tile in self.tiles:
-            tile.levelPos = self.pos
-        self.player.levelPos = self.pos
-                
-        for line in self.grid:
-            line.pos = ((line.pos + delta) % self.tileSize) - self.tileSize
             
     def getTileAt(self, pos, levelTime):
         for i in self.tileAnim.tree.at(levelTime):
@@ -101,6 +98,16 @@ class Level:
         
         with open('level_data.json', 'w') as file:
             json.dump({"data": levelData, "signature": signature}, file)
+            
+    def screenPosToTilePos(self, screenPos, topLeftPos):
+        return screenPos / self.tileSize + topLeftPos
+    
+    def screenPosToRoundedTilePos(self, screenPos, topLeftPos):
+        tilePos = screenPos / self.tileSize + topLeftPos
+        return Vector2(math.floor(tilePos.x), math.floor(tilePos.y))
+    
+    def tilePosToScreenPos(self, tilePos, topLeftPos):
+        return self.tileSize * (topLeftPos - tilePos)
 
 def signData(data):
     signature = hashlib.sha256(json.dumps(data).encode()).hexdigest()

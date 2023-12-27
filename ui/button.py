@@ -7,7 +7,7 @@ from utils.vector2 import Vector2
 from utils.polygon import Polygon
 
 class Button:
-    def __init__(self, text, x, y, width, height, color, textColor, onClick, onRelease = lambda: None,z = 0, particles = False):
+    def __init__(self, text, x, y, width, height, color, textColor, onClick, onRelease = lambda: None,z = 0, particles = False, textSize = 20, scaler = 1.25):
         self.text = text
         self.x = x
         self.y = y
@@ -15,11 +15,12 @@ class Button:
         self.height = height
         self.color = color
         self.scale = 1
-        self.scaler = 1.25
+        self.scaler = scaler
         self.z = z
         self.particles = particles
         self.held = False
         self.onRelease = onRelease
+        self.textSize = textSize
         
         if self.particles:
             shape = Polygon([(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
@@ -34,7 +35,7 @@ class Button:
         width = self.width * self.scale
         height = self.height * self.scale
         pygame.draw.rect(screen, self.color, (x, y, width, height))
-        gui.drawText(self.text, x+width//2, y+height//2, int(20*self.scale), self.textColor)
+        gui.drawText(self.text, x+width//2, y+height//2, int(self.textSize*self.scale), self.textColor)
         if self.particles:
             self.emitter.draw(screen)
         
@@ -48,7 +49,7 @@ class Button:
             self.emitter.update()
 
         if self.isOver(input.mousePos.x, input.mousePos.y):
-            if input.mouseBindings["lmb"].justPressed and not input.mouseBindings["lmb"].justReleased:
+            if input.mouseBindings["lmb"].justPressed:# and not input.mouseBindings["lmb"].justReleased:
                 self.held = True
                 self.onClick()
             self.scale = self.scaler

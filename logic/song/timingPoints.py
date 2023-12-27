@@ -66,7 +66,10 @@ def getBeatByIndex(points, index, divisor):
         if beatsRemaining < 0:
             beatsRemaining += beatsInPoint
             return points[i].time + math.floor(beatsRemaining * points[i].beatLength / divisor)
-    return points[len(points) - 1].time + beatsRemaining * points[len(points) - 1].beatLength / divisor
+    return points[len(points) - 1].time + beatsRemaining * points[len(points) - 1].beatLength
+
+def getIndexByBeat(points, beatTime, divisor):
+    pass
 
 def test():
     timingPoint1 = TimingPoint(0, 120, TimeSignature(4, 4))

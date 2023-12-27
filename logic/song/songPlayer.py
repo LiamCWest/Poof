@@ -8,6 +8,12 @@ def load(songPath, timingPoints):
     mixer.music.load(filename=songPath)
     song = mixer.Sound(songPath)
     currentTimingPoints = timingPoints
+    
+    oldVolume = getVolume()
+    setVolume(0)
+    play()
+    unpause()
+    setVolume(oldVolume)
 
 def unload():
     mixer.music.unload()
@@ -16,35 +22,35 @@ def getSongLength():
     return song.get_length()
     
 def play():
+    global lastPos
+    lastPos = float("-inf")
     mixer.music.play()
+    
+def stop():
+    mixer.music.stop()
     
 def unpause():
     mixer.music.unpause()
     
 def pause():
     mixer.music.pause()
-
+    
 def seek(position):
     global lastPos
-    last_playing_state = mixer.music.get_busy()
-    mixer.music.stop()
-    mixer.music.play()
-    mixer.music.set_pos(position)
     lastPos = position
-    if last_playing_state:
-        mixer.music.unpause()
-    else:
+    
+    wasPlaying = getIsPlaying()
+    oldVolume = getVolume()
+    setVolume(0)
+    mixer.music.play(start=position)
+    if not wasPlaying:
         mixer.music.pause()
-    print(getPos(), position)
+    setVolume(oldVolume)
 
-lastPos = None #for whatever reason, the time returned by music.get_pos() can sometimes go backwards, so this makes it not do that
+lastPos = float("-inf") #for whatever reason, the time returned by music.get_pos() can sometimes go backwards, so this makes it not do that
 def getPos():
     global lastPos
     currentPos = mixer.music.get_pos() / 1000
-    
-    if lastPos is None:
-        lastPos = currentPos
-        return currentPos
     
     if lastPos > currentPos:
         return lastPos
@@ -55,6 +61,12 @@ def getPos():
 def getIsPlaying():
     return mixer.music.get_busy()
 
+def setVolume(volume):
+    mixer.music.set_volume(volume)
+    
+def getVolume():
+    return mixer.music.get_volume()
+
 def getPreviousPoint():
     global currentTimingPoints
     return timingPoints.getPreviousPoint(currentTimingPoints, getPos())
@@ -62,9 +74,6 @@ def getPreviousPoint():
 def getNextPoint():
     global currentTimingPoints
     return timingPoints.getNextPoint(currentTimingPoints, getPos())
-
-def getNthPoint():
-    global currentTimingPoints
 
 def getPreviousBeat(divisor):
     global currentTimingPoints

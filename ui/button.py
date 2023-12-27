@@ -39,16 +39,16 @@ class Button:
         if self.particles:
             self.emitter.draw(screen)
         
-    def isOver(self, x, y):
-        if x is None or y is None:
+    def isOver(self, pos):
+        if pos is None:
             return False
-        return self.x < x < self.x + self.width and self.y < y < self.y + self.height
+        return self.x < pos.x < self.x + self.width and self.y < pos.y < self.y + self.height
     
     def update(self):
         if self.particles:
             self.emitter.update()
 
-        if self.isOver(input.mousePos.x, input.mousePos.y):
+        if self.isOver(input.mousePos.pos):
             if input.mouseBindings["lmb"].justPressed:# and not input.mouseBindings["lmb"].justReleased:
                 self.held = True
                 self.onClick()

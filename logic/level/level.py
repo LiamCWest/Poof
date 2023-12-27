@@ -10,70 +10,60 @@ import json
 import hashlib
 
 class Level:
-    def __init__(self, tiles, appearLength, disappearLength, songPath):
+    deathTimeBuffer = 0.25
+    def __init__(self, tiles, appearLength, disappearLength, songPath, timingPoints, playerStartPos = None, playerStartTime = None):
         self.win = None
-        self.songPath = songPath
-        songPlayer.load(self.songPath, [TimingPoint(2.108, 170, TimeSignature(4, 4))])
-        self.playing = False
-        self.tileValues = tiles
-        self.tiles = self.genTiles(self.tileValues)
-        tileEvents = []
-        for tile in self.tiles:
-            startTime = tile.appearedTime - appearLength
-            endTime = tile.disappearTime + disappearLength
-            callback = lambda t, tile=tile: tile.draw(self.win, self.player.visiblePos, self.appearLength, self.disappearLength, t + tile.appearedTime - appearLength)
-            data = tile
-            tileEvents.append(AnimEvent(startTime, endTime, callback, data))
-        self.tileAnim = Animation(tileEvents, 0)
-
         self.appearLength = appearLength
         self.disappearLength = disappearLength
+        
+        tileEvents = [self.createEventFromTile(tile) for tile in tiles]
+        self.tileAnim = Animation(tileEvents, 0)
         self.pos = Vector2(0, 0)
         self.tileSize = Vector2(50, 50)
         self.grid = self.genGrid(Vector2(gui.screen.get_size()[0], gui.screen.get_size()[1]), 5)
         
-        self.player = Player(Vector2(0, 0))
+        self.playerStartPos = playerStartPos
+        self.playerStartTime = playerStartTime
+        self.player = self.createPlayer(self.playerStartPos, self.playerStartTime)
         
-    def genTiles(self, tiles):
-        outTiles = []
-        for tile in tiles:
-            outTiles.append(Tile(tile[0], tile[1], tile[2], tile[3], tile[4]))
-        return outTiles
-        
-    def addTile(self, tile):
-        tile[0] -= self.player.offset
-        self.tileValues.append(tile)
-        tile = self.genTiles([tile])[0]
-        self.tiles.append(tile)
+        self.songPath = songPath
+        self.timingPoints = timingPoints
+        songPlayer.load(self.songPath, self.timingPoints)
+    
+    def createEventFromTile(self, tile):
         startTime = tile.appearedTime - self.appearLength
         endTime = tile.disappearTime + self.disappearLength
-        callback = lambda t, tile=tile: tile.draw(self.win, self.player.visiblePos, self.appearLength, self.disappearLength, t + tile.appearedTime - self.appearLength)
+        callback = lambda t, win, topLeftPos, tileSize, tile=tile: tile.draw(win, topLeftPos, tileSize, self.appearLength, self.disappearLength, t + tile.appearedTime - self.appearLength)
         data = tile
-        self.tileAnim.addEvent(AnimEvent(startTime, endTime, callback, data))
-        
-    def start(self, time):
-        self.tileAnim.restart(time)
-        
-    def play(self):
-        songPlayer.play()
-        self.playing = True
+        return AnimEvent(startTime, endTime, callback, data)
     
-    def draw(self, win, time, showPlayer = True, showGrid = False):
-        self.win = win
+    def addTile(self, tile):
+        self.tileAnim.addEvent(self.createEventFromTile(tile))
+    
+    def createPlayer(self, playerStartPos, playerStartTime):
+        if playerStartPos is not None and playerStartTime is not None:
+            return Player(playerStartPos, playerStartTime)
+        return None
+    
+    def restart(self):
+        self.pos = Vector2(0, 0)
         
-        self.player.updateVisiblePos(time)
-        self.tileAnim.updateTime(time)
-        if showPlayer: self.player.draw(win)
-        if showGrid: self.drawGrid(win)
+        self.player = self.createPlayer(self.playerStartPos, self.playerStartTime)
         
-    def move(self, delta):
-        self.pos += delta
-        for tile in self.tiles:
-            tile.levelPos = self.pos
-        self.player.levelPos = self.pos
-                
-        for line in self.grid:
-            line.pos = ((line.pos + delta) % self.tileSize) - self.tileSize
+        songPlayer.play()
+        self.tileAnim.restart(songPlayer.getPos())        
+    
+    def draw(self, win, timeSourceTime, topLeftPos, tileSize, drawPlayer = True):
+        self.tileAnim.updateTime(timeSourceTime, win, topLeftPos, tileSize)
+        if self.player is not None and drawPlayer:
+            self.player.draw(win)
+            
+    def getTileAt(self, pos, levelTime):
+        for i in self.tileAnim.tree.at(levelTime):
+            tile = i.data[1]
+            if tile.pos == pos:
+                return tile
+        return None
         
     def genGrid(self, size, lineSize):
         size += self.tileSize
@@ -108,6 +98,16 @@ class Level:
         
         with open('level_data.json', 'w') as file:
             json.dump({"data": levelData, "signature": signature}, file)
+            
+    def screenPosToTilePos(self, screenPos, topLeftPos):
+        return screenPos / self.tileSize + topLeftPos
+    
+    def screenPosToRoundedTilePos(self, screenPos, topLeftPos):
+        tilePos = screenPos / self.tileSize + topLeftPos
+        return Vector2(math.floor(tilePos.x), math.floor(tilePos.y))
+    
+    def tilePosToScreenPos(self, tilePos, topLeftPos):
+        return self.tileSize * (topLeftPos - tilePos)
 
 def signData(data):
     signature = hashlib.sha256(json.dumps(data).encode()).hexdigest()

@@ -37,7 +37,7 @@ class Scrollbar:
     def update(self):
         self.bar.update()
         if self.bar.held:
-            mPos = input.mousePos.y if self.orientation == "v" else input.mousePos.x
+            mPos = input.mousePos.pos.y if self.orientation == "v" else input.mousePos.pos.x
             newPos = mPos - self.valueSize//2
             pos = self.y if self.orientation == "v" else self.x
             if newPos > pos and newPos < pos+self.length-self.valueSize:

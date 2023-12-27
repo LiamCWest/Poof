@@ -9,7 +9,7 @@ class AnimEvent:
         self.data = data
         
 class Animation:
-    def __init__(self, events, timeSourceTime, repeatType = "oneShot", length = None, ignoreSameTime = False):
+    def __init__(self, events, timeSourceTime, repeatType = "oneShot", length = None, ignoreSameTimeUpdates = False):
         intervals = []
         for i in events:
             if i.startTime <= i.endTime:
@@ -26,21 +26,18 @@ class Animation:
         else:
             self.length = max(self.tree.end(), length)
             
-        self.ignoreSameTime = False
+        self.ignoreSameTimeUpdates = ignoreSameTimeUpdates
         
-    def addEvent(self, event, index = None):
-        if index is None:
-            index = len(self.tree)
+    def addEvent(self, event):
         if event.startTime <= event.endTime:
             self.tree.add(intervaltree.Interval(event.startTime, math.nextafter(event.endTime, float("inf")), (event.callback, event.data)))
         else:
             self.tree.add(intervaltree.Interval(event.endTime, math.nextafter(event.startTime, float("inf")), (event.callback, event.data)))
         
-        
     def getEventsAt(self, time):
         return self.tree.at(time)
         
-    def updateTime(self, timeSourceTime):        
+    def updateTime(self, timeSourceTime, *args):        
         oldAnimTime = self.animTime
         
         animTimeUnrepeated = float(timeSourceTime) - self.timeSourceStartTime
@@ -57,26 +54,27 @@ class Animation:
             if oldAnimTime == self.animTime:
                 oldAnimTime = math.nextafter(0., -1.)
                 
-        if self.ignoreSameTime and self.animTime == oldAnimTime:
+        if self.ignoreSameTimeUpdates and self.animTime == oldAnimTime:
             return
         
         if self.animTime > oldAnimTime:
             for i in self.tree.overlap(math.nextafter(oldAnimTime, float("inf")), self.animTime):
                 if self.animTime <= i.end:
                     continue
-                i.data[0](i.end - i.begin)
+                i.data[0](i.end - i.begin, *args)
         else:
             for i in self.tree.overlap(self.animTime, oldAnimTime):
                 if self.animTime >= i.begin:
                     continue
-                i.data[0](0.)
+                i.data[0](0., *args)
         
         for i in self.tree.at(self.animTime):
-            i.data[0](self.animTime - i.begin)
+            i.data[0](self.animTime - i.begin, *args)
     
     def skipToTime(self, animTime, timeSourceTime):
         self.animTime = animTime
         self.timeSourceStartTime = timeSourceTime - animTime
+        print(self.animTime, self.timeSourceStartTime)
     
     def restart(self, timeSourceTime):
         self.skipToTime(0, timeSourceTime)

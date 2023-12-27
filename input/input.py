@@ -1,6 +1,7 @@
 from pynput import keyboard, mouse
 import pygame
 import logic.song.songPlayer as songPlayer
+from utils.vector2 import Vector2
 
 def getSongTime():
     return songPlayer.getPos() if songPlayer.getIsPlaying() else None
@@ -60,33 +61,29 @@ class ButtonEvent: #keyboard keys and mouse buttons
 class MouseMoveEvent(Event):
     def __init__(self):
         super().__init__()
-        self.x = None
-        self.y = None
+        self.pos = None
         
     songTimeLastMoved = property(lambda self: self.songTimeLastInvoked, lambda self, val: setattr(self, "songTimeLastInvoked", val))
     realTimeLastMoved = property(lambda self: self.realTimeLastInvoked, lambda self, val: setattr(self, "realTimeLastInvoked", val))
     
     justMoved = property(lambda self: self.justInvoked, lambda self, val: self.setJustInvoked(val))
     
-    def move(self, x, y):
-        self.x = x
-        self.y = y
+    def move(self, pos):
+        self.pos = pos
         self.invoke()
         
 class MouseScrollEvent(Event):
     def __init__(self):
         super().__init__()
-        self.dx = None
-        self.dy = None
+        self.diff = None
         
     songTimeLastScrolled = property(lambda self: self.songTimeLastInvoked, lambda self, val: setattr(self, "songTimeLastInvoked", val))
     realTimeLastScrolled = property(lambda self: self.realTimeLastInvoked, lambda self, val: setattr(self, "realTimeLastInvoked", val))
     
     justScrolled = property(lambda self: self.justInvoked, lambda self, val: self.setJustInvoked(val))
     
-    def scroll(self, dx, dy):
-        self.dx = dx
-        self.dy = dy
+    def scroll(self, diff):
+        self.diff = diff
         self.invoke()
         
 modifierBindings = {
@@ -189,12 +186,12 @@ def onMouseClick(x, y, button, pressed):
 def handleEvent(event):
     global mouseBindings
     if event.type == pygame.MOUSEMOTION:
-        mousePos.move(event.pos[0], event.pos[1])
+        mousePos.move(Vector2(event.pos[0], event.pos[1]))
     
 def onMouseScroll(x, y, dx, dy):
     global mouseScroll
     
-    mouseScroll.scroll(dx, dy)
+    mouseScroll.scroll(Vector2(dx, dy))
 
 kblistener = None
 mouseListener = None

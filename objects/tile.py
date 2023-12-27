@@ -12,7 +12,6 @@ class Tile:
         self.appearedTime = appearedTime        
         self.disappearTime = disappearTime
         self.type = type
-        self.levelPos = Vector2(0, 0)
         
         self.inputs = []
     
@@ -28,16 +27,13 @@ class Tile:
             case "wall":
                 return images.images["debug"] #for testing
     
-    def getTypeSize(self):
-        return Vector2(50, 50)
-    
     def getScaleFromAppearAnimTime(self, timeIntoAppearAnim, appearLength): #temp, to be replaced with proper animation
         return timeIntoAppearAnim / appearLength
     
     def getScaleFromDisappearAnimTime(self, timeIntoDisappearAnim, disappearLength): #temp, to be replaced with proper animation
         return 1 - (timeIntoDisappearAnim / disappearLength)    
 
-    def draw(self, win, playerPos, appearLength, disappearLength, time):
+    def draw(self, win, topLeftPos, tileSize, appearLength, disappearLength, time):
         if self.appearedTime is None and self.disappearedTime is None: #TODO: make tiles animate with a proper animation
             scale = 1
         elif self.appearedTime is None:
@@ -71,6 +67,5 @@ class Tile:
                 scale = 0
         scale **= 5 #temp
         
-        size = self.getTypeSize().multiply(scale).toTuple()
-        pos = ((self.pos - playerPos + Player.offset) * self.getTypeSize() + self.getTypeSize().multiply(1 - scale).divide(2) + self.levelPos).toTuple()
-        win.blit(pygame.transform.scale(self.getTypeImage(), size), pos)
+        pos = ((self.pos - topLeftPos) * tileSize + tileSize.multiply(1 - scale).divide(2)).toTuple()
+        win.blit(pygame.transform.scale(self.getTypeImage(), tileSize.multiply(scale).toTuple()), pos)

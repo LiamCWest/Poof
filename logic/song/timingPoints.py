@@ -12,6 +12,9 @@ class TimingPoint:
         self.bpm = bpm
         self.beatLength = 60 / bpm
         self.timeSignature = timeSignature
+        
+    def toValues(self):
+        return [self.time, self.bpm, self.timeSignature.num, self.timeSignature.denom]
 
 def getPreviousPoint(points, time):
     index = binarySearch(points, time, lambda time, point: time - point.time)

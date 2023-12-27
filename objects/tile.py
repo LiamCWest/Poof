@@ -30,6 +30,9 @@ class Tile:
     def getScaleFromAppearAnimTime(self, timeIntoAppearAnim, appearLength): #temp, to be replaced with proper animation
         return timeIntoAppearAnim / appearLength
     
+    def toValues(self):
+        return [self.pos, self.color, self.appearedTime, self.disappearTime, self.type]
+    
     def getScaleFromDisappearAnimTime(self, timeIntoDisappearAnim, disappearLength): #temp, to be replaced with proper animation
         return 1 - (timeIntoDisappearAnim / disappearLength)    
 

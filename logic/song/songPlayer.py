@@ -12,6 +12,8 @@ def unload():
     mixer.music.unload()
     
 def play():
+    global lastPos
+    lastPos = float("-inf")
     mixer.music.play()
     
 def stop():
@@ -34,9 +36,6 @@ def seek(position):
     if not wasPlaying:
         mixer.music.pause()
     setVolume(oldVolume)
-    
-def restart():
-    seek(0)
 
 lastPos = float("-inf") #for whatever reason, the time returned by music.get_pos() can sometimes go backwards, so this makes it not do that
 def getPos():

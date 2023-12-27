@@ -12,7 +12,7 @@ level = None
 
 def show():
     global tiles, level
-    songPlayer.load(r"Song.MP3", [TimingPoint(2.108, 170, TimeSignature(4, 4))])
+    songPlayer.load(r"Song.MP3", [TimingPoint(2.108, 170, TimeSignature(4, 4))]) #Temp
     
     tiles = [
         Tile(Vector2(0, 0), None, 0, songPlayer.getBeatByIndex(0, 1), "platform"),
@@ -21,11 +21,11 @@ def show():
         Tile(Vector2(1, 2), None, songPlayer.getBeatByIndex(2, 1), songPlayer.getBeatByIndex(3, 1), "platform"),
         Tile(Vector2(2, 2), None, songPlayer.getBeatByIndex(3, 1), songPlayer.getBeatByIndex(4, 1), "platform"),
     ]
+    songPlayer.unload() #Temp
     
-    level = Level(tiles, 1, 1)
+    level = Level(tiles, 1, 1, "Song.MP3", [TimingPoint(2.108, 170, TimeSignature(4, 4))])
     
-    songPlayer.play()
-    level.start(songPlayer.getPos())
+    level.start()
     
     update()
     
@@ -44,11 +44,14 @@ def checkInput():
         
     if input.keyBindings["down"].justPressed:
         level.player.move(Vector2(0, 1), input.keyBindings["down"].songTimeLastPressed)
+        
+    if input.keyBindings["dash"].justPressed:
+        level.start(0)
+        level.draw(gui.screen, 0)
 
 def update():
     checkInput()
     draw()
     
 def draw():
-    if level.draw(gui.screen, songPlayer.getPos()) == "Dead":
-        pass
+    level.draw(gui.screen, songPlayer.getPos())

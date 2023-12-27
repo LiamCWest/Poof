@@ -1,9 +1,12 @@
 from utils.vector2 import Vector2
 from objects.player import Player
 from graphics.animation import *
+from logic.song import songPlayer
+from logic.song.timingPoints import TimingPoint, TimeSignature
 
 class Level:
-    def __init__(self, tiles, appearLength, disappearLength):
+    deathTimeBuffer = 0.25
+    def __init__(self, tiles, appearLength, disappearLength, songPath, timingPoints):
         self.win = None
         self.appearLength = appearLength
         self.disappearLength = disappearLength
@@ -20,22 +23,33 @@ class Level:
         
         self.player = Player(Vector2(0, 0), 0)
         
-    def start(self, time):
-        self.tileAnim.restart(time)
+        self.songPath = songPath
+        self.timingPoints = timingPoints
+        songPlayer.load(self.songPath, self.timingPoints)
+        
+    def start(self):
+        self.pos = Vector2(0, 0)
+        self.player = Player(Vector2(0, 0), 0)
+        
+        songPlayer.play()
+        self.tileAnim.restart(songPlayer.getPos())
     
-    def draw(self, win, time):        
-        pos = self.player.calculatePos(self, time)
+    def draw(self, win, timeSourceTime):        
+        pos = self.player.calculatePos(self, timeSourceTime)
         if isinstance(pos, Vector2):
-            self.tileAnim.updateTime(time, win, self.player.calculateVisiblePos(self, time)) 
+            self.tileAnim.updateTime(timeSourceTime, win, self.player.calculateVisiblePos(self, timeSourceTime))
+            self.player.draw(win)
         else:
-            return "Dead"
-        self.player.draw(win)
+            if pos[1] + self.deathTimeBuffer < timeSourceTime: #A buffer so you don't die unfairly if you have input delay
+                self.start()
+            else:
+                self.tileAnim.updateTime(timeSourceTime, win, self.player.calculateVisiblePos(self, timeSourceTime))
         
     def move(self, delta):
         self.pos += delta
         
-    def getTileAt(self, pos, time):
-        for i in self.tileAnim.tree.at(time):
+    def getTileAt(self, pos, levelTime):
+        for i in self.tileAnim.tree.at(levelTime):
             tile = i.data[1]
             if tile.pos == pos:
                 return tile

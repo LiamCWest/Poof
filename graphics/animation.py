@@ -9,7 +9,7 @@ class AnimEvent:
         self.data = data
         
 class Animation:
-    def __init__(self, events, timeSourceTime, repeatType = "oneShot", length = None, ignoreSameTime = False):
+    def __init__(self, events, timeSourceTime, repeatType = "oneShot", length = None, ignoreSameTimeUpdates = False):
         intervals = []
         for i in events:
             if i.startTime <= i.endTime:
@@ -26,7 +26,7 @@ class Animation:
         else:
             self.length = max(self.tree.end(), length)
             
-        self.ignoreSameTime = False
+        self.ignoreSameTimeUpdates = ignoreSameTimeUpdates
         
     def getEventsAt(self, time):
         return self.tree.at(time)
@@ -48,7 +48,7 @@ class Animation:
             if oldAnimTime == self.animTime:
                 oldAnimTime = math.nextafter(0., -1.)
                 
-        if self.ignoreSameTime and self.animTime == oldAnimTime:
+        if self.ignoreSameTimeUpdates and self.animTime == oldAnimTime:
             return
         
         if self.animTime > oldAnimTime:
@@ -68,6 +68,7 @@ class Animation:
     def skipToTime(self, animTime, timeSourceTime):
         self.animTime = animTime
         self.timeSourceStartTime = timeSourceTime - animTime
+        print(self.animTime, self.timeSourceStartTime)
     
     def restart(self, timeSourceTime):
         self.skipToTime(0, timeSourceTime)

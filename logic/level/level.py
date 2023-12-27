@@ -3,14 +3,19 @@ from objects.player import Player
 from graphics.animation import *
 from utils.polygon import Polygon
 import graphics.gui as gui
-import pygame
+import logic.song.songPlayer as songPlayer
+from logic.song.timingPoints import TimeSignature, TimingPoint
+from objects.tile import Tile
 
 class Level:
-    def __init__(self, tiles, appearLength, disappearLength):
+    def __init__(self, tiles, appearLength, disappearLength, songPath):
         self.win = None
-        self.tiles = tiles
+        self.songPath = songPath
+        songPlayer.load(self.songPath, [TimingPoint(2.108, 170, TimeSignature(4, 4))])
+        self.playing = False
+        self.tiles = self.genTiles(tiles)
         tileEvents = []
-        for tile in tiles:
+        for tile in self.tiles:
             startTime = tile.appearedTime - appearLength
             endTime = tile.disappearTime + disappearLength
             callback = lambda t, tile=tile: tile.draw(self.win, self.player.visiblePos, self.appearLength, self.disappearLength, t + tile.appearedTime - appearLength)
@@ -26,6 +31,12 @@ class Level:
         
         self.player = Player(Vector2(0, 0))
         
+    def genTiles(self, tiles):
+        outTiles = []
+        for tile in tiles:
+            outTiles.append(Tile(tile[0], tile[1], songPlayer.getBeatByIndex(tile[2][0], tile[2][1]), songPlayer.getBeatByIndex(tile[3][0], tile[3][1]), tile[4]))
+        return outTiles
+        
     def addTile(self, tile):
         tile.pos -= self.player.offset
         self.tiles.append(tile)
@@ -37,6 +48,10 @@ class Level:
         
     def start(self, time):
         self.tileAnim.restart(time)
+        
+    def play(self):
+        songPlayer.play()
+        self.playing = True
     
     def draw(self, win, time, showPlayer = True, showGrid = False):
         self.win = win

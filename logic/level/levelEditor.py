@@ -3,7 +3,6 @@ from utils.vector2 import Vector2
 import input.input as input
 from logic.level.level import Level
 from objects.tile import Tile
-from logic.song.timingPoints import TimingPoint, TimeSignature
 import logic.song.songPlayer as songPlayer
 import graphics.gui as gui
 from utils.polygon import Polygon
@@ -20,14 +19,14 @@ def select(option):
     toolbarButtons[toolbarOptions.index(selected)].color = (50, 50, 255)
 
 def checkInput():
-    global playing
+    global level
     if input.keyBindings["play"].justPressed:
-        if playing:
+        if level.playing:
             songPlayer.pause()
-            playing = False
+            level.playing = False
         else:
             songPlayer.unpause()
-            playing = True
+            level.playing = True
 
 def update():
     checkInput()
@@ -79,24 +78,21 @@ def show():
     select("move")
 
     global tiles, level
-    songPlayer.load(r"Song.MP3", [TimingPoint(2.108, 170, TimeSignature(4, 4))])
-    
     tiles = [
-        Tile(Vector2(0, 0), None, 0, songPlayer.getBeatByIndex(0, 1), "platform"),
-        Tile(Vector2(0, 1), None, songPlayer.getBeatByIndex(0, 1), songPlayer.getBeatByIndex(1, 1), "platform"),
-        Tile(Vector2(0, 2), None, songPlayer.getBeatByIndex(1, 1), songPlayer.getBeatByIndex(2, 1), "platform"),
-        Tile(Vector2(1, 2), None, songPlayer.getBeatByIndex(2, 1), songPlayer.getBeatByIndex(3, 1), "platform"),
-        Tile(Vector2(2, 2), None, songPlayer.getBeatByIndex(3, 1), songPlayer.getBeatByIndex(4, 1), "platform"),
+        [Vector2(0, 0), None, (0, 0), (0, 1), "platform"],
+        [Vector2(0, 1), None, (0, 1), (1, 1), "platform"],
+        [Vector2(0, 2), None, (1, 1), (2, 1), "platform"],
+        [Vector2(1, 2), None, (2, 1), (3, 1), "platform"],
+        [Vector2(2, 2), None, (3, 1), (4, 1), "platform"],
     ]
     
-    level = Level(tiles, 1, 1)
+    level = Level(tiles, 1, 1, "Song.MP3")
     
     global lastMousePos
     lastMousePos = Vector2(input.mousePos.x, input.mousePos.y)
     
-    songPlayer.play()
-    global playing
-    playing = True
+    level.play()
+    
     update()
 
 def load(level):
@@ -113,7 +109,6 @@ toolbarButtons = []
 buttonSize = 55
 toolbarPos = Vector2(buttonSize*0.1, buttonSize*0.1)
 selected = "move"
-playing = False
 toolbar = Polygon([(toolbarPos.x, toolbarPos.y), 
                    (toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + 100, toolbarPos.y), 
                    (toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + 100, toolbarPos.y + buttonSize*1.1), 

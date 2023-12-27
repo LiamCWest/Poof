@@ -20,7 +20,6 @@ class Level:
         self.tileAnim = Animation(tileEvents, 0)
         self.pos = Vector2(0, 0)
         self.tileSize = Vector2(50, 50)
-        self.grid = self.genGrid(Vector2(gui.screen.get_size()[0], gui.screen.get_size()[1]), 5)
         
         self.playerStartPos = playerStartPos
         self.playerStartTime = playerStartTime
@@ -54,10 +53,28 @@ class Level:
         songPlayer.play()
         self.tileAnim.restart(songPlayer.getPos())        
     
-    def draw(self, win, timeSourceTime, topLeftPos, tileSize, drawPlayer = True):
+    def draw(self, win, timeSourceTime, topLeftPos, tileSize, drawPlayer = True, drawGrid = False, gridLineThickness = 2):
         self.tileAnim.updateTime(timeSourceTime, win, topLeftPos, tileSize)
+        
         if self.player is not None and drawPlayer:
             self.player.draw(win)
+        
+        if drawGrid:
+            ltHalf = gridLineThickness / 2
+            screenSize = Vector2(gui.screen.get_size()[0], gui.screen.get_size()[1])
+            topLeftMod = self.tilePosToScreenPos(topLeftPos, Vector2(0, 0)) % tileSize
+            
+            gridWidth = screenSize.x + tileSize.x
+            gridHeight = screenSize.y + tileSize.y
+            for i in range(math.floor(screenSize.x / tileSize.x) + 2):
+                pos = topLeftMod - tileSize + (Vector2(i, 0) * tileSize)
+                polygon1 = Polygon([(pos.x - ltHalf, pos.y), (pos.x + ltHalf, pos.y), (pos.x + ltHalf, pos.y + gridHeight), (pos.x - ltHalf, pos.y + gridHeight)])
+                polygon1.draw(win)
+                
+            for i in range(math.floor(screenSize.y / tileSize.y) + 2):
+                pos = topLeftMod - tileSize + (Vector2(0, i) * tileSize)
+                polygon1 = Polygon([(pos.x, pos.y - ltHalf), (pos.x, pos.y + ltHalf), (pos.x + gridWidth, pos.y + ltHalf), (pos.x + gridWidth, pos.y - ltHalf)])
+                polygon1.draw(win)
             
     def getTileAt(self, pos, levelTime):
         for i in self.tileAnim.tree.at(levelTime):
@@ -65,23 +82,6 @@ class Level:
             if tile.pos == pos:
                 return tile
         return None
-        
-    def genGrid(self, size, lineSize):
-        size += self.tileSize
-        width = math.ceil(size.x/self.tileSize.x)
-        height = math.ceil(size.y/self.tileSize.y)
-        columns = []
-        for x in range(width):
-            columns.append(Polygon([(x*self.tileSize.x, 0), (x*self.tileSize.x + lineSize, 0), (x*self.tileSize.x + lineSize, size.y), (x*self.tileSize.x, size.y)]))
-            
-        rows = []
-        for y in range(height):
-            rows.append(Polygon([(0, y*self.tileSize.y), (size.x, y*self.tileSize.y), (size.x, y*self.tileSize.y + lineSize), (0, y*self.tileSize.y + lineSize)]))
-        return columns + rows
-    
-    def drawGrid(self, win):
-        for polygon in self.grid:
-            polygon.draw(win)
             
     def save(self):
         noV2sTiles = []

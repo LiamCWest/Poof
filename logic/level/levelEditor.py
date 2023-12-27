@@ -45,7 +45,7 @@ def update():
         global lastMousePos, levelPos
         if selected == "move" and input.mouseBindings["lmb"].down:
             currentMousePos = input.mousePos.pos
-            levelPos += (currentMousePos - lastMousePos).divide(59)
+            levelPos -= (currentMousePos - lastMousePos) / level.tileSize
             lastMousePos = currentMousePos
         else:
             lastMousePos = input.mousePos.pos
@@ -68,7 +68,7 @@ def posIn(pos, rect):
     
 def draw():
     global levelPos
-    level.draw(gui.screen, songPlayer.getPos(), levelPos, level.tileSize, False)
+    level.draw(gui.screen, songPlayer.getPos(), levelPos, level.tileSize, False, True)
     toolbar.draw(gui.screen)
     for button in toolbarButtons:
         button.draw(gui.screen)

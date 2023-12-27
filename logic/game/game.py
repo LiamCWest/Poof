@@ -57,10 +57,10 @@ def draw():
     
     playerPos = level.player.calculatePos(level, timeSourceTime)
     if isinstance(playerPos, Vector2):
-        level.draw(gui.screen, timeSourceTime, level.player.calculateVisiblePos(level, timeSourceTime) - Player.offset, level.tileSize, True)
+        level.draw(gui.screen, timeSourceTime, level.player.calculateVisiblePos(level, timeSourceTime) - Player.offset, level.tileSize, True, False)
         level.player.draw(gui.screen)
     else:
         if playerPos[1] + level.deathTimeBuffer < timeSourceTime: #A buffer so you don't die unfairly if you have input delay
             level.restart()
         else:
-            level.draw(gui.screen, timeSourceTime, level.player.calculateVisiblePos(level, timeSourceTime) - Player.offset, level.tileSize, False)
+            level.draw(gui.screen, timeSourceTime, level.player.calculateVisiblePos(level, timeSourceTime) - Player.offset, level.tileSize, False, False)

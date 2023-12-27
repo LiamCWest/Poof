@@ -113,14 +113,14 @@ def loadLevel(levelFile):
             print("Level file corrupted")
             return None
         tiles = loaded_data['tiles']
-        tilesV2 = []
-        for tile in tiles:
-            tilesV2.append([Vector2.from_tuple(tile[0]), tile[1], tile[2], tile[3], tile[4]])
+        tilesV2 = [Tile(Vector2.from_tuple(tile[0]), tile[1], tile[2], tile[3], tile[4]) for tile in tiles]
         appearLength = loaded_data['appearLength']
         disappearLength = loaded_data['disappearLength']
         songPath = loaded_data['songPath']
-        level = Level(tilesV2, appearLength, disappearLength, songPath)
-        print("Level loaded:", tilesV2, appearLength, disappearLength, songPath)
+        timingPointsVals = loaded_data['timingPoints']
+        timingPoints = [TimingPoint(timingPoint[0], timingPoint[1], TimeSignature(timingPoint[2], timingPoint[3])) for timingPoint in timingPointsVals]
+        level = Level(tilesV2, appearLength, disappearLength, songPath, timingPoints)
+        print("Level loaded:", tilesV2, appearLength, disappearLength, songPath, timingPoints)
         return level
 
 def checkSignature(data, signature):

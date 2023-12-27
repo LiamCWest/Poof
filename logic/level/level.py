@@ -15,6 +15,7 @@ class Level:
         self.win = None
         self.appearLength = appearLength
         self.disappearLength = disappearLength
+        self.tiles = tiles
         
         tileEvents = [self.createEventFromTile(tile) for tile in tiles]
         self.tileAnim = Animation(tileEvents, 0)
@@ -38,6 +39,7 @@ class Level:
         return AnimEvent(startTime, endTime, callback, data)
     
     def addTile(self, tile):
+        self.tiles.append(tile)
         self.tileAnim.addEvent(self.createEventFromTile(tile))
     
     def createPlayer(self, playerStartPos, playerStartTime):
@@ -85,14 +87,20 @@ class Level:
             
     def save(self):
         noV2sTiles = []
-        for tile in self.tileValues:
+        tileValues = [tile.toValues() for tile in self.tiles]
+        for tile in tileValues:
             noV2sTiles.append([tile[0].toTuple(), tile[1], tile[2], tile[3], tile[4]])
+            
+        timingPoints = []
+        for timingPoint in self.timingPoints:
+            timingPoints.append(timingPoint.toValues())
             
         levelData = {
             "tiles": noV2sTiles,
             "appearLength": self.appearLength,
             "disappearLength": self.disappearLength,
             "songPath": self.songPath,
+            "timingPoints": timingPoints,
             }
         
         signature = signData(levelData)

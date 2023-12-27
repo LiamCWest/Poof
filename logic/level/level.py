@@ -6,6 +6,8 @@ import graphics.gui as gui
 import logic.song.songPlayer as songPlayer
 from logic.song.timingPoints import TimeSignature, TimingPoint
 from objects.tile import Tile
+import json
+import hashlib
 
 class Level:
     def __init__(self, tiles, appearLength, disappearLength, songPath):
@@ -13,7 +15,8 @@ class Level:
         self.songPath = songPath
         songPlayer.load(self.songPath, [TimingPoint(2.108, 170, TimeSignature(4, 4))])
         self.playing = False
-        self.tiles = self.genTiles(tiles)
+        self.tileValues = tiles
+        self.tiles = self.genTiles(self.tileValues)
         tileEvents = []
         for tile in self.tiles:
             startTime = tile.appearedTime - appearLength
@@ -34,11 +37,13 @@ class Level:
     def genTiles(self, tiles):
         outTiles = []
         for tile in tiles:
-            outTiles.append(Tile(tile[0], tile[1], songPlayer.getBeatByIndex(tile[2][0], tile[2][1]), songPlayer.getBeatByIndex(tile[3][0], tile[3][1]), tile[4]))
+            outTiles.append(Tile(tile[0], tile[1], tile[2], tile[3], tile[4]))
         return outTiles
         
     def addTile(self, tile):
-        tile.pos -= self.player.offset
+        tile[0] -= self.player.offset
+        self.tileValues.append(tile)
+        tile = self.genTiles([tile])[0]
         self.tiles.append(tile)
         startTime = tile.appearedTime - self.appearLength
         endTime = tile.disappearTime + self.disappearLength
@@ -86,3 +91,27 @@ class Level:
     def drawGrid(self, win):
         for polygon in self.grid:
             polygon.draw(win)
+            
+    def save(self):
+        noV2sTiles = []
+        for tile in self.tileValues:
+            noV2sTiles.append([tile[0].toTuple(), tile[1], tile[2], tile[3], tile[4]])
+            
+        levelData = {
+            "tiles": noV2sTiles,
+            "appearLength": self.appearLength,
+            "disappearLength": self.disappearLength,
+            "songPath": self.songPath,
+            }
+        
+        signature = signData(levelData)
+        
+        with open('level_data.json', 'w') as file:
+            json.dump({"data": levelData, "signature": signature}, file)
+
+def signData(data):
+    signature = hashlib.sha256(json.dumps(data).encode()).hexdigest()
+    return signature
+
+def checkSignature(data, signature):
+    return signature == signData(data)

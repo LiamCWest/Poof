@@ -2,11 +2,13 @@ from ui.button import Button
 from utils.vector2 import Vector2
 import input.input as input
 from logic.level.level import Level
-from objects.tile import Tile
 import logic.song.songPlayer as songPlayer
 import graphics.gui as gui
 from utils.polygon import Polygon
 from ui.scrollbar import Scrollbar
+from logic.song.timingPoints import TimingPoint, TimeSignature
+import json
+import hashlib
 
 def addOption(option, func, i):
     global toolbarButtons
@@ -14,9 +16,9 @@ def addOption(option, func, i):
 
 def select(option):
     global selected
-    toolbarButtons[toolbarOptions.index(selected)].color = (100, 100, 255)
+    toolbarButtons[toolbarModes.index(selected)].color = (100, 100, 255)
     selected = option
-    toolbarButtons[toolbarOptions.index(selected)].color = (50, 50, 255)
+    toolbarButtons[toolbarModes.index(selected)].color = (50, 50, 255)
 
 def checkInput():
     global level
@@ -54,13 +56,13 @@ def update():
             selectedTile = getGridPos(input.mousePos)
         
         if selected == "platform" and input.mouseBindings["lmb"].justPressed:
-            level.addTile(Tile(getGridPos(input.mousePos), None, songPlayer.getPos(), songPlayer.getPos(), "platform"))
+            level.addTile([getGridPos(input.mousePos), None, songPlayer.getPos(), songPlayer.getPos(), "platform"])
         
         if selected == "wall" and input.mouseBindings["lmb"].justPressed:
-            level.addTile(Tile(getGridPos(input.mousePos), None, songPlayer.getPos(), songPlayer.getPos(), "wall"))
+            level.addTile([getGridPos(input.mousePos), None, songPlayer.getPos(), songPlayer.getPos(), "wall"])
             
         if selected == "rest" and input.mouseBindings["lmb"].justPressed:
-            level.addTile(Tile(getGridPos(input.mousePos), None, songPlayer.getPos(), songPlayer.getPos(), "rest"))
+            level.addTile([getGridPos(input.mousePos), None, songPlayer.getPos(), songPlayer.getPos(), "rest"])
     
 def posIn(pos, rect):
     return pos.x > rect[0] and pos.x < rect[0] + rect[2] and pos.y > rect[1] and pos.y < rect[1] + rect[3]
@@ -73,18 +75,23 @@ def draw():
     scrollbar.draw(gui.screen)
 
 def show():
-    for i, option in enumerate(toolbarOptions):
+    for i, option in enumerate(toolbarModes):
         addOption(option, lambda x=option: select(x), i)
+    for option in toolbarB:
+        i += 1
+        addOption(option, toolbarFuncs[option], i)
     select("move")
 
     global tiles, level
+    songPlayer.load("Song.MP3", [TimingPoint(2.108, 170, TimeSignature(4, 4))]) #temp
     tiles = [
-        [Vector2(0, 0), None, (0, 0), (0, 1), "platform"],
-        [Vector2(0, 1), None, (0, 1), (1, 1), "platform"],
-        [Vector2(0, 2), None, (1, 1), (2, 1), "platform"],
-        [Vector2(1, 2), None, (2, 1), (3, 1), "platform"],
-        [Vector2(2, 2), None, (3, 1), (4, 1), "platform"],
+        [Vector2(0, 0), None, songPlayer.getBeatByIndex(0, 0), songPlayer.getBeatByIndex(0, 1), "platform"],
+        [Vector2(0, 1), None, songPlayer.getBeatByIndex(0, 1), songPlayer.getBeatByIndex(1, 1), "platform"],
+        [Vector2(0, 2), None, songPlayer.getBeatByIndex(1, 1), songPlayer.getBeatByIndex(2, 1), "platform"],
+        [Vector2(1, 2), None, songPlayer.getBeatByIndex(2, 1), songPlayer.getBeatByIndex(3, 1), "platform"],
+        [Vector2(2, 2), None, songPlayer.getBeatByIndex(3, 1), songPlayer.getBeatByIndex(4, 1), "platform"],
     ]
+    songPlayer.unload() #temp
     
     level = Level(tiles, 1, 1, "Song.MP3")
     
@@ -95,8 +102,27 @@ def show():
     
     update()
 
-def load(level):
-    pass
+def loadLevel(levelFile):
+    with open(levelFile, 'r') as file:
+        saved_data = json.load(file)
+        loaded_data = saved_data['data']
+        saved_signature = saved_data['signature']
+        if not checkSignature(loaded_data, saved_signature):
+            print("Level file corrupted")
+            return None
+        tiles = loaded_data['tiles']
+        tilesV2 = []
+        for tile in tiles:
+            tilesV2.append([Vector2.from_tuple(tile[0]), tile[1], tile[2], tile[3], tile[4]])
+        appearLength = loaded_data['appearLength']
+        disappearLength = loaded_data['disappearLength']
+        songPath = loaded_data['songPath']
+        level = Level(tilesV2, appearLength, disappearLength, songPath)
+        print("Level loaded:", tilesV2, appearLength, disappearLength, songPath)
+        return level
+
+def checkSignature(data, signature):
+    return hashlib.sha256(json.dumps(data).encode('utf-8')).hexdigest() == signature
 
 def getGridPos(pos):
     return (getRelGridPos(pos) - getRelGridPos(level.pos)).floor()
@@ -104,8 +130,14 @@ def getGridPos(pos):
 def getRelGridPos(pos):
     return Vector2(pos.x/level.tileSize.x, pos.y/level.tileSize.y)
 
-toolbarOptions = ["move", "select", "platform", "wall", "rest", "save", "load"]
+toolbarModes = ["move", "select", "platform", "wall", "rest"]
+toolbarB = ["save", "load"]
+toolbarOptions = toolbarModes + toolbarB
 toolbarButtons = []
+toolbarFuncs = {
+    "save": lambda: level.save(),
+    "load": lambda: loadLevel("level_data.json")
+}
 buttonSize = 55
 toolbarPos = Vector2(buttonSize*0.1, buttonSize*0.1)
 selected = "move"

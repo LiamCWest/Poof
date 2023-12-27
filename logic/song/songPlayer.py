@@ -14,26 +14,34 @@ def unload():
 def play():
     mixer.music.play()
     
+def stop():
+    mixer.music.stop()
+    
 def unpause():
     mixer.music.unpause()
     
 def pause():
     mixer.music.pause()
     
-def seek(time):
+def seek(position):
     global lastPos
-    lastPos = None
-    mixer.music.rewind()
-    mixer.music.set_pos(time)
+    lastPos = position
+    
+    wasPlaying = getIsPlaying()
+    oldVolume = getVolume()
+    setVolume(0)
+    mixer.music.play(start=position)
+    if not wasPlaying:
+        mixer.music.pause()
+    setVolume(oldVolume)
+    
+def restart():
+    seek(0)
 
-lastPos = None #for whatever reason, the time returned by music.get_pos() can sometimes go backwards, so this makes it not do that
+lastPos = float("-inf") #for whatever reason, the time returned by music.get_pos() can sometimes go backwards, so this makes it not do that
 def getPos():
     global lastPos
     currentPos = mixer.music.get_pos() / 1000
-    
-    if lastPos is None:
-        lastPos = currentPos
-        return currentPos
     
     if lastPos > currentPos:
         return lastPos
@@ -44,6 +52,12 @@ def getPos():
 def getIsPlaying():
     return mixer.music.get_busy()
 
+def setVolume(volume):
+    mixer.music.set_volume(volume)
+    
+def getVolume():
+    return mixer.music.get_volume()
+
 def getPreviousPoint():
     global currentTimingPoints
     return timingPoints.getPreviousPoint(currentTimingPoints, getPos())
@@ -51,9 +65,6 @@ def getPreviousPoint():
 def getNextPoint():
     global currentTimingPoints
     return timingPoints.getNextPoint(currentTimingPoints, getPos())
-
-def getNthPoint():
-    global currentTimingPoints
 
 def getPreviousBeat(divisor):
     global currentTimingPoints

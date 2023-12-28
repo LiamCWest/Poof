@@ -35,12 +35,13 @@ def update():
     checkInput()
     for button in toolbarButtons:
         button.update()
-    global lastPercent
+    global lastScrollbarValue
     scrollbar.update()
     songLen = songPlayer.getSongLength()
-    if scrollbar.perc != lastPercent: songPlayer.seek(songLen * scrollbar.perc)
-    else: scrollbar.moveTo(songPlayer.getPos()/songLen)
-    lastPercent = scrollbar.perc
+    
+    if scrollbar.getValue() != lastScrollbarValue: songPlayer.seek(songLen * scrollbar.getValue())
+    else: scrollbar.moveTo(songPlayer.getPos() / songLen)
+    lastScrollbarValue = scrollbar.getValue()
 
     if not posIn(input.mousePos.pos, (toolbarPos.x, toolbarPos.y, len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.2 + 100, buttonSize*1.2)):
         global lastMousePos, levelPos
@@ -150,5 +151,5 @@ toolbar = Polygon([(toolbarPos.x, toolbarPos.y),
                    (toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.2 + 100, toolbarPos.y), 
                    (toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.2 + 100, toolbarPos.y + buttonSize*1.2), 
                    (toolbarPos.x, toolbarPos.y + buttonSize*1.2)], (25, 25, 100))
-scrollbar = Scrollbar(toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.1, toolbarPos.y+buttonSize*1.2/2-10, 20, 100, "h", [i for i in range(100)], 20)
-lastPercent = 0
+scrollbar = Scrollbar(toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.1, toolbarPos.y+buttonSize*1.2/2-10, 20, 100, "h")
+lastScrollbarValue = 0

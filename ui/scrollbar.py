@@ -32,11 +32,8 @@ class Scrollbar:
     def moveTo(self, value):
         if self.snapToSteps:
             value = self.roundValue(value)
-            
-        if self.orientation == "v":
-            self.slider.y = self.y + value*(self.length-self.sliderWidth)
-        else:
-            self.slider.x = self.x + value*(self.length-self.sliderWidth)
+        
+        self.setValue(value)
     
     def update(self):
         self.slider.update()
@@ -53,6 +50,23 @@ class Scrollbar:
                 self.slider.y = sliderPos
             else:
                 self.slider.x = sliderPos
+    
+    def getPos(self):
+        if self.orientation == "v":
+            return self.slider.y
+        return self.slider.x
+    
+    def setPos(self, pos):
+        if self.orientation == "v":
+            self.slider.y = pos
+        else:
+            self.slider.x = pos
+            
+    def getValue(self):
+        return self.posToValue(self.getPos())
+    
+    def setValue(self, value):
+        self.setPos(self.valueToPos(value))
     
     def posToValue(self, pos):
         minPos = self.y if self.orientation == "v" else self.x

@@ -6,31 +6,47 @@ from logic.level.level import Level
 import input.input as input
 import logic.song.songPlayer as songPlayer
 from logic.song.timingPoints import TimingPoint, TimeSignature
+import json
+import hashlib
 
 tiles = None
 level = None
 
 def show():
-    global tiles, level
-    songPlayer.load(r"Song.MP3", [TimingPoint(2.108, 170, TimeSignature(4, 4))]) #Temp
-    
-    tiles = [
-        Tile(Vector2(0, 0), None, 0, songPlayer.getBeatByIndex(0, 1), "platform"),
-        Tile(Vector2(0, 1), None, songPlayer.getBeatByIndex(0, 1), songPlayer.getBeatByIndex(1, 1), "platform"),
-        Tile(Vector2(0, 2), None, songPlayer.getBeatByIndex(1, 1), songPlayer.getBeatByIndex(2, 1), "platform"),
-        Tile(Vector2(1, 2), None, songPlayer.getBeatByIndex(2, 1), songPlayer.getBeatByIndex(3, 1), "platform"),
-        Tile(Vector2(2, 2), None, songPlayer.getBeatByIndex(3, 1), songPlayer.getBeatByIndex(4, 1), "platform"),
-    ]
-    songPlayer.unload() #Temp
-    
-    level = Level(tiles, 1, 1, "Song.MP3", [TimingPoint(2.108, 170, TimeSignature(4, 4))], Vector2(0, 0), 0)
-    
     level.restart()
     
     update()
     
 def hide():
     gui.clear()
+
+def loadLevel(levelFile):
+    global level
+    songPlayer.unload()
+    level = getLevel(levelFile)
+
+def getLevel(levelFile):
+    with open(levelFile, 'r') as file:
+        saved_data = json.load(file)
+        loaded_data = saved_data['data']
+        saved_signature = saved_data['signature']
+        if not checkSignature(loaded_data, saved_signature):
+            print("Level file corrupted")
+            return None
+        tiles = loaded_data['tiles']
+        tilesV2 = [Tile(Vector2.from_tuple(tile[0]), tile[1], tile[2], tile[3], tile[4]) for tile in tiles]
+        appearLength = loaded_data['appearLength']
+        disappearLength = loaded_data['disappearLength']
+        songPath = loaded_data['songPath']
+        timingPointsVals = loaded_data['timingPoints']
+        timingPoints = [TimingPoint(timingPoint[0], timingPoint[1], TimeSignature(timingPoint[2], timingPoint[3])) for timingPoint in timingPointsVals]
+        playerStartPos = Vector2.from_tuple(loaded_data['playerStartPos'])
+        playerStartTime = loaded_data['playerStartTime']
+        level = Level(tilesV2, appearLength, disappearLength, songPath, timingPoints, playerStartPos, playerStartTime)
+        return level
+    
+def checkSignature(data, signature):
+    return hashlib.sha256(json.dumps(data).encode()).hexdigest() == signature
 
 def checkInput():
     if input.keyBindings["left"].justPressed:

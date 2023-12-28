@@ -13,7 +13,7 @@ import hashlib
 
 def addOption(option, func, i):
     global toolbarButtons
-    toolbarButtons.append(Button(option, toolbarPos.x + i*(buttonSize*1.1), toolbarPos.y, buttonSize, buttonSize, (100, 100, 255), (0, 0, 0), func, textSize = 15, scaler=1.1))
+    toolbarButtons.append(Button(option, toolbarPos.x + buttonSize*0.1 + i*(buttonSize*1.1), toolbarPos.y + buttonSize*0.1, buttonSize, buttonSize, (100, 100, 255), (0, 0, 0), func, textSize = 15, scaler=1.1))
 
 selected = None
 def select(option):
@@ -42,7 +42,7 @@ def update():
     else: scrollbar.moveTo(songPlayer.getPos()/songLen)
     lastPercent = scrollbar.perc
 
-    if not posIn(input.mousePos.pos, (toolbarPos.x, toolbarPos.y, len(toolbarOptions)*(buttonSize*1.1) +100, buttonSize*1.1)):
+    if not posIn(input.mousePos.pos, (toolbarPos.x, toolbarPos.y, len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.2 + 100, buttonSize*1.2)):
         global lastMousePos, levelPos
         if selected == "move" and input.mouseBindings["lmb"].down:
             currentMousePos = input.mousePos.pos
@@ -105,7 +105,9 @@ def show():
     
     update()
 
-def loadLevel(levelFile):
+def getLevel(levelFile):
+    global levelF
+    levelF = levelFile
     with open(levelFile, 'r') as file:
         saved_data = json.load(file)
         loaded_data = saved_data['data']
@@ -120,9 +122,15 @@ def loadLevel(levelFile):
         songPath = loaded_data['songPath']
         timingPointsVals = loaded_data['timingPoints']
         timingPoints = [TimingPoint(timingPoint[0], timingPoint[1], TimeSignature(timingPoint[2], timingPoint[3])) for timingPoint in timingPointsVals]
-        level = Level(tilesV2, appearLength, disappearLength, songPath, timingPoints)
-        print("Level loaded:", tilesV2, appearLength, disappearLength, songPath, timingPoints)
+        playerStartPos = Vector2.from_tuple(loaded_data['playerStartPos'])
+        playerStartTime = loaded_data['playerStartTime']
+        level = Level(tilesV2, appearLength, disappearLength, songPath, timingPoints, playerStartPos, playerStartTime)
         return level
+    
+def loadLevel(levelFile):
+    global level
+    songPlayer.unload()
+    level = getLevel(levelFile)
 
 def checkSignature(data, signature):
     return hashlib.sha256(json.dumps(data).encode('utf-8')).hexdigest() == signature
@@ -132,15 +140,15 @@ toolbarB = ["save", "load"]
 toolbarOptions = toolbarModes + toolbarB
 toolbarButtons = []
 toolbarFuncs = {
-    "save": lambda: level.save(),
+    "save": lambda: level.save(levelF),
     "load": lambda: loadLevel("level_data.json")
 }
 buttonSize = 55
 toolbarPos = Vector2(buttonSize*0.1, buttonSize*0.1)
 selected = "move"
 toolbar = Polygon([(toolbarPos.x, toolbarPos.y), 
-                   (toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + 100, toolbarPos.y), 
-                   (toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + 100, toolbarPos.y + buttonSize*1.1), 
-                   (toolbarPos.x, toolbarPos.y + buttonSize*1.1)], (25, 25, 100))
-scrollbar = Scrollbar(toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1), toolbarPos.y+buttonSize/2-10, 20, 100, "h")
+                   (toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.2 + 100, toolbarPos.y), 
+                   (toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.2 + 100, toolbarPos.y + buttonSize*1.2), 
+                   (toolbarPos.x, toolbarPos.y + buttonSize*1.2)], (25, 25, 100))
+scrollbar = Scrollbar(toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.1, toolbarPos.y+buttonSize*1.2/2-10, 20, 100, "h", [i for i in range(100)], 20)
 lastPercent = 0

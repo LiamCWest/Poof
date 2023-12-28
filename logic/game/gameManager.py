@@ -23,5 +23,7 @@ def start():
     gameLoop()
 
 def update():
+    input.updateFrameTimes()
+    
     gui.update()
     pygame.display.update()

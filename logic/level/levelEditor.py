@@ -45,7 +45,7 @@ def update():
 
     if not posIn(input.mousePos.pos, (toolbarPos.x, toolbarPos.y, len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.2 + 100, buttonSize*1.2)):
         global lastMousePos, levelPos
-        if selected == "move" and input.mouseBindings["lmb"].down:
+        if selected == "move" and input.mouseBindings["lmb"].pressed:
             currentMousePos = input.mousePos.pos
             levelPos -= (currentMousePos - lastMousePos) / level.tileSize
             lastMousePos = currentMousePos

@@ -126,12 +126,6 @@ def loadLevel(levelFile):
 def checkSignature(data, signature):
     return hashlib.sha256(json.dumps(data).encode('utf-8')).hexdigest() == signature
 
-def getGridPos(pos):
-    return (getRelGridPos(pos) - getRelGridPos(level.pos)).floor()
-
-def getRelGridPos(pos):
-    return Vector2(pos.x/level.tileSize.x, pos.y/level.tileSize.y)
-
 toolbarModes = ["move", "select", "platform", "wall", "rest"]
 toolbarB = ["save", "load"]
 toolbarOptions = toolbarModes + toolbarB

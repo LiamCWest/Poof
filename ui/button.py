@@ -49,12 +49,13 @@ class Button:
             self.emitter.update()
 
         if self.isOver(input.mousePos.pos):
-            if input.mouseBindings["lmb"].justPressed:# and not input.mouseBindings["lmb"].justReleased:
+            self.scale = self.scaler
+            if input.mouseBindings["lmb"].justPressed:
                 self.held = True
                 self.onClick()
-            self.scale = self.scaler
         else:
             self.scale = 1
-        if self.held and input.mouseBindings["lmb"].justReleased and not input.mouseBindings["lmb"].justPressed:
+                
+        if self.held and not input.mouseBindings["lmb"].pressed:
             self.held = False
             self.onRelease()

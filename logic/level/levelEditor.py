@@ -104,7 +104,9 @@ def show():
     
     update()
 
-def loadLevel(levelFile):
+def getLevel(levelFile):
+    global levelF
+    levelF = levelFile
     with open(levelFile, 'r') as file:
         saved_data = json.load(file)
         loaded_data = saved_data['data']
@@ -119,9 +121,15 @@ def loadLevel(levelFile):
         songPath = loaded_data['songPath']
         timingPointsVals = loaded_data['timingPoints']
         timingPoints = [TimingPoint(timingPoint[0], timingPoint[1], TimeSignature(timingPoint[2], timingPoint[3])) for timingPoint in timingPointsVals]
-        level = Level(tilesV2, appearLength, disappearLength, songPath, timingPoints)
-        print("Level loaded:", tilesV2, appearLength, disappearLength, songPath, timingPoints)
+        playerStartPos = Vector2.from_tuple(loaded_data['playerStartPos'])
+        playerStartTime = loaded_data['playerStartTime']
+        level = Level(tilesV2, appearLength, disappearLength, songPath, timingPoints, playerStartPos, playerStartTime)
         return level
+    
+def loadLevel(levelFile):
+    global level
+    songPlayer.unload()
+    level = getLevel(levelFile)
 
 def checkSignature(data, signature):
     return hashlib.sha256(json.dumps(data).encode('utf-8')).hexdigest() == signature
@@ -131,7 +139,7 @@ toolbarB = ["save", "load"]
 toolbarOptions = toolbarModes + toolbarB
 toolbarButtons = []
 toolbarFuncs = {
-    "save": lambda: level.save(),
+    "save": lambda: level.save(levelF),
     "load": lambda: loadLevel("level_data.json")
 }
 buttonSize = 55

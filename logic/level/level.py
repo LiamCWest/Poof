@@ -85,7 +85,7 @@ class Level:
                 return tile
         return None
             
-    def save(self):
+    def save(self, levelFile):
         noV2sTiles = []
         tileValues = [tile.toValues() for tile in self.tiles]
         for tile in tileValues:
@@ -101,11 +101,13 @@ class Level:
             "disappearLength": self.disappearLength,
             "songPath": self.songPath,
             "timingPoints": timingPoints,
+            "playerStartPos": self.playerStartPos.toTuple(),
+            "playerStartTime": self.playerStartTime
             }
         
         signature = signData(levelData)
         
-        with open('level_data.json', 'w') as file:
+        with open(levelFile, 'w') as file:
             json.dump({"data": levelData, "signature": signature}, file)
             
     def screenPosToTilePos(self, screenPos, topLeftPos):

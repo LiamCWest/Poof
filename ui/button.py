@@ -53,11 +53,9 @@ class Button:
             if input.mouseBindings["lmb"].justPressed:
                 self.held = True
                 self.onClick()
-            if self.held and input.mouseBindings["lmb"].justReleased:
-                self.held = False
-                self.onRelease()
         else:
             self.scale = 1
-            if self.held:
-                self.held = False
-                self.onRelease()
+                
+        if self.held and not input.mouseBindings["lmb"].pressed:
+            self.held = False
+            self.onRelease()

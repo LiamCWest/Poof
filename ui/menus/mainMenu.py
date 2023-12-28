@@ -38,5 +38,5 @@ objects = [Button("Start", 100, 175, 100, 50, (0, 255, 0), (255, 0, 0), startGam
            Button("Settings", 100, 250, 100, 50, (0, 255, 0), (255, 0 ,0), settings),
            Button("Level Editor", 100, 325, 100, 50, (0, 255, 0), (255, 0, 0), levelEditor),
            Button("Quit", 100, 400, 100, 50, (0, 255, 0), (255, 0, 0), quit),
-           Scrollbar(400, 50, 10, 200, "h", [0,1,2,3])]
+           Scrollbar(400, 50, 10, 200, "h", None, 3, True)]
 texts = [Text(title, 200, 100, (255, 0, 0), 50)]

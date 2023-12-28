@@ -15,6 +15,7 @@ def addOption(option, func, i):
     global toolbarButtons
     toolbarButtons.append(Button(option, toolbarPos.x + i*(buttonSize*1.1), toolbarPos.y, buttonSize, buttonSize, (100, 100, 255), (0, 0, 0), func, textSize = 15, scaler=1.1))
 
+selected = None
 def select(option):
     global selected
     toolbarButtons[toolbarModes.index(selected)].color = (100, 100, 255)
@@ -38,7 +39,7 @@ def update():
     scrollbar.update()
     songLen = songPlayer.getSongLength()
     if scrollbar.perc != lastPercent: songPlayer.seek(songLen * scrollbar.perc)
-    else: scrollbar.move(songPlayer.getPos()/songLen)
+    else: scrollbar.moveTo(songPlayer.getPos()/songLen)
     lastPercent = scrollbar.perc
 
     if not posIn(input.mousePos.pos, (toolbarPos.x, toolbarPos.y, len(toolbarOptions)*(buttonSize*1.1) +100, buttonSize*1.1)):
@@ -141,5 +142,5 @@ toolbar = Polygon([(toolbarPos.x, toolbarPos.y),
                    (toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + 100, toolbarPos.y), 
                    (toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + 100, toolbarPos.y + buttonSize*1.1), 
                    (toolbarPos.x, toolbarPos.y + buttonSize*1.1)], (25, 25, 100))
-scrollbar = Scrollbar(toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1), toolbarPos.y+buttonSize/2-10, 20, 100, "h", [i for i in range(100)], 20)
+scrollbar = Scrollbar(toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1), toolbarPos.y+buttonSize/2-10, 20, 100, "h")
 lastPercent = 0

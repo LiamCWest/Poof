@@ -50,5 +50,5 @@ class Scrollbar:
     def valUpdate(self):
         barPos = self.bar.y if self.orientation == "v" else self.bar.x
         pos = self.y if self.orientation == "v" else self.x
-        self.perc = round((barPos-pos)/(self.length-self.valueSize), 1)
+        self.perc = round((barPos-pos)/(self.length-self.valueSize), 4)
         self.value = round(self.perc * (len(self.values)-1))

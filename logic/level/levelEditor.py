@@ -13,7 +13,7 @@ import hashlib
 
 def addOption(option, func, i):
     global toolbarButtons
-    toolbarButtons.append(Button(option, toolbarPos.x + i*(buttonSize*1.1), toolbarPos.y, buttonSize, buttonSize, (100, 100, 255), (0, 0, 0), func, textSize = 15, scaler=1.1))
+    toolbarButtons.append(Button(option, toolbarPos.x + buttonSize*0.1 + i*(buttonSize*1.1), toolbarPos.y + buttonSize*0.1, buttonSize, buttonSize, (100, 100, 255), (0, 0, 0), func, textSize = 15, scaler=1.1))
 
 def select(option):
     global selected
@@ -41,7 +41,7 @@ def update():
     else: scrollbar.move(songPlayer.getPos()/songLen)
     lastPercent = scrollbar.perc
 
-    if not posIn(input.mousePos.pos, (toolbarPos.x, toolbarPos.y, len(toolbarOptions)*(buttonSize*1.1) +100, buttonSize*1.1)):
+    if not posIn(input.mousePos.pos, (toolbarPos.x, toolbarPos.y, len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.2 + 100, buttonSize*1.2)):
         global lastMousePos, levelPos
         if selected == "move" and input.mouseBindings["lmb"].down:
             currentMousePos = input.mousePos.pos
@@ -144,8 +144,8 @@ buttonSize = 55
 toolbarPos = Vector2(buttonSize*0.1, buttonSize*0.1)
 selected = "move"
 toolbar = Polygon([(toolbarPos.x, toolbarPos.y), 
-                   (toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + 100, toolbarPos.y), 
-                   (toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + 100, toolbarPos.y + buttonSize*1.1), 
-                   (toolbarPos.x, toolbarPos.y + buttonSize*1.1)], (25, 25, 100))
-scrollbar = Scrollbar(toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1), toolbarPos.y+buttonSize/2-10, 20, 100, "h", [i for i in range(100)], 20)
+                   (toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.2 + 100, toolbarPos.y), 
+                   (toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.2 + 100, toolbarPos.y + buttonSize*1.2), 
+                   (toolbarPos.x, toolbarPos.y + buttonSize*1.2)], (25, 25, 100))
+scrollbar = Scrollbar(toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.1, toolbarPos.y+buttonSize*1.2/2-10, 20, 100, "h", [i for i in range(100)], 20)
 lastPercent = 0

@@ -7,7 +7,7 @@ import logic.song.songPlayer as songPlayer
 import graphics.gui as gui
 from utils.polygon import Polygon
 from ui.scrollbar import Scrollbar
-from logic.song.timingPoints import TimingPoint, TimeSignature
+from logic.song.timingPoints import TimingPoint, TimeSignature, getNextBeat
 import json
 import hashlib
 
@@ -29,6 +29,21 @@ def checkInput():
             songPlayer.pause()
         else:
             songPlayer.unpause()
+            
+    if input.keyBindings["moveTileLeft"].justPressed:
+        moveTile(selectedTile, Vector2(-1, 0))
+    if input.keyBindings["moveTileRight"].justPressed:
+        moveTile(selectedTile, Vector2(1, 0))
+    if input.keyBindings["moveTileUp"].justPressed:
+        moveTile(selectedTile, Vector2(0, -1))
+    if input.keyBindings["moveTileDown"].justPressed:
+        moveTile(selectedTile, Vector2(0, 1))
+
+def moveTile(pos, delta):
+    global level, selectedTile
+    tile = level.getTileByPos(pos)
+    tile.pos += delta
+    selectedTile += delta
 
 levelPos = Vector2(0, 0)
 def update():
@@ -43,7 +58,7 @@ def update():
     else: scrollbar.moveTo(songPlayer.getPos() / songLen)
     lastScrollbarValue = scrollbar.getValue()
 
-    if not posIn(input.mousePos.pos, (toolbarPos.x, toolbarPos.y, len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.2 + 100, buttonSize*1.2)):
+    if not posIn(input.mousePos.pos, (toolbarPos.x, toolbarPos.y, toolbar.getWidth(), toolbar.getHeight())):
         global lastMousePos, levelPos
         if selected == "move" and input.mouseBindings["lmb"].down:
             currentMousePos = input.mousePos.pos
@@ -56,15 +71,11 @@ def update():
             global selectedTile
             selectedTile = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
         
-        if selected == "platform" and input.mouseBindings["lmb"].justPressed:
-            level.addTile(Tile(level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos), None, songPlayer.getPos(), songPlayer.getPos(), "platform"))
-        
-        if selected == "wall" and input.mouseBindings["lmb"].justPressed:
-            level.addTile(Tile(level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos), None, songPlayer.getPos(), songPlayer.getPos(), "wall"))
-            
-        if selected == "rest" and input.mouseBindings["lmb"].justPressed:
-            level.addTile(Tile(level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos), None, songPlayer.getPos(), songPlayer.getPos(), "rest"))
-    
+        if selected in ["platform", "wall", "rest"] and input.mouseBindings["lmb"].down:
+            nextBeat = getNextBeat(songPlayer.currentTimingPoints,songPlayer.getPos(), 1)
+            level.addTile(Tile(level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos), None, nextBeat, nextBeat, selected))
+            selectedTile = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
+
 def posIn(pos, rect):
     return pos.x > rect[0] and pos.x < rect[0] + rect[2] and pos.y > rect[1] and pos.y < rect[1] + rect[3]
     
@@ -147,9 +158,6 @@ toolbarFuncs = {
 buttonSize = 55
 toolbarPos = Vector2(buttonSize*0.1, buttonSize*0.1)
 selected = "move"
-toolbar = Polygon([(toolbarPos.x, toolbarPos.y), 
-                   (toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.2 + 100, toolbarPos.y), 
-                   (toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.2 + 100, toolbarPos.y + buttonSize*1.2), 
-                   (toolbarPos.x, toolbarPos.y + buttonSize*1.2)], (25, 25, 100))
-scrollbar = Scrollbar(toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.1, toolbarPos.y+buttonSize*1.2/2-10, 20, 100, "h")
+scrollbar = Scrollbar(toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.1, toolbarPos.y+buttonSize*1.2/2-5, 10, 195, "h", sliderWidth=25)
+toolbar = Polygon.fromRect((toolbarPos.x, toolbarPos.y, len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.2 + scrollbar.length, buttonSize*1.2), (25, 25, 100))
 lastScrollbarValue = 0

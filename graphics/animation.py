@@ -34,6 +34,12 @@ class Animation:
         else:
             self.tree.add(intervaltree.Interval(event.endTime, math.nextafter(event.startTime, float("inf")), (event.callback, event.data)))
         
+    def removeEvent(self, event):
+        if event.startTime <= event.endTime:
+            self.tree.remove(intervaltree.Interval(event.startTime, math.nextafter(event.endTime, float("inf")), (event.callback, event.data)))
+        else:
+            self.tree.remove(intervaltree.Interval(event.endTime, math.nextafter(event.startTime, float("inf")), (event.callback, event.data)))
+        
     def getEventsAt(self, time):
         return self.tree.at(time)
         

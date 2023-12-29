@@ -49,7 +49,19 @@ class Polygon:
             x += point[0]
             y += point[1]
         return Vector2(x / len(self.points), y / len(self.points))
-        
+
+    def getWidth(self):
+        #width of polygon
+        return max(self.points, key=lambda x: x[0])[0] - min(self.points, key=lambda x: x[0])[0]
+    
+    def getHeight(self):
+        #height of polygon
+        return max(self.points, key=lambda x: x[1])[1] - min(self.points, key=lambda x: x[1])[1]
+    
+    @classmethod
+    def fromRect(cls, rect, color = (0,0,0)):
+        #create polygon from rect
+        return cls([(rect[0], rect[1]), (rect[0] + rect[2], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (rect[0], rect[1] + rect[3])], color)        
         
 class Edge:
     def __init__(self, p1, p2):

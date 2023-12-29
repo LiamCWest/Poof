@@ -70,7 +70,7 @@ def posIn(pos, rect):
     
 def draw():
     global levelPos
-    level.draw(gui.screen, songPlayer.getPos(), levelPos, level.tileSize, False, True)
+    level.draw(gui.screen, songPlayer.getPos(), levelPos, level.tileSize, drawGrid=True)
     toolbar.draw(gui.screen)
     for button in toolbarButtons:
         button.draw(gui.screen)

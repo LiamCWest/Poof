@@ -14,9 +14,31 @@ class Player:
         self.moves = [] #Tuple of (diff, time)
         self.deathTime = None
         
-    def draw(self, win): 
+    def draw(self, win, pos, visiblePos, time): 
         size = Vector2(50, 50)
-        img = images.images["player"]
+        
+        if len(self.moves) == 0:
+            img = images.images["player_down"]
+        else:
+            lastMove = self.moves[binarySearch(self.moves, time, lambda x, y: x - y[1])][0]
+            if pos != visiblePos: #moving
+                if lastMove == Vector2(-1, 0):
+                    img = images.images["player_left_moving"]
+                elif lastMove == Vector2(0, -1):
+                    img = images.images["player_up_moving"]
+                elif lastMove == Vector2(1, 0):
+                    img = images.images["player_right_moving"]
+                else:
+                    img = images.images["player_down_moving"]
+            else:
+                if lastMove == Vector2(-1, 0):
+                    img = images.images["player_left"]
+                elif lastMove == Vector2(0, -1):
+                    img = images.images["player_up"]
+                elif lastMove == Vector2(1, 0):
+                    img = images.images["player_right"]
+                else:
+                    img = images.images["player_down"]
         
         win.blit(pygame.transform.scale(img, size.toTuple()), (size * self.offset).toTuple())
         

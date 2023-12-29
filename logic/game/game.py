@@ -60,10 +60,6 @@ def checkInput():
         
     if input.keyBindings["down"].justPressed:
         level.player.move(Vector2(0, 1), input.keyBindings["down"].songTimeLastPressed)
-        
-    if input.keyBindings["dash"].justPressed:
-        level.restart(0)
-        level.draw(gui.screen, 0)
 
 def update():
     checkInput()
@@ -72,11 +68,11 @@ def draw():
     timeSourceTime = songPlayer.getPos()
     
     playerPos = level.player.calculatePos(level, timeSourceTime)
+    visiblePos = level.player.calculateVisiblePos(level, timeSourceTime)
     if isinstance(playerPos, Vector2):
-        level.draw(gui.screen, timeSourceTime, level.player.calculateVisiblePos(level, timeSourceTime) - Player.offset, level.tileSize, True, False)
-        level.player.draw(gui.screen)
+        level.draw(gui.screen, timeSourceTime, visiblePos - Player.offset, level.tileSize, drawPlayer=True, playerPos=playerPos, visiblePos=visiblePos)
     else:
         if playerPos[1] + level.deathTimeBuffer < timeSourceTime: #A buffer so you don't die unfairly if you have input delay
             level.restart()
         else:
-            level.draw(gui.screen, timeSourceTime, level.player.calculateVisiblePos(level, timeSourceTime) - Player.offset, level.tileSize, False, False)
+            level.draw(gui.screen, timeSourceTime, visiblePos - Player.offset, level.tileSize, False, False)

@@ -10,6 +10,21 @@ def getRealTime():
     ticks = pygame.time.get_ticks()
     return ticks / 1000 if ticks != 0 else None
 
+frameTime = None
+oldFrameTime = None
+def updateFrameTimes():
+    global frameTime, oldFrameTime
+    oldFrameTime = frameTime
+    frameTime = getRealTime()
+    
+def getFrameTime():
+    global frameTime
+    return frameTime
+
+def getOldFrameTime():
+    global oldFrameTime
+    return oldFrameTime
+
 class Event: #generic event
     def __init__(self):
         self.songTimeLastInvoked = None
@@ -20,6 +35,8 @@ class Event: #generic event
     def getJustInvoked(self):
         toReturn = self.__justInvoked
         self.__justInvoked = False
+        if self.realTimeLastInvoked is None or getOldFrameTime() is None or self.realTimeLastInvoked < getOldFrameTime():
+            return False
         return toReturn
     
     def setJustInvoked(self, val):
@@ -48,7 +65,6 @@ class ButtonEvent: #keyboard keys and mouse buttons
     
     justPressed = property(lambda self: self.__pressEvent.justInvoked, lambda self, val: self.__pressEvent.setJustInvoked(val))
     justReleased = property(lambda self: self.__releaseEvent.justInvoked, lambda self, val: self.__releaseEvent.setJustInvoked(val))
-    down = property(lambda self: self.pressed)
     
     def press(self):
         self.pressed = True

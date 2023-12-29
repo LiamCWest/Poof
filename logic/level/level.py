@@ -65,11 +65,11 @@ class Level:
         songPlayer.play()
         self.tileAnim.restart(songPlayer.getPos())        
     
-    def draw(self, win, timeSourceTime, topLeftPos, tileSize, drawPlayer = True, drawGrid = False, gridLineThickness = 2):
+    def draw(self, win, timeSourceTime, topLeftPos, tileSize, drawPlayer = False, playerPos = None, visiblePos = None, drawGrid = False, gridLineThickness = 2):
         self.tileAnim.updateTime(timeSourceTime, win, topLeftPos, tileSize)
         
         if self.player is not None and drawPlayer:
-            self.player.draw(win)
+            self.player.draw(win, playerPos, visiblePos, timeSourceTime)
         
         if drawGrid:
             ltHalf = gridLineThickness / 2

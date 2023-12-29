@@ -6,7 +6,7 @@ from graphics.animation import *
 
 class Player:
     offset = Vector2(5, 4)
-    moveTime = 0.1
+    moveTime = 0.2
     def __init__(self, startPos, startTime):
         self.startPos = startPos
         self.startTime = startTime
@@ -102,6 +102,6 @@ class Player:
             if isinstance(lastMovePos, tuple):
                 lastMovePos = lastMovePos[0]
         
-        x = easeOutPow(lastMovePos.x, currentPos.x, lastMoveTime, lastMoveTime + self.moveTime, 2, min(searchTime, lastMoveTime + self.moveTime))
-        y = easeOutPow(lastMovePos.y, currentPos.y, lastMoveTime, lastMoveTime + self.moveTime, 2, min(searchTime, lastMoveTime + self.moveTime))
+        x = easeOutPow(lastMovePos.x, currentPos.x, lastMoveTime, lastMoveTime + self.moveTime, 3.5, min(searchTime, lastMoveTime + self.moveTime))
+        y = easeOutPow(lastMovePos.y, currentPos.y, lastMoveTime, lastMoveTime + self.moveTime, 3.5, min(searchTime, lastMoveTime + self.moveTime))
         return Vector2(x, y)

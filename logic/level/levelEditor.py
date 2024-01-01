@@ -127,33 +127,12 @@ def show():
     lastMousePos = input.mousePos.pos
     
     update()
-
-def getLevel(levelFile):
-    global levelF
-    levelF = levelFile
-    with open(levelFile, 'r') as file:
-        saved_data = json.load(file)
-        loaded_data = saved_data['data']
-        saved_signature = saved_data['signature']
-        if not checkSignature(loaded_data, saved_signature):
-            print("Level file corrupted")
-            return None
-        tiles = loaded_data['tiles']
-        tilesV2 = [Tile(Vector2.from_tuple(tile[0]), tile[1], tile[2], tile[3], tile[4]) for tile in tiles]
-        appearLength = loaded_data['appearLength']
-        disappearLength = loaded_data['disappearLength']
-        songPath = loaded_data['songPath']
-        timingPointsVals = loaded_data['timingPoints']
-        timingPoints = [TimingPoint(timingPoint[0], timingPoint[1], TimeSignature(timingPoint[2], timingPoint[3])) for timingPoint in timingPointsVals]
-        playerStartPos = Vector2.from_tuple(loaded_data['playerStartPos'])
-        playerStartTime = loaded_data['playerStartTime']
-        level = Level(tilesV2, appearLength, disappearLength, songPath, timingPoints, playerStartPos, playerStartTime)
-        return level
     
 def loadLevel(levelFile):
-    global level
+    global level, levelF
+    levelF = levelFile
     songPlayer.unload()
-    level = getLevel(levelFile)
+    level = Level.fromFile(levelFile)
 
 def checkSignature(data, signature):
     return hashlib.sha256(json.dumps(data).encode('utf-8')).hexdigest() == signature

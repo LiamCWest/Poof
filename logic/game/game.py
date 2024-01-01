@@ -6,6 +6,7 @@ from logic.level.level import Level
 import input.input as input
 import logic.song.songPlayer as songPlayer
 from logic.song.timingPoints import TimingPoint, TimeSignature
+from ui.text import Text
 import json
 import hashlib
 
@@ -65,9 +66,11 @@ def update():
     checkInput()
     
 def draw():
+    global accText
     timeSourceTime = songPlayer.getPos()
     
     playerState = level.player.calculateState(level, timeSourceTime)
+    print(playerState.acc)
     
     if playerState.deathTime is None:
         level.draw(gui.screen, timeSourceTime, playerState.visiblePos - Player.offset, level.tileSize, drawPlayer=True, playerState=playerState)
@@ -75,3 +78,8 @@ def draw():
         level.draw(gui.screen, timeSourceTime, playerState.visiblePos - Player.offset, level.tileSize)
     else:
         level.restart()
+    
+    accText.text = f"{int(playerState.acc * 1000)}ms"
+    accText.draw()
+        
+accText = Text("0ms", 100, 100)

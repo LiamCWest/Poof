@@ -1,12 +1,11 @@
-class test:
-    def __init__(self):
-        self.val = 3
-        
-    def returnVal(self):
-        def inner():
-            return self.val
-        
-        return inner()
-    
-t = test()
-print(t.returnVal())
+def func():
+    try:
+        func.x += 1
+    except:
+        func.x = 0
+    return func.x
+
+print(func())
+print(func())
+print(func())
+print(func())

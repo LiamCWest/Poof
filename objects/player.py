@@ -11,7 +11,7 @@ class PlayerState:
         self.visiblePos = None
         self.lastMove = None
         self.countedMovesMade = None
-        self.averageAcc = None
+        self.acc = None
         self.deathTime = None
 
 class Player:
@@ -30,32 +30,24 @@ class Player:
         
         size = Vector2(50, 50)
         
-        pos = state.pos
-        visiblePos = state.visiblePos
-        time = state.time
-        
-        if len(self.moves) == 0:
+        if state.lastMove is None:
             img = images.images["player_down"]
         else:
-            lastMove = self.moves[binarySearch(self.moves, time, lambda x, y: x - y[1])][0]
-            if pos != visiblePos: #moving
-                if lastMove == Vector2(-1, 0):
-                    img = images.images["player_left_moving"]
-                elif lastMove == Vector2(0, -1):
-                    img = images.images["player_up_moving"]
-                elif lastMove == Vector2(1, 0):
-                    img = images.images["player_right_moving"]
-                else:
-                    img = images.images["player_down_moving"]
+            if state.pos != state.visiblePos: #moving
+                imgs = {
+                    Vector2(-1, 0): images.images["player_left_moving"],
+                    Vector2(0, -1): images.images["player_up_moving"],
+                    Vector2(1, 0): images.images["player_right_moving"],
+                    Vector2(0, 1): images.images["player_down_moving"]
+                }
             else:
-                if lastMove == Vector2(-1, 0):
-                    img = images.images["player_left"]
-                elif lastMove == Vector2(0, -1):
-                    img = images.images["player_up"]
-                elif lastMove == Vector2(1, 0):
-                    img = images.images["player_right"]
-                else:
-                    img = images.images["player_down"]
+                imgs = {
+                    Vector2(-1, 0): images.images["player_left"],
+                    Vector2(0, -1): images.images["player_up"],
+                    Vector2(1, 0): images.images["player_right"],
+                    Vector2(0, 1): images.images["player_down"]
+                }
+            img = imgs[state.lastMove[0]]
         
         win.blit(pygame.transform.scale(img, size.toTuple()), (size * self.offset).toTuple())
         
@@ -64,71 +56,20 @@ class Player:
         
     def die(self, time):
         self.deathTime = time
-        
-    def calculatePos(self, level, searchTime): #Calculates the position that the player would be at searchTime. Returns a pos if the player lives or a (pos, time) if the player dies
-        if searchTime < self.startTime:
-            return None
-        
-        currentPos = self.startPos.copy()
-        currentTile = None
-        
-        tile = level.getTileAt(currentPos, self.startTime)
-        if tile is None:
-            return currentPos, self.startTime #If there's no tile at the start then you die at the start
-        currentTile = tile #Otherwise that's the tile you're on
 
-        for move in self.moves:
-            moveTime = move[1]
-            
-            if moveTime > searchTime:
-                return currentPos #If you've reached the time you want to, then you are alive and at your current pos
-            
-            tile = level.getTileAt(currentPos, moveTime)
-            if tile != currentTile:
-                return currentPos, currentTile.disappearTime + level.disappearLength #If you're not on the same tile as before when you start moving, then you died
-            
-            currentPos += move[0] #Make the move you were trying to make
-            tile = level.getTileAt(currentPos, moveTime)
-            if tile is None:
-                return currentPos, moveTime #If you move to nothing then you die at the time of your move
-            currentTile = tile #Otherwise that's the tile you're on
-            
-        tile = level.getTileAt(currentPos, searchTime) #If your last move was made before the search time
-        if tile != currentTile:
-            return currentPos, currentTile.disappearTime + level.disappearLength #If you're not on the same tile as before, then you died
-        return currentPos
-    
-    def calculateVisiblePos(self, level, searchTime): #Calculates the visible position of the player at searchTime
-        if searchTime < self.startTime:
-            return None
-        
-        currentPos = self.calculatePos(level, searchTime)
-        if isinstance(currentPos, tuple):
-            currentPos = currentPos[0]
-        
-        moveJustMadeIndex = binarySearch(self.moves, searchTime, lambda x, y: x - y[1])
-        if moveJustMadeIndex is None or moveJustMadeIndex < 0:
-            lastMoveTime = 0
-            lastMovePos = self.startPos
-        elif moveJustMadeIndex == 0:
-            lastMoveTime = self.moves[moveJustMadeIndex][1]
-            lastMovePos = self.startPos
-        elif moveJustMadeIndex > 0:
-            lastMoveTime = self.moves[moveJustMadeIndex][1]
-            lastMovePos = self.calculatePos(level, self.moves[moveJustMadeIndex - 1][1])
-            if isinstance(lastMovePos, tuple):
-                lastMovePos = lastMovePos[0]
-        
-        x = easeOutPow(lastMovePos.x, currentPos.x, lastMoveTime, lastMoveTime + self.moveLength, 3.5, min(searchTime, lastMoveTime + self.moveLength))
-        y = easeOutPow(lastMovePos.y, currentPos.y, lastMoveTime, lastMoveTime + self.moveLength, 3.5, min(searchTime, lastMoveTime + self.moveLength))
-        return Vector2(x, y)
-    
     def calculateState(self, level, searchTime):
         if searchTime < self.startTime:
             return None #cant have a state if the player isnt in the level yet
         
-        def calculatePosMovesDeathTime(state):
+        def calculateAcc(currentAcc, movesMade, tileTime, time):
+            thisAcc = abs(tileTime - time)
+            return (currentAcc * (movesMade - 1) + thisAcc) / movesMade #weighted average
+        
+        def addPosMovesDeathTimeAcc(state):
+            tilesMovedTo = set() #So you cant get acc counted twice off the same tile
+            
             state.countedMovesMade = 0
+            state.acc = 0
             
             state.pos = self.startPos.copy()
             currentTile = None
@@ -158,7 +99,13 @@ class Player:
                 if tile is None:
                     state.deathTime = moveTime #If you move to nothing then you die at the time of your move
                     return
+                
                 currentTile = tile #Otherwise that's the tile you're on
+                
+                tileTuple = (tile.pos.x, tile.appearedTime, tile.disappearTime)
+                if tileTuple not in tilesMovedTo:
+                    state.countedMovesMade += 1
+                    state.acc = calculateAcc(state.acc, state.countedMovesMade, tile.appearedTime, moveTime)
                 
             tile = level.getTileAt(state.pos, searchTime) #If your last move was made before the search time
             if tile != currentTile:
@@ -175,6 +122,6 @@ class Player:
         
         state = PlayerState()
         state.time = searchTime
-        calculatePosMovesDeathTime(state)
+        addPosMovesDeathTimeAcc(state)
         addVisiblePos(state)
         return state

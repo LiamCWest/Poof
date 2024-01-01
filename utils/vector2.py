@@ -41,21 +41,11 @@ class Vector2:
     def __ne__(self, other):
         return self.x != other.x or self.y != other.y
     
-    #all don't make sense for vector2s
-    '''def __lt__(self, other):
-        return Vector2(self.x < other.x, self.y < other.y)
-    
-    def __le__(self, other):
-        return Vector2(self.x <= other.x, self.y <= other.y)
-    
-    def __gt__(self, other):
-        return Vector2(self.x > other.x, self.y > other.y)
-    
-    def __ge__(self, other):
-        return Vector2(self.x >= other.x, self.y >= other.y)'''
-    
     def __str__(self):
         return f"Vector2({self.x}, {self.y})"
+    
+    def __hash__(self):
+        return hash(self.toTuple())
     
     def copy(self):
         return Vector2(self.x, self.y)

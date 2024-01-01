@@ -67,12 +67,11 @@ def update():
 def draw():
     timeSourceTime = songPlayer.getPos()
     
-    playerPos = level.player.calculatePos(level, timeSourceTime)
-    visiblePos = level.player.calculateVisiblePos(level, timeSourceTime)
-    if isinstance(playerPos, Vector2):
-        level.draw(gui.screen, timeSourceTime, visiblePos - Player.offset, level.tileSize, drawPlayer=True, playerPos=playerPos, visiblePos=visiblePos)
+    playerState = level.player.calculateState(level, timeSourceTime)
+    
+    if playerState.deathTime is None:
+        level.draw(gui.screen, timeSourceTime, playerState.visiblePos - Player.offset, level.tileSize, drawPlayer=True, playerState=playerState)
+    elif playerState.deathTime + level.deathTimeBuffer >= timeSourceTime:
+        level.draw(gui.screen, timeSourceTime, playerState.visiblePos - Player.offset, level.tileSize)
     else:
-        if playerPos[1] + level.deathTimeBuffer < timeSourceTime: #A buffer so you don't die unfairly if you have input delay
-            level.restart()
-        else:
-            level.draw(gui.screen, timeSourceTime, visiblePos - Player.offset, level.tileSize, False, False)
+        level.restart()

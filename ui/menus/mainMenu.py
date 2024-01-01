@@ -41,8 +41,8 @@ def levelEditor():
     levelMenu.setLoad(lambda level: load(level))
     gui.setScreen("levelMenu")
     def load(level):
-        gui.setScreen("levelEditor")
         LE.loadLevel(level)
+        gui.setScreen("levelEditor")
         
 title = "Main Menu"
 objects = [Button("Start", 100, 175, 100, 50, (0, 255, 0), (255, 0, 0), startGame, particles=True),

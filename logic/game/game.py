@@ -14,8 +14,8 @@ tiles = None
 level = None
 
 def show():
+    global level
     level.restart()
-    
     update()
     
 def hide():
@@ -50,7 +50,6 @@ def draw():
     timeSourceTime = songPlayer.getPos()
     
     playerState = level.player.calculateState(level, timeSourceTime)
-    
     if playerState.deathTime is None:
         level.draw(gui.screen, timeSourceTime, playerState.visiblePos - Player.offset, level.tileSize, drawPlayer=True, playerState=playerState)
     elif playerState.deathTime + level.deathTimeBuffer >= timeSourceTime:

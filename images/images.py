@@ -26,7 +26,6 @@ images = {
 
 def init():
     global images
-    print("initiated")
     images["debug"] = loadImage("debug.png")
     images["platform"] = loadImage("platform.png")
     

@@ -36,7 +36,6 @@ class Animation:
             self.tree.add(self.toInterval(event))
         
     def removeEvent(self, event):
-        print(len(self.tree.overlap(event.startTime, event.endTime)))
         if event.startTime <= event.endTime:
             self.tree.remove(self.toInterval(event))
         
@@ -80,7 +79,6 @@ class Animation:
     def skipToTime(self, animTime, timeSourceTime):
         self.animTime = animTime
         self.timeSourceStartTime = timeSourceTime - animTime
-        print(self.animTime, self.timeSourceStartTime)
     
     def restart(self, timeSourceTime):
         self.skipToTime(0, timeSourceTime)

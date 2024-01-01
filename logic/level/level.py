@@ -41,10 +41,20 @@ class Level:
     def addTile(self, tile):
         self.tiles.append(tile)
         self.tileAnim.addEvent(self.createEventFromTile(tile))
+        
+    def removeTile(self, tile):
+        self.tiles.remove(tile)
+        self.tileAnim.removeEvent(self.createEventFromTile(tile))
     
     def createPlayer(self, playerStartPos, playerStartTime):
         if playerStartPos is not None and playerStartTime is not None:
             return Player(playerStartPos, playerStartTime)
+        return None
+    
+    def getTileByPos(self, pos):
+        for tile in self.tiles:
+            if tile.pos == pos:
+                return tile
         return None
     
     def restart(self):

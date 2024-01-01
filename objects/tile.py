@@ -71,3 +71,6 @@ class Tile:
         
         pos = ((self.pos - topLeftPos) * tileSize + tileSize.multiply(1 - scale).divide(2)).toTuple()
         win.blit(pygame.transform.scale(self.getTypeImage(), tileSize.multiply(scale).toTuple()), pos)
+        
+    def copy(self):
+        return Tile(self.pos, self.color, self.appearedTime, self.disappearTime, self.type)

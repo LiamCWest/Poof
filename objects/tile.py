@@ -1,7 +1,5 @@
 from images import images
 import pygame
-from utils.vector2 import Vector2
-from objects.player import Player
 
 class Tile:
     def __init__(self, pos, color, appearedTime = None, disappearTime = None, type = None):

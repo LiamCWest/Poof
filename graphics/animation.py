@@ -13,7 +13,7 @@ class Animation:
         intervals = []
         for i in events:
             if i.startTime <= i.endTime:
-                intervals.append(intervaltree.Interval(i.startTime, math.nextafter(i.endTime, float("inf")), (i.callback, i.data)))
+                intervals.append(self.toInterval(i))
         self.tree = intervaltree.IntervalTree(intervals)
         
         self.timeSourceStartTime = float(timeSourceTime)
@@ -36,6 +36,7 @@ class Animation:
             self.tree.add(self.toInterval(event))
         
     def removeEvent(self, event):
+        print(len(self.tree.overlap(event.startTime, event.endTime)))
         if event.startTime <= event.endTime:
             self.tree.remove(self.toInterval(event))
         

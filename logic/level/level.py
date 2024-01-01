@@ -15,7 +15,6 @@ class Level:
         self.win = None
         self.appearLength = appearLength
         self.disappearLength = disappearLength
-        self.tiles = tiles
         
         tileEvents = [self.createEventFromTile(tile) for tile in tiles]
         self.tileAnim = Animation(tileEvents, 0)
@@ -39,22 +38,17 @@ class Level:
         return AnimEvent(startTime, endTime, callback, data)
     
     def addTile(self, tile):
-        self.tiles.append(tile)
         self.tileAnim.addEvent(self.createEventFromTile(tile))
         
-    def removeTile(self, tile):
-        self.tiles.remove(tile)
-        self.tileAnim.removeEvent(self.createEventFromTile(tile))
+    def removeTileAt(self, pos, levelTime):
+        for i in self.tileAnim.tree.at(levelTime):
+            tile = i.data[1]
+            if tile.pos == pos:
+                self.tileAnim.tree.remove(i)
     
     def createPlayer(self, playerStartPos, playerStartTime):
         if playerStartPos is not None and playerStartTime is not None:
             return Player(playerStartPos, playerStartTime)
-        return None
-    
-    def getTileByPos(self, pos):
-        for tile in self.tiles:
-            if tile.pos == pos:
-                return tile
         return None
     
     def restart(self):
@@ -96,14 +90,10 @@ class Level:
         return None
             
     def save(self, levelFile):
-        noV2sTiles = []
-        tileValues = [tile.toValues() for tile in self.tiles]
-        for tile in tileValues:
-            noV2sTiles.append([tile[0].toTuple(), tile[1], tile[2], tile[3], tile[4]])
+        tileValues = [event.data[1].toValues() for event in self.tileAnim.tree]
+        noV2sTiles = [[tile[0].toTuple(), tile[1], tile[2], tile[3], tile[4]] for tile in tileValues]
             
-        timingPoints = []
-        for timingPoint in self.timingPoints:
-            timingPoints.append(timingPoint.toValues())
+        timingPoints = [point.toValues() for point in self.timingPoints]
             
         levelData = {
             "tiles": noV2sTiles,

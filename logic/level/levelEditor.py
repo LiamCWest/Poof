@@ -42,7 +42,7 @@ def checkInput():
 
 def moveTile(pos, delta):
     global level, selectedTile
-    tile = level.getTileByPos(pos)
+    tile = level.getTileAt(pos, songPlayer.getPos())
     tile.pos += delta
     selectedTile += delta
 
@@ -76,16 +76,15 @@ def update():
             else:
                 selectedTile = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
         
-        if selected in ["platform", "wall", "rest"] and input.mouseBindings["lmb"].down:
+        if selected in ["platform", "wall", "rest"] and input.mouseBindings["lmb"].pressed:
             nextBeat = getNextBeat(songPlayer.currentTimingPoints,songPlayer.getPos(), 1)
             level.addTile(Tile(level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos), None, nextBeat, nextBeat, selected))
             selectedTile = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
             
         if selected == "delete" and input.mouseBindings["lmb"].justPressed:
-            tile = level.getTileByPos(level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos))
-            if tile is not None:
-                level.removeTile(tile)
-                selectedTile = None
+            nextBeat = getNextBeat(songPlayer.currentTimingPoints,songPlayer.getPos(), 1)
+            level.removeTileAt(level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos), nextBeat)
+            selectedTile = None
 
 def posIn(pos, rect):
     return pos.x > rect[0] and pos.x < rect[0] + rect[2] and pos.y > rect[1] and pos.y < rect[1] + rect[3]

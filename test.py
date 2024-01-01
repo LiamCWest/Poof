@@ -1,7 +1,6 @@
-from graphics.animation import *
+from intervaltree import IntervalTree, Interval
 
-a = AnimEvent(0, 1, lambda x:print(x), "a1")
-anim = Animation([a], 0)
-anim.updateTime(0.5)
-#anim.removeEvent(a)
-anim.updateTime(0.6)
+tree = IntervalTree([Interval(1, 2, "hi"), Interval(3, 4, "lo")])
+
+for i in tree:
+    print(i.data)

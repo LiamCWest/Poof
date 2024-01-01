@@ -29,15 +29,16 @@ def checkInput():
             songPlayer.pause()
         else:
             songPlayer.unpause()
-            
-    if input.keyBindings["moveTileLeft"].justPressed:
-        moveTile(selectedTile, Vector2(-1, 0))
-    if input.keyBindings["moveTileRight"].justPressed:
-        moveTile(selectedTile, Vector2(1, 0))
-    if input.keyBindings["moveTileUp"].justPressed:
-        moveTile(selectedTile, Vector2(0, -1))
-    if input.keyBindings["moveTileDown"].justPressed:
-        moveTile(selectedTile, Vector2(0, 1))
+       
+    if "selectedTile" in globals() and selectedTile:    
+        if input.keyBindings["moveTileLeft"].justPressed:
+            moveTile(selectedTile, Vector2(-1, 0))
+        if input.keyBindings["moveTileRight"].justPressed:
+            moveTile(selectedTile, Vector2(1, 0))
+        if input.keyBindings["moveTileUp"].justPressed:
+            moveTile(selectedTile, Vector2(0, -1))
+        if input.keyBindings["moveTileDown"].justPressed:
+            moveTile(selectedTile, Vector2(0, 1))
 
 def moveTile(pos, delta):
     global level, selectedTile
@@ -69,12 +70,22 @@ def update():
             
         if selected == "select" and input.mouseBindings["lmb"].justPressed:
             global selectedTile
-            selectedTile = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
+            tilePos = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
+            if "selectedTile" in globals() and selectedTile and tilePos == selectedTile:
+                    selectedTile = None
+            else:
+                selectedTile = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
         
         if selected in ["platform", "wall", "rest"] and input.mouseBindings["lmb"].down:
             nextBeat = getNextBeat(songPlayer.currentTimingPoints,songPlayer.getPos(), 1)
             level.addTile(Tile(level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos), None, nextBeat, nextBeat, selected))
             selectedTile = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
+            
+        if selected == "delete" and input.mouseBindings["lmb"].justPressed:
+            tile = level.getTileByPos(level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos))
+            if tile is not None:
+                level.removeTile(tile)
+                selectedTile = None
 
 def posIn(pos, rect):
     return pos.x > rect[0] and pos.x < rect[0] + rect[2] and pos.y > rect[1] and pos.y < rect[1] + rect[3]
@@ -116,38 +127,17 @@ def show():
     lastMousePos = input.mousePos.pos
     
     update()
-
-def getLevel(levelFile):
-    global levelF
-    levelF = levelFile
-    with open(levelFile, 'r') as file:
-        saved_data = json.load(file)
-        loaded_data = saved_data['data']
-        saved_signature = saved_data['signature']
-        if not checkSignature(loaded_data, saved_signature):
-            print("Level file corrupted")
-            return None
-        tiles = loaded_data['tiles']
-        tilesV2 = [Tile(Vector2.from_tuple(tile[0]), tile[1], tile[2], tile[3], tile[4]) for tile in tiles]
-        appearLength = loaded_data['appearLength']
-        disappearLength = loaded_data['disappearLength']
-        songPath = loaded_data['songPath']
-        timingPointsVals = loaded_data['timingPoints']
-        timingPoints = [TimingPoint(timingPoint[0], timingPoint[1], TimeSignature(timingPoint[2], timingPoint[3])) for timingPoint in timingPointsVals]
-        playerStartPos = Vector2.from_tuple(loaded_data['playerStartPos'])
-        playerStartTime = loaded_data['playerStartTime']
-        level = Level(tilesV2, appearLength, disappearLength, songPath, timingPoints, playerStartPos, playerStartTime)
-        return level
     
 def loadLevel(levelFile):
-    global level
+    global level, levelF
+    levelF = levelFile
     songPlayer.unload()
-    level = getLevel(levelFile)
+    level = Level.fromFile(levelFile)
 
 def checkSignature(data, signature):
     return hashlib.sha256(json.dumps(data).encode('utf-8')).hexdigest() == signature
 
-toolbarModes = ["move", "select", "platform", "wall", "rest"]
+toolbarModes = ["move", "select", "platform", "wall", "rest", "delete"]
 toolbarB = ["save", "load"]
 toolbarOptions = toolbarModes + toolbarB
 toolbarButtons = []
@@ -158,6 +148,6 @@ toolbarFuncs = {
 buttonSize = 55
 toolbarPos = Vector2(buttonSize*0.1, buttonSize*0.1)
 selected = "move"
-scrollbar = Scrollbar(toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.1, toolbarPos.y+buttonSize*1.2/2-5, 10, 195, "h", sliderWidth=25)
+scrollbar = Scrollbar(toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.1, toolbarPos.y+buttonSize*1.2/2-5, 10, 100, "h", sliderWidth=25)
 toolbar = Polygon.fromRect((toolbarPos.x, toolbarPos.y, len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.2 + scrollbar.length, buttonSize*1.2), (25, 25, 100))
 lastScrollbarValue = 0

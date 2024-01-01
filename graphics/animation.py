@@ -27,18 +27,17 @@ class Animation:
             self.length = max(self.tree.end(), length)
             
         self.ignoreSameTimeUpdates = ignoreSameTimeUpdates
-        
+    
+    def toInterval(self, event):
+        return intervaltree.Interval(event.startTime, math.nextafter(event.endTime, float("inf")), (event.callback, event.data))
+    
     def addEvent(self, event):
         if event.startTime <= event.endTime:
-            self.tree.add(intervaltree.Interval(event.startTime, math.nextafter(event.endTime, float("inf")), (event.callback, event.data)))
-        else:
-            self.tree.add(intervaltree.Interval(event.endTime, math.nextafter(event.startTime, float("inf")), (event.callback, event.data)))
+            self.tree.add(self.toInterval(event))
         
     def removeEvent(self, event):
         if event.startTime <= event.endTime:
-            self.tree.remove(intervaltree.Interval(event.startTime, math.nextafter(event.endTime, float("inf")), (event.callback, event.data)))
-        else:
-            self.tree.remove(intervaltree.Interval(event.endTime, math.nextafter(event.startTime, float("inf")), (event.callback, event.data)))
+            self.tree.remove(self.toInterval(event))
         
     def getEventsAt(self, time):
         return self.tree.at(time)

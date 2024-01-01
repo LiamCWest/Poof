@@ -1,11 +1,7 @@
-def func():
-    try:
-        func.x += 1
-    except:
-        func.x = 0
-    return func.x
+from graphics.animation import *
 
-print(func())
-print(func())
-print(func())
-print(func())
+a = AnimEvent(0, 1, lambda x:print(x), "a1")
+anim = Animation([a], 0)
+anim.updateTime(0.5)
+#anim.removeEvent(a)
+anim.updateTime(0.6)

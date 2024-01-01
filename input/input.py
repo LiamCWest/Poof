@@ -123,8 +123,8 @@ keyBindings = {
     "moveTileDown": ButtonEvent("<65364>"),
     "increaseTileLength": ButtonEvent("<38>", "shift"),
     "decreaseTileLength": ButtonEvent("<40>", "shift"),
-    "timeBackwards": ButtonEvent("<37>", "shift"),
-    "timeForwards": ButtonEvent("<39>", "shift"),
+    "timeBackwards": ButtonEvent("<65361>", "shift"),
+    "timeForwards": ButtonEvent("<65363>", "shift"),
     "play": ButtonEvent("<32>"),
 }
 

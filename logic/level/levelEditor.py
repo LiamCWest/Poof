@@ -40,6 +40,28 @@ def checkInput():
         if input.keyBindings["moveTileDown"].justPressed:
             moveTile(selectedTile, Vector2(0, 1))
 
+    if input.keyBindings["timeForwards"].justPressed:
+        oldTime = songPlayer.getPos()
+        moveTime(1)
+        if "selectedTile" in globals() and selectedTile:
+            tile = level.getTileByPos(selectedTile)
+            delta = songPlayer.getPos() - oldTime
+            tile.appearedTime += delta
+            tile.disappearTime += delta
+        
+    if input.keyBindings["timeBackwards"].justPressed:
+        moveTime(-1)
+        oldTime = songPlayer.getPos()
+        if "selectedTile" in globals() and selectedTile:
+            tile = level.getTileByPos(selectedTile)
+            delta = songPlayer.getPos() - oldTime
+            tile.appearedTime += delta
+            tile.disappearTime += delta
+        
+def moveTime(delta):
+    moveTo = songPlayer.getNextBeat(4) if delta > 0 else songPlayer.getPreviousBeat(4)
+    songPlayer.seek(moveTo)
+
 def moveTile(pos, delta):
     global level, selectedTile
     tile = level.getTileByPos(pos)

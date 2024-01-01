@@ -70,7 +70,6 @@ def draw():
     timeSourceTime = songPlayer.getPos()
     
     playerState = level.player.calculateState(level, timeSourceTime)
-    print(playerState.acc)
     
     if playerState.deathTime is None:
         level.draw(gui.screen, timeSourceTime, playerState.visiblePos - Player.offset, level.tileSize, drawPlayer=True, playerState=playerState)

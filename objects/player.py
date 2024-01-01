@@ -10,6 +10,7 @@ class PlayerState:
         self.pos = None
         self.visiblePos = None
         self.lastMove = None
+        self.lastCountedMove = None
         self.countedMovesMade = None
         self.acc = None
         self.deathTime = None
@@ -87,7 +88,6 @@ class Player:
                     return #If you've reached the time you want to, then you are alive and at your current pos
                 
                 state.lastMove = move
-                state.countedMovesMade += 1
                 
                 tile = level.getTileAt(state.pos, moveTime)
                 if tile != currentTile:
@@ -104,6 +104,8 @@ class Player:
                 
                 tileTuple = (tile.pos.x, tile.appearedTime, tile.disappearTime)
                 if tileTuple not in tilesMovedTo:
+                    tilesMovedTo.add(tileTuple)
+                    state.lastCountedMove = move
                     state.countedMovesMade += 1
                     state.acc = calculateAcc(state.acc, state.countedMovesMade, tile.appearedTime, moveTime)
                 

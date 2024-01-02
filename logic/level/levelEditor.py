@@ -22,6 +22,12 @@ def select(option):
     selected = option
     toolbarButtons[toolbarModes.index(selected)].color = (50, 50, 255)
 
+def selectDivisor(d):
+    global divisor
+    divisorSelector[divisors.index(divisor)].color = (100, 100, 255)
+    divisor = d
+    divisorSelector[divisors.index(d)].color = (50, 50, 255)
+
 def checkInput():
     global level
     if input.keyBindings["play"].justPressed:
@@ -30,7 +36,7 @@ def checkInput():
         else:
             songPlayer.unpause()
        
-    if "selectedTile" in globals() and selectedTile:    
+    if "selectedTile" in globals() and selectedTile:
         if input.keyBindings["moveTileLeft"].justPressed:
             moveTile(selectedTile, Vector2(-1, 0))
         if input.keyBindings["moveTileRight"].justPressed:
@@ -59,7 +65,7 @@ def checkInput():
             tile.disappearTime += delta
         
 def moveTime(delta):
-    moveTo = songPlayer.getNextBeat(1) if delta > 0 else songPlayer.getPreviousBeat(1)
+    moveTo = songPlayer.getNextBeat(divisor) if delta > 0 else songPlayer.getPreviousBeat(divisor)
     songPlayer.seek(moveTo)
 
 def moveTile(pos, delta):
@@ -72,6 +78,8 @@ levelPos = Vector2(0, 0)
 def update():
     checkInput()
     for button in toolbarButtons:
+        button.update()
+    for button in divisorSelector:
         button.update()
     global lastScrollbarValue
     scrollbar.update()
@@ -118,6 +126,8 @@ def draw():
     for button in toolbarButtons:
         button.draw(gui.screen)
     scrollbar.draw(gui.screen)
+    for button in divisorSelector:
+        button.draw(gui.screen)
 
 tiles = None
 level = None
@@ -131,7 +141,9 @@ def show():
         i += 1
         addOption(option, toolbarFuncs[option], i)
     select("move")
-    
+    for i, d in enumerate(divisors):
+        divisorSelector.append(Button(str(d), toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize/2.75*0.1 + buttonSize/2.75*1.1*i, toolbarPos.y + buttonSize*1.2/4-5 + 20, buttonSize/2.75, buttonSize/2.75, (100, 100, 255), (0, 0, 0), lambda x=d: selectDivisor(x), textSize = 15, scaler=1.1))
+    selectDivisor(1)
     lastMousePos = input.mousePos.pos
     
     update()
@@ -156,6 +168,9 @@ toolbarFuncs = {
 buttonSize = 55
 toolbarPos = Vector2(buttonSize*0.1, buttonSize*0.1)
 selected = "move"
-scrollbar = Scrollbar(toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.1, toolbarPos.y+buttonSize*1.2/2-5, 10, 100, "h", sliderWidth=25)
+scrollbar = Scrollbar(toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.1, toolbarPos.y+buttonSize*1.2/4-5, 10, 100, "h", sliderWidth=25)
 toolbar = Polygon.fromRect((toolbarPos.x, toolbarPos.y, len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.2 + scrollbar.length, buttonSize*1.2), (25, 25, 100))
+divisors = [1, 2, 4, 8, 16]
+divisorSelector = []
 lastScrollbarValue = 0
+divisor = 1

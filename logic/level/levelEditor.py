@@ -59,7 +59,7 @@ def checkInput():
             tile.disappearTime += delta
         
 def moveTime(delta):
-    moveTo = songPlayer.getNextBeat(4) if delta > 0 else songPlayer.getPreviousBeat(4)
+    moveTo = songPlayer.getNextBeat(1) if delta > 0 else songPlayer.getPreviousBeat(1)
     songPlayer.seek(moveTo)
 
 def moveTile(pos, delta):
@@ -98,7 +98,7 @@ def update():
             else:
                 selectedTile = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
         
-        if selected in ["platform", "wall", "rest"] and input.mouseBindings["lmb"].pressed:
+        if selected in ["platform", "wall", "rest"] and input.mouseBindings["lmb"].justPressed:
             nextBeat = getNextBeat(songPlayer.currentTimingPoints,songPlayer.getPos(), 1)
             level.addTile(Tile(level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos), None, nextBeat, nextBeat, selected))
             selectedTile = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)

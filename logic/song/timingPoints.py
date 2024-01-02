@@ -31,6 +31,8 @@ def getNextPoint(points, time):
 def getPreviousBeat(points, time, divisor):
     if len(points) == 0:
         return None
+    # time = math.nextafter(time, -math.inf)
+    time -= 0.00000000001 # jank but it works
     
     point = getPreviousPoint(points, time)
     if point == None:
@@ -45,13 +47,15 @@ def getPreviousBeat(points, time, divisor):
 def getNextBeat(points, time, divisor): #TODO: Make sure none of these getBeat functions have subtle errors
     if len(points) == 0:
         return None
+    # time = math.nextafter(time, math.inf)
+    time += 0.0000000001 # jank but it works
     
     point = getPreviousPoint(points, time)
     if point == None:
         point = points[0]
         timeUntilFirstPoint = point.time - time
         beatsWillBeElapsed = timeUntilFirstPoint * divisor / point.beatLength
-        return point.time - (math.floor(beatsWillBeElapsed) * point.beatLength / divisor)
+        return point.time - (math.floor(beatsWillBeElapsed-1) * point.beatLength / divisor)
     timeSinceLastPoint = time - point.time
     beatsElapsed = timeSinceLastPoint * divisor / point.beatLength
     return math.ceil(beatsElapsed) * point.beatLength / divisor + point.time

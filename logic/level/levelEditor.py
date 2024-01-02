@@ -56,8 +56,8 @@ def checkInput():
             tile.disappearTime += delta
         
     if input.keyBindings["timeBackwards"].justPressed:
-        moveTime(-1)
         oldTime = songPlayer.getPos()
+        moveTime(-1)
         if "selectedTile" in globals() and selectedTile:
             tile = level.getTileByPos(selectedTile)
             delta = songPlayer.getPos() - oldTime
@@ -66,7 +66,13 @@ def checkInput():
         
 def moveTime(delta):
     moveTo = songPlayer.getNextBeat(divisor) if delta > 0 else songPlayer.getPreviousBeat(divisor)
-    songPlayer.seek(moveTo)
+    if moveTo > 0 and moveTo < songPlayer.getSongLength(): 
+        songPlayer.seek(moveTo)
+    elif moveTo < 0:
+        songPlayer.seek(0)
+    elif moveTo > songPlayer.getSongLength():
+        songPlayer.seek(songPlayer.getSongLength())
+    print(songPlayer.getPos())
 
 def moveTile(pos, delta):
     global level, selectedTile

@@ -34,15 +34,17 @@ def unpause():
     
 def pause():
     mixer.music.pause()
-    
+
+addPos = 0 #when play is called, it resets get_pos() to 0, so this is the time from when play was called to when the song actually starts playing
 def seek(position):
-    global lastPos
+    global lastPos, addPos
     lastPos = position
     
     wasPlaying = getIsPlaying()
     oldVolume = getVolume()
     setVolume(0)
     mixer.music.play(start=position)
+    addPos = position
     if not wasPlaying:
         mixer.music.pause()
     setVolume(oldVolume)
@@ -50,7 +52,7 @@ def seek(position):
 lastPos = float("-inf") #for whatever reason, the time returned by music.get_pos() can sometimes go backwards, so this makes it not do that
 def getPos():
     global lastPos
-    currentPos = mixer.music.get_pos() / 1000
+    currentPos = mixer.music.get_pos() / 1000 + addPos
     
     if lastPos > currentPos:
         return lastPos

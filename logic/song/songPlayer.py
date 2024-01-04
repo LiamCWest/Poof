@@ -77,17 +77,23 @@ def getNextPoint():
     global currentTimingPoints
     return timingPoints.getNextPoint(currentTimingPoints, getPos())
 
-def getPreviousBeat(divisor):
+def getPreviousBeat(divisor, time = None):
     global currentTimingPoints
-    return timingPoints.getPreviousBeat(currentTimingPoints, getPos(), divisor)
+    if time is None:
+        time = getPos()
+    return timingPoints.getPreviousBeat(currentTimingPoints, time, divisor)
 
-def getNextBeat(divisor):
+def getNextBeat(divisor, time = None):
     global currentTimingPoints
-    return timingPoints.getNextBeat(currentTimingPoints, getPos(), divisor)
+    if time is None:
+        time = getPos()
+    return timingPoints.getNextBeat(currentTimingPoints, time, divisor)
 
-def getBeatByIndex(index, divisor):
+def getNearestBeat(divisor, time = None):
     global currentTimingPoints
-    return timingPoints.getBeatByIndex(currentTimingPoints, index, divisor) if divisor != 0 else 0
+    if time is None:
+        time = getPos()
+    return timingPoints.getNearestBeat(currentTimingPoints, time, divisor)
 
 def test():
     timingPoint1 = timingPoints.TimingPoint(2.108, 170, timingPoints.TimeSignature(4, 4))

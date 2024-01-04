@@ -117,14 +117,14 @@ keyBindings = {
     "dash": ButtonEvent("Key.shift"),
     
     #Editor bindings
-    "moveTileLeft": ButtonEvent("<65361>"),
-    "moveTileUp": ButtonEvent("<65362>"),
-    "moveTileRight": ButtonEvent("<65363>"),
-    "moveTileDown": ButtonEvent("<65364>"),
-    "increaseTileLength": ButtonEvent("<38>", "shift"),
-    "decreaseTileLength": ButtonEvent("<40>", "shift"),
-    "timeBackwards": ButtonEvent("<65361>", "shift"),
-    "timeForwards": ButtonEvent("<65363>", "shift"),
+    "moveTileLeft": ButtonEvent(("<37>", "<65361>")),
+    "moveTileUp": ButtonEvent(("<38>", "<65362>")),
+    "moveTileRight": ButtonEvent(("<39>", "<65363>")),
+    "moveTileDown": ButtonEvent(("<40>", "<65364>")),
+    "increaseTileLength": ButtonEvent(("<38>", "<65362>"), "shift"),
+    "decreaseTileLength": ButtonEvent(("<40>", "<65364>"), "shift"),
+    "timeBackwards": ButtonEvent(("<37>", "<65361>"), "shift"),
+    "timeForwards": ButtonEvent(("<39>", "<65363>"), "shift"),
     "play": ButtonEvent("<32>"),
 }
 

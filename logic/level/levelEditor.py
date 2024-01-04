@@ -7,7 +7,7 @@ import logic.song.songPlayer as songPlayer
 import graphics.gui as gui
 from utils.polygon import Polygon
 from ui.scrollbar import Scrollbar
-from logic.song.timingPoints import TimingPoint, TimeSignature, getNextBeat
+import pygame
 import json
 import hashlib
 
@@ -28,57 +28,44 @@ def selectDivisor(d):
     divisor = d
     divisorSelector[divisors.index(d)].color = (50, 50, 255)
 
+selectedTile = None
 def checkInput():
-    global level
+    global level, divisor
     if input.keyBindings["play"].justPressed:
         if songPlayer.getIsPlaying():
             songPlayer.pause()
+            songPlayer.seek(songPlayer.getNearestBeat(divisor))
         else:
             songPlayer.unpause()
        
-    if "selectedTile" in globals() and selectedTile:
-        if input.keyBindings["moveTileLeft"].justPressed:
-            moveTile(selectedTile, Vector2(-1, 0))
-        if input.keyBindings["moveTileRight"].justPressed:
-            moveTile(selectedTile, Vector2(1, 0))
-        if input.keyBindings["moveTileUp"].justPressed:
-            moveTile(selectedTile, Vector2(0, -1))
-        if input.keyBindings["moveTileDown"].justPressed:
-            moveTile(selectedTile, Vector2(0, 1))
+    if selectedTile:
+        if input.keyBindings["moveTileLeft"].justPressed and not input.modifierBindings["shift"].pressed:
+            selectedTile.pos += Vector2(-1, 0)
+        if input.keyBindings["moveTileRight"].justPressed and not input.modifierBindings["shift"].pressed:
+            selectedTile.pos += Vector2(1, 0)
+        if input.keyBindings["moveTileUp"].justPressed and not input.modifierBindings["shift"].pressed:
+            selectedTile.pos += Vector2(0, -1)
+        if input.keyBindings["moveTileDown"].justPressed and not input.modifierBindings["shift"].pressed:
+            selectedTile.pos += Vector2(0, 1)
+        
+        if input.keyBindings["increaseTileLength"].justPressed:
+            newTileEndTime = songPlayer.getNextBeat(divisor, selectedTile.disappearTime)
+            if level.getTileAt(selectedTile.pos, newTileEndTime + level.disappearLength) is None:
+                level.removeTileAt(selectedTile.pos, selectedTile.appearedTime)
+                selectedTile.disappearTime = newTileEndTime
+                level.addTile(selectedTile)
+        if input.keyBindings["decreaseTileLength"].justPressed:
+            newTileEndTime = songPlayer.getPreviousBeat(divisor, selectedTile.disappearTime)
+            if newTileEndTime >= selectedTile.appearedTime:
+                level.removeTileAt(selectedTile.pos, selectedTile.appearedTime)
+                selectedTile.disappearTime = newTileEndTime
+                level.addTile(selectedTile)
 
     if input.keyBindings["timeForwards"].justPressed:
-        oldTime = songPlayer.getPos()
-        moveTime(1)
-        if "selectedTile" in globals() and selectedTile:
-            tile = level.getTileByPos(selectedTile)
-            delta = songPlayer.getPos() - oldTime
-            tile.appearedTime += delta
-            tile.disappearTime += delta
+        songPlayer.seek(songPlayer.getNextBeat(divisor))
         
     if input.keyBindings["timeBackwards"].justPressed:
-        oldTime = songPlayer.getPos()
-        moveTime(-1)
-        if "selectedTile" in globals() and selectedTile:
-            tile = level.getTileByPos(selectedTile)
-            delta = songPlayer.getPos() - oldTime
-            tile.appearedTime += delta
-            tile.disappearTime += delta
-        
-def moveTime(delta):
-    moveTo = songPlayer.getNextBeat(divisor) if delta > 0 else songPlayer.getPreviousBeat(divisor)
-    if moveTo > 0 and moveTo < songPlayer.getSongLength(): 
-        songPlayer.seek(moveTo)
-    elif moveTo < 0:
-        songPlayer.seek(0)
-    elif moveTo > songPlayer.getSongLength():
-        songPlayer.seek(songPlayer.getSongLength())
-    print(songPlayer.getPos())
-
-def moveTile(pos, delta):
-    global level, selectedTile
-    tile = level.getTileAt(pos, songPlayer.getPos())
-    tile.pos += delta
-    selectedTile += delta
+        songPlayer.seek(max(0, songPlayer.getPreviousBeat(divisor)))
 
 levelPos = Vector2(0, 0)
 def update():
@@ -87,16 +74,21 @@ def update():
         button.update()
     for button in divisorSelector:
         button.update()
-    global lastScrollbarValue
+    
+    global lastScrollbarValue, divisor
     scrollbar.update()
     songLen = songPlayer.getSongLength()
-    
-    if scrollbar.getValue() != lastScrollbarValue: songPlayer.seek(songLen * scrollbar.getValue())
-    else: scrollbar.moveTo(songPlayer.getPos() / songLen)
+    if scrollbar.getValue() != lastScrollbarValue: 
+        songPos = songLen * scrollbar.getValue()
+        roundedSongPos = songPlayer.getNearestBeat(divisor, songPos)
+        songPlayer.seek(roundedSongPos)
+        scrollbar.moveTo(roundedSongPos / songLen)
+    else: 
+        scrollbar.moveTo(songPlayer.getPos() / songLen)
     lastScrollbarValue = scrollbar.getValue()
 
     if not posIn(input.mousePos.pos, (toolbarPos.x, toolbarPos.y, toolbar.getWidth(), toolbar.getHeight())):
-        global lastMousePos, levelPos
+        global lastMousePos, levelPos, selectedTile
         if selected == "move" and input.mouseBindings["lmb"].pressed:
             currentMousePos = input.mousePos.pos
             levelPos -= (currentMousePos - lastMousePos) / level.tileSize
@@ -105,21 +97,19 @@ def update():
             lastMousePos = input.mousePos.pos
             
         if selected == "select" and input.mouseBindings["lmb"].justPressed:
-            global selectedTile
-            tilePos = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
-            if "selectedTile" in globals() and selectedTile and tilePos == selectedTile:
-                    selectedTile = None
-            else:
-                selectedTile = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
+            selectedTile = level.getTileAt(level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos), songPlayer.getPos())
         
         if selected in ["platform", "wall", "rest"] and input.mouseBindings["lmb"].justPressed:
-            nextBeat = getNextBeat(songPlayer.currentTimingPoints,songPlayer.getPos(), 1)
-            level.addTile(Tile(level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos), None, nextBeat, nextBeat, selected))
-            selectedTile = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
+            tilePos = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
+            tileTime = songPlayer.getNearestBeat(divisor, songPlayer.getPos())
+            if level.getTileAt(tilePos, tileTime) is None:
+                level.addTile(Tile(tilePos, None, tileTime, tileTime, selected))
+                selectedTile = level.getTileAt(tilePos, tileTime)
             
         if selected == "delete" and input.mouseBindings["lmb"].justPressed:
-            nextBeat = getNextBeat(songPlayer.currentTimingPoints,songPlayer.getPos(), 1)
-            level.removeTileAt(level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos), nextBeat)
+            tilePos = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
+            tileTime = songPlayer.getNearestBeat(divisor, songPlayer.getPos())
+            level.removeTileAt(tilePos, tileTime)
             selectedTile = None
 
 def posIn(pos, rect):
@@ -134,6 +124,12 @@ def draw():
     scrollbar.draw(gui.screen)
     for button in divisorSelector:
         button.draw(gui.screen)
+        
+    if selectedTile:
+        s = pygame.Surface(level.tileSize.toTuple())
+        s.set_alpha(128)
+        s.fill((255,255,255))
+        gui.screen.blit(s, ((selectedTile.pos - levelPos) * level.tileSize).toTuple())
 
 tiles = None
 level = None

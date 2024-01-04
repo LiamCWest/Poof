@@ -28,7 +28,6 @@ class Level:
         self.songPath = songPath
         self.timingPoints = timingPoints
         songPlayer.load(self.songPath, self.timingPoints)
-        songPlayer.pause()
     
     def createEventFromTile(self, tile):
         startTime = tile.appearedTime - self.appearLength

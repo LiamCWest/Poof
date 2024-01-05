@@ -129,9 +129,9 @@ keyBindings = {
 }
 
 mouseBindings = {
-    "lmb": ButtonEvent("Button.left"),
-    "mmb": ButtonEvent("Button.middle"),
-    "rmb": ButtonEvent("Button.right")
+    "lmb": ButtonEvent(1),
+    "mmb": ButtonEvent(2),
+    "rmb": ButtonEvent(3)
 }
 
 mousePos = MouseMoveEvent()
@@ -187,43 +187,24 @@ def onKeyRelease(key):
     keyEvent.release()
     justReleasedKeys.append(keyEvent)
             
-def toMouseStr(button):
-    return str(button)
-            
-def onMouseClick(x, y, button, pressed):
+def handleEvent(mouseEvent):
     global mouseBindings
-    buttonStr = toMouseStr(button)
-    
-    def onMousePress(buttonStr):
-        global mouseBindings
+    if mouseEvent.type == pygame.MOUSEMOTION:
+        mousePos.move(Vector2(mouseEvent.pos[0], mouseEvent.pos[1]))
+    elif mouseEvent.type == pygame.MOUSEWHEEL:
+        mouseScroll.scroll(Vector2(mouseEvent.x, mouseEvent.y))
+    elif mouseEvent.type == pygame.MOUSEBUTTONDOWN:
         for event in mouseBindings.values():
-            if any(map(lambda i: buttonStr == i, event.bindings)) and not event.pressed:
+            if any(map(lambda i: mouseEvent.button == i, event.bindings)) and not event.pressed:
                 if event.modifiers == (None,) or all(map(lambda i: modifierBindings[i].pressed, event.modifiers)):
                     event.press()
-                
-    def onMouseRelease(buttonStr):
-        global mouseBindings
+    elif mouseEvent.type == pygame.MOUSEBUTTONUP:
         for event in mouseBindings.values():
             if event.modifiers != (None,) and not all(map(lambda i: modifierBindings[i].pressed, event.modifiers)):
                 event.release()
             
-            if any(map(lambda i: buttonStr == i, event.bindings)) and event.pressed:
+            if any(map(lambda i: mouseEvent.button == i, event.bindings)) and event.pressed:
                 event.release()
-                
-    if pressed:
-        onMousePress(buttonStr)
-    else:
-        onMouseRelease(buttonStr)
-            
-def handleEvent(event):
-    global mouseBindings
-    if event.type == pygame.MOUSEMOTION:
-        mousePos.move(Vector2(event.pos[0], event.pos[1]))
-    
-def onMouseScroll(x, y, dx, dy):
-    global mouseScroll
-    
-    mouseScroll.scroll(Vector2(dx, dy))
 
 kblistener = None
 mouseListener = None
@@ -233,6 +214,3 @@ def init():
     global kbListener, mouseListener
     kbListener = keyboard.Listener(on_press=onKeyPress, on_release=onKeyRelease)
     kbListener.start()
-    
-    mouseListener = mouse.Listener(on_click=onMouseClick, on_scroll=onMouseScroll)
-    mouseListener.start()

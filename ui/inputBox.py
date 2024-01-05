@@ -20,18 +20,7 @@ class InputBox(Button):
     def update(self):
         Button.update(self)
         if self.active:
-            for k in input.justPressedKeys:
-                if k.justPressed:
-                    key = input.toKeyStr(k.bindings[0])
-                    if key == "Key.backspace":
-                        self.input = self.input[:-1]
-                    elif key == "Key.space":
-                        self.input += " "
-                    elif key == "Key.return":
-                        self.active = False
-                    else:
-                        self.input += key
-            self.text.text = self.input
+            pass
         
     def draw(self, win):
         Button.draw(self, win)

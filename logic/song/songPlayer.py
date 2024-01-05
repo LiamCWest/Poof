@@ -2,32 +2,21 @@ import pygame.mixer as mixer
 import logic.song.timingPoints as timingPoints
 
 currentTimingPoints = None
-
+songLength = None
 def load(songPath, timingPoints):
-    global currentTimingPoints, song
+    global currentTimingPoints, songLength
     mixer.music.load(filename=songPath)
     song = mixer.Sound(songPath)
+    songLength = song.get_length()
     currentTimingPoints = timingPoints
-    
-    oldVolume = getVolume()
-    setVolume(0)
-    play()
-    unpause()
-    setVolume(oldVolume)
+
+    seek(0) #so it's playing
 
 def unload():
     mixer.music.unload()
     
 def getSongLength():
-    return song.get_length()
-    
-def play():
-    global lastPos
-    lastPos = float("-inf")
-    mixer.music.play()
-    
-def stop():
-    mixer.music.stop()
+    return songLength
     
 def unpause():
     mixer.music.unpause()
@@ -35,30 +24,29 @@ def unpause():
 def pause():
     mixer.music.pause()
 
-addPos = 0 #when play is called, it resets get_pos() to 0, so this is the time from when play was called to when the song actually starts playing
+seekPos = 0 #when play is called, it resets mixer.music.get_pos() to 0, so this is the time that was passed into seek so it can be added later
 def seek(position):
-    global lastPos, addPos
-    lastPos = position
+    position = min(max(0, position), getSongLength()) #so position can't be outside the valid range
     
-    wasPlaying = getIsPlaying()
+    global lastPos, seekPos
+    lastPos = position #reset lastPos
+    seekPos = position #set seekPos
+    
+    wasPlaying = getIsPlaying() #so it can keep being paused
     oldVolume = getVolume()
-    setVolume(0)
+    setVolume(0) #so you don't hear a random snippet of song when its seeking
     mixer.music.play(start=position)
-    addPos = position
     if not wasPlaying:
         mixer.music.pause()
-    setVolume(oldVolume)
+    setVolume(oldVolume) #so your song isnt muted
 
 lastPos = float("-inf") #for whatever reason, the time returned by music.get_pos() can sometimes go backwards, so this makes it not do that
 def getPos():
     global lastPos
-    currentPos = mixer.music.get_pos() / 1000 + addPos
+    currentPos = mixer.music.get_pos() / 1000 + seekPos
     
-    if lastPos > currentPos:
-        return lastPos
-    
-    lastPos = currentPos
-    return currentPos
+    lastPos = max(lastPos, currentPos)
+    return lastPos
 
 def getIsPlaying():
     return mixer.music.get_busy()

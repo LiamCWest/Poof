@@ -1,21 +1,13 @@
-from logic.song.timingPoints import *
-import random
+import pygame.mixer as mixer
+import pygame
+import time
 
-tp1 = TimingPoint(1, 120, TimeSignature(4, 4))
-tp2 = TimingPoint(4, 10, TimeSignature(4, 4))
-tp25 = TimingPoint(4, 20, TimeSignature(4, 4))
-tp27 = TimingPoint(4, 30, TimeSignature(4, 4))
-tp3 = TimingPoint(4, 130, TimeSignature(4, 4))
-tp4 = TimingPoint(11, 160, TimeSignature(4, 4))
-tps = [tp1, tp2, tp25, tp27, tp3, tp4]
+pygame.init()
+length = mixer.Sound("Song.MP3").get_length()
+mixer.music.load(filename="Song.MP3")
+mixer.music.play(start=length)
+mixer.music.pause()
 
-#print(getPreviousBeat(tps, 15, 1))
-#1.0 1.5 2.0 2.5 3.0 3.5 4.0
-#4.0 4.461538461538462 4.923076923076923 5.384615384615385 5.846153846153847 6.307692307692308 6.769230769230769 7.230769230769231 7.6923076923076925 8.153846153846153 8.615384615384617 9.076923076923077 9.538461538461538 10.0 10.461538461538462 10.923076923076923
-#11.0 11.375 11.75 12.125 12.5 12.875 13.25 13.625 14.0 14.375 14.75 15.125 15.5 15.875 16.25 16.625 17.0 17.375 17.75 18.125 18.5 18.875 19.25 19.625 20.0 20.375 20.75 21.125 21.5 21.875 22.25 22.625 23.0 23.375 23.75 24.125 24.5 24.875 25.25 25.625 26.0 26.375 26.75 27.125 27.5 27.875 28.25 28.625 29.0 29.375
-
-time = 29.75
-divisor = 4
-for i in range(200):
-    time = i / 10
-    print(getNearestBeat(tps, time, divisor))
+while True:
+    time.sleep(0.1)
+    print(mixer.music.get_pos() / 1000 + 60)

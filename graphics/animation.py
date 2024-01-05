@@ -83,12 +83,14 @@ class Animation:
     def restart(self, timeSourceTime):
         self.skipToTime(0, timeSourceTime)
         
-def interp(startingValue, endingValue, startingTime, endingTime, basis, currentTime):
+def interp(startingValue, endingValue, startingTime, endingTime, basis, currentTime): #Clamps currentTime to the range (startingTime, endingTime)
     d = startingTime
     k = endingTime
     c = startingValue
     a = endingValue
-    return (a - c) * basis((currentTime - d) / (k - d)) + c
+    basisVal = (currentTime - d) / (k - d)
+    basisVal = min(max(0, basisVal), 1)
+    return (a - c) * basis(basisVal) + c
 
 def lerp(startingValue, endingValue, startingTime, endingTime, currentTime):
     return (currentTime - startingTime) * ((endingValue - startingValue) / (endingTime - startingTime)) + startingValue

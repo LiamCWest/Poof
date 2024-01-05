@@ -15,6 +15,9 @@ def addOption(option, func, i):
     global toolbarButtons
     toolbarButtons.append(Button(option, toolbarPos.x + buttonSize*0.1 + i*(buttonSize*1.1), toolbarPos.y + buttonSize*0.1, buttonSize, buttonSize, (100, 100, 255), (0, 0, 0), func, textSize = 15, scaler=1.1))
 
+def updateFactors(factor):
+    level.factor = factor
+
 selected = None
 def select(option):
     global selected

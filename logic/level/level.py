@@ -89,6 +89,17 @@ class Level:
                 return tile
         return None
             
+    def isTileValid(self, tile, oldTile):
+        if tile.appearedTime < 0 or tile.disappearTime < 0 or tile.appearedTime > songPlayer.getSongLength():
+            return False
+        if tile.appearedTime > tile.disappearTime:
+            return False
+        overlapping = self.tileAnim.tree.overlap(tile.appearedTime, tile.disappearTime)
+        for i in overlapping:
+            if i.data[1].pos == tile.pos and i.data[1] != oldTile:
+                return False
+        return True
+
     def save(self, levelFile):
         tileValues = [event.data[1].toValues() for event in self.tileAnim.tree]
         noV2sTiles = [[tile[0].toTuple(), tile[1], tile[2], tile[3], tile[4]] for tile in tileValues]
@@ -148,3 +159,6 @@ def signData(data):
 
 def checkSignature(data, signature):
     return signature == signData(data)
+
+def rangeOverlapsWithRange(range1, range2):
+    return range1[0] <= range2[1] and range2[0] <= range1[1]

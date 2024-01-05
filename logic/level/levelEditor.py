@@ -40,7 +40,7 @@ def selectDivisor(d):
 selectedTile = None
 def checkInput():
     global level, divisor, selectedTile
-    if input.keyBindings["play"].justPressed:
+    if input.keyActionBindings["play"].justPressed:
         if songPlayer.getIsPlaying():
             songPlayer.pause()
             songPlayer.seek(songPlayer.getNearestBeat(divisor))
@@ -48,16 +48,16 @@ def checkInput():
             songPlayer.unpause()
        
     if selectedTile:
-        if input.keyBindings["moveTileLeft"].justPressed:
+        if input.keyActionBindings["moveTileLeft"].justPressed:
             selectedTile.pos += Vector2(-1, 0)
-        if input.keyBindings["moveTileRight"].justPressed:
+        if input.keyActionBindings["moveTileRight"].justPressed:
             selectedTile.pos += Vector2(1, 0)
-        if input.keyBindings["moveTileUp"].justPressed:
+        if input.keyActionBindings["moveTileUp"].justPressed:
             selectedTile.pos += Vector2(0, -1)
-        if input.keyBindings["moveTileDown"].justPressed:
+        if input.keyActionBindings["moveTileDown"].justPressed:
             selectedTile.pos += Vector2(0, 1)
         
-        if input.keyBindings["increaseTileLength"].justPressed:
+        if input.keyActionBindings["increaseTileLength"].justPressed:
             newTileEndTime = songPlayer.getNextBeat(divisor, selectedTile.disappearTime)
             newTile = selectedTile.copy()
             newTile.disappearTime = newTileEndTime
@@ -65,14 +65,14 @@ def checkInput():
                 level.removeTileAt(selectedTile.pos, selectedTile.appearedTime)
                 selectedTile = newTile.copy()
                 level.addTile(selectedTile)
-        if input.keyBindings["decreaseTileLength"].justPressed:
+        if input.keyActionBindings["decreaseTileLength"].justPressed:
             newTileEndTime = songPlayer.getPreviousBeat(divisor, selectedTile.disappearTime)
             if newTileEndTime >= selectedTile.appearedTime:
                 level.removeTileAt(selectedTile.pos, selectedTile.appearedTime)
                 selectedTile.disappearTime = newTileEndTime
                 level.addTile(selectedTile)
 
-    if input.keyBindings["timeForwards"].justPressed:
+    if input.keyActionBindings["timeForwards"].justPressed:
         oldTime = songPlayer.getPos()
         songPlayer.seek(songPlayer.getNextBeat(divisor))
         delta = songPlayer.getPos() - oldTime
@@ -85,7 +85,7 @@ def checkInput():
                 selectedTile = newTile.copy()
                 level.addTile(selectedTile)
         
-    if input.keyBindings["timeBackwards"].justPressed:
+    if input.keyActionBindings["timeBackwards"].justPressed:
         oldTime = songPlayer.getPos()
         songPlayer.seek(max(0, songPlayer.getPreviousBeat(divisor)))
         delta = songPlayer.getPos() - oldTime

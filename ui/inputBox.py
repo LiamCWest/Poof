@@ -20,7 +20,15 @@ class InputBox(Button):
     def update(self):
         Button.update(self)
         if self.active:
-            pass
+            for key, value in input.characterBindings.items():
+                if value.justPressed:
+                    self.text.text += key
+                    
+            if input.specialKeyBindings["backspace"].justPressed:
+                self.text.text = self.text.text[:-1]
+                
+            if input.specialKeyBindings["escape"].justPressed or input.specialKeyBindings["enter"].justPressed:
+                self.active = False
         
     def draw(self, win):
         Button.draw(self, win)

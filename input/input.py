@@ -2,6 +2,7 @@ from pynput import keyboard, mouse
 import pygame
 import logic.song.songPlayer as songPlayer
 from utils.vector2 import Vector2
+from itertools import chain
 
 def getSongTime():
     return songPlayer.getPos() if songPlayer.getIsPlaying() else None
@@ -116,77 +117,113 @@ modifierBindings = {
     "alt": ButtonEvent("Key.alt"),
 }
 
-keyboardBindings = {
-    "a": ButtonEvent("'a'"),
-    "b": ButtonEvent("'b'"),
-    "c": ButtonEvent("'c'"),
-    "d": ButtonEvent("'d'"),
-    "e": ButtonEvent("'e'"),
-    "f": ButtonEvent("'f'"),
-    "g": ButtonEvent("'g'"),
-    "h": ButtonEvent("'h'"),
-    "i": ButtonEvent("'i'"),
-    "j": ButtonEvent("'j'"),
-    "k": ButtonEvent("'k'"),
-    "l": ButtonEvent("'l'"),
-    "m": ButtonEvent("'m'"),
-    "n": ButtonEvent("'n'"),
-    "o": ButtonEvent("'o'"),
-    "p": ButtonEvent("'p'"),
-    "q": ButtonEvent("'q'"),
-    "r": ButtonEvent("'r'"),
-    "s": ButtonEvent("'s'"),
-    "t": ButtonEvent("'t'"),
-    "u": ButtonEvent("'u'"),
-    "v": ButtonEvent("'v'"),
-    "w": ButtonEvent("'w'"),
-    "x": ButtonEvent("'x'"),
-    "y": ButtonEvent("'y'"),
-    "z": ButtonEvent("'z'"),
-    "A": ButtonEvent("'A'"),
-    "B": ButtonEvent("'B'"),
-    "C": ButtonEvent("'C'"),
-    "D": ButtonEvent("'D'"),
-    "E": ButtonEvent("'E'"),
-    "F": ButtonEvent("'F'"),
-    "G": ButtonEvent("'G'"),
-    "H": ButtonEvent("'H'"),
-    "I": ButtonEvent("'I'"),
-    "J": ButtonEvent("'J'"),
-    "K": ButtonEvent("'K'"),
-    "L": ButtonEvent("'L'"),
-    "M": ButtonEvent("'M'"),
-    "N": ButtonEvent("'N'"),
-    "O": ButtonEvent("'O'"),
-    "P": ButtonEvent("'P'"),
-    "Q": ButtonEvent("'Q'"),
-    "R": ButtonEvent("'R'"),
-    "S": ButtonEvent("'S'"),
-    "T": ButtonEvent("'T'"),
-    "U": ButtonEvent("'U'"),
-    "V": ButtonEvent("'V'"),
-    "W": ButtonEvent("'W'"),
-    "X": ButtonEvent("'X'"),
-    "Y": ButtonEvent("'Y'"),
-    "Z": ButtonEvent("'Z'"),
-    "0": ButtonEvent("'0'"),
-    "1": ButtonEvent("'1'"),
-    "2": ButtonEvent("'2'"),
-    "3": ButtonEvent("'3'"),
-    "4": ButtonEvent("'4'"),
-    "5": ButtonEvent("'5'"),
-    "6": ButtonEvent("'6'"),
-    "7": ButtonEvent("'7'"),
-    "8": ButtonEvent("'8'"),
-    "9": ButtonEvent("'9'"),
-    "backspace": ButtonEvent("<>"),
-    "return": ButtonEvent("<>"),
-    "space": ButtonEvent("<32>"),
-    "tab": ButtonEvent("<>"),
-    "esc": ButtonEvent("<>"),
+characterBindings = {
+    "a": ButtonEvent("'a'", strict=True),
+    "b": ButtonEvent("'b'", strict=True),
+    "c": ButtonEvent("'c'", strict=True),
+    "d": ButtonEvent("'d'", strict=True),
+    "e": ButtonEvent("'e'", strict=True),
+    "f": ButtonEvent("'f'", strict=True),
+    "g": ButtonEvent("'g'", strict=True),
+    "h": ButtonEvent("'h'", strict=True),
+    "i": ButtonEvent("'i'", strict=True),
+    "j": ButtonEvent("'j'", strict=True),
+    "k": ButtonEvent("'k'", strict=True),
+    "l": ButtonEvent("'l'", strict=True),
+    "m": ButtonEvent("'m'", strict=True),
+    "n": ButtonEvent("'n'", strict=True),
+    "o": ButtonEvent("'o'", strict=True),
+    "p": ButtonEvent("'p'", strict=True),
+    "q": ButtonEvent("'q'", strict=True),
+    "r": ButtonEvent("'r'", strict=True),
+    "s": ButtonEvent("'s'", strict=True),
+    "t": ButtonEvent("'t'", strict=True),
+    "u": ButtonEvent("'u'", strict=True),
+    "v": ButtonEvent("'v'", strict=True),
+    "w": ButtonEvent("'w'", strict=True),
+    "x": ButtonEvent("'x'", strict=True),
+    "y": ButtonEvent("'y'", strict=True),
+    "z": ButtonEvent("'z'", strict=True),
+    "A": ButtonEvent("'a'", "shift", strict=True),
+    "B": ButtonEvent("'b'", "shift", strict=True),
+    "C": ButtonEvent("'c'", "shift", strict=True),
+    "D": ButtonEvent("'d'", "shift", strict=True),
+    "E": ButtonEvent("'e'", "shift", strict=True),
+    "F": ButtonEvent("'f'", "shift", strict=True),
+    "G": ButtonEvent("'g'", "shift", strict=True),
+    "H": ButtonEvent("'h'", "shift", strict=True),
+    "I": ButtonEvent("'i'", "shift", strict=True),
+    "J": ButtonEvent("'j'", "shift", strict=True),
+    "K": ButtonEvent("'k'", "shift", strict=True),
+    "L": ButtonEvent("'l'", "shift", strict=True),
+    "M": ButtonEvent("'m'", "shift", strict=True),
+    "N": ButtonEvent("'n'", "shift", strict=True),
+    "O": ButtonEvent("'o'", "shift", strict=True),
+    "P": ButtonEvent("'p'", "shift", strict=True),
+    "Q": ButtonEvent("'q'", "shift", strict=True),
+    "R": ButtonEvent("'r'", "shift", strict=True),
+    "S": ButtonEvent("'s'", "shift", strict=True),
+    "T": ButtonEvent("'t'", "shift", strict=True),
+    "U": ButtonEvent("'u'", "shift", strict=True),
+    "V": ButtonEvent("'v'", "shift", strict=True),
+    "W": ButtonEvent("'w'", "shift", strict=True),
+    "X": ButtonEvent("'x'", "shift", strict=True),
+    "Y": ButtonEvent("'y'", "shift", strict=True),
+    "Z": ButtonEvent("'z'", "shift", strict=True),
+    
+    "1": ButtonEvent("'1'", strict=True),
+    "2": ButtonEvent("'2'", strict=True),
+    "3": ButtonEvent("'3'", strict=True),
+    "4": ButtonEvent("'4'", strict=True),
+    "5": ButtonEvent("'5'", strict=True),
+    "6": ButtonEvent("'6'", strict=True),
+    "7": ButtonEvent("'7'", strict=True),
+    "8": ButtonEvent("'8'", strict=True),
+    "9": ButtonEvent("'9'", strict=True),
+    "0": ButtonEvent("'0'", strict=True),
+    "!": ButtonEvent("'1'", "shift", strict=True),
+    "@": ButtonEvent("'2'", "shift", strict=True),
+    "#": ButtonEvent("'3'", "shift", strict=True),
+    "$": ButtonEvent("'4'", "shift", strict=True),
+    "%": ButtonEvent("'5'", "shift", strict=True),
+    "^": ButtonEvent("'6'", "shift", strict=True),
+    "&": ButtonEvent("'7'", "shift", strict=True),
+    "*": ButtonEvent("'8'", "shift", strict=True),
+    "(": ButtonEvent("'9'", "shift", strict=True),
+    ")": ButtonEvent("'0'", "shift", strict=True),
+    
+    "`": ButtonEvent("'`'", strict=True),
+    "-": ButtonEvent("'-'", strict=True),
+    "=": ButtonEvent("'='", strict=True),
+    "[": ButtonEvent("'['", strict=True),
+    "]": ButtonEvent("']'", strict=True),
+    "\\": ButtonEvent("'\\\\'", strict=True),
+    ";": ButtonEvent("';'", strict=True),
+    "'": ButtonEvent("\"'\"", strict=True),
+    ",": ButtonEvent("','", strict=True),
+    ".": ButtonEvent("'.'", strict=True),
+    "/": ButtonEvent("'/'", strict=True),
+    "~": ButtonEvent("'`'", "shift", strict=True),
+    "_": ButtonEvent("'-'", "shift", strict=True),
+    "+": ButtonEvent("'='", "shift", strict=True),
+    "{": ButtonEvent("'['", "shift", strict=True),
+    "}": ButtonEvent("']'", "shift", strict=True),
+    "|": ButtonEvent("'\\\\'", "shift", strict=True),
+    ":": ButtonEvent("';'", strict=True),
+    "\"": ButtonEvent("\"'\"", "shift", strict=True),
+    "<": ButtonEvent("','", "shift", strict=True),
+    ">": ButtonEvent("'.'", "shift", strict=True),
+    "?": ButtonEvent("'/'", "shift", strict=True),
 }
 
-keyBindings = {
+specialKeyBindings = {
+    "backspace": ButtonEvent("<8>", strict=True),
+    "delete": ButtonEvent("<46>", strict=True),
+    "enter": ButtonEvent("<13>", strict=True),
+    "escape": ButtonEvent("<27>", strict=True),
+}
+
+keyActionBindings = {
     #In game bindings
     "left": ButtonEvent("'a'"),
     "up": ButtonEvent("'w'"),
@@ -205,9 +242,6 @@ keyBindings = {
     "timeForwards": ButtonEvent(("<39>", "<65363>"), "shift"),
     "play": ButtonEvent("<32>"),
 }
-
-justPressedKeys = []
-justReleasedKeys = []
 
 mouseBindings = {
     "lmb": ButtonEvent(1),
@@ -241,7 +275,7 @@ def shouldBeReleased(event, keyVal):
     return False
 
 def onKeyPress(key):
-    global keyBindings, modifierBindings, justPressedKeys
+    global keyActionBindings, modifierBindings
     
     keyStr = toKeyStr(key)
         
@@ -249,20 +283,15 @@ def onKeyPress(key):
         if any(map(lambda i: keyStr == i, event.bindings)) and not event.pressed:
             event.press()
     
-    for event in keyBindings.values():
+    for event in chain(characterBindings.values(), specialKeyBindings.values(), keyActionBindings.values()):
         if shouldBePressed(event, keyStr):
             event.press()
-    
-    for k in justPressedKeys:
-        if not k.justPressed:
-            justPressedKeys.remove(k)
             
     keyEvent = ButtonEvent(keyStr)
     keyEvent.press()
-    justPressedKeys.append(keyEvent)
 
 def onKeyRelease(key):
-    global keyBindings, modifierBindings, justReleasedKeys
+    global keyActionBindings, modifierBindings
     
     keyStr = toKeyStr(key)
 
@@ -270,7 +299,7 @@ def onKeyRelease(key):
         if any(map(lambda i: keyStr == i, event.bindings)) and event.pressed:
             event.release()
     
-    for event in keyBindings.values():
+    for event in chain(characterBindings.values(), specialKeyBindings.values(), keyActionBindings.values()):
         if shouldBeReleased(event, keyStr):
             event.release()
             

@@ -30,17 +30,17 @@ def checkSignature(data, signature):
     return hashlib.sha256(json.dumps(data).encode()).hexdigest() == signature
 
 def checkInput():
-    if input.keyBindings["left"].justPressed:
-        level.player.move(Vector2(-1, 0), input.keyBindings["left"].songTimeLastPressed)
+    if input.keyActionBindings["left"].justPressed:
+        level.player.move(Vector2(-1, 0), input.keyActionBindings["left"].songTimeLastPressed)
     
-    if input.keyBindings["right"].justPressed:
-        level.player.move(Vector2(1, 0), input.keyBindings["right"].songTimeLastPressed)
+    if input.keyActionBindings["right"].justPressed:
+        level.player.move(Vector2(1, 0), input.keyActionBindings["right"].songTimeLastPressed)
         
-    if input.keyBindings["up"].justPressed:
-        level.player.move(Vector2(0, -1), input.keyBindings["up"].songTimeLastPressed)
+    if input.keyActionBindings["up"].justPressed:
+        level.player.move(Vector2(0, -1), input.keyActionBindings["up"].songTimeLastPressed)
         
-    if input.keyBindings["down"].justPressed:
-        level.player.move(Vector2(0, 1), input.keyBindings["down"].songTimeLastPressed)
+    if input.keyActionBindings["down"].justPressed:
+        level.player.move(Vector2(0, 1), input.keyActionBindings["down"].songTimeLastPressed)
 
 def updateFactors(factor):
     level.factor = factor

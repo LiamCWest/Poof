@@ -115,6 +115,7 @@ def easeInPow(startingValue, endingValue, startingTime, endingTime, pow, current
 
 def easeOutPowBasis(x, pow):
     return math.pow(x, 1 / pow)
+
 def easeOutPow(startingValue, endingValue, startingTime, endingTime, pow, currentTime):
     return interp(startingValue, endingValue, startingTime, endingTime, lambda x: easeOutPowBasis(x, pow), currentTime)
 

@@ -9,6 +9,7 @@ class Tile:
         self.appearedTime = appearedTime        
         self.disappearTime = disappearTime
         self.type = type
+        self.factor = 1
         
         self.inputs = []
     
@@ -34,6 +35,7 @@ class Tile:
         return 1 - (timeIntoDisappearAnim / disappearLength)    
 
     def draw(self, win, topLeftPos, tileSize, appearLength, disappearLength, time):
+        
         if self.appearedTime is None and self.disappearedTime is None: #TODO: make tiles animate with a proper animation
             scale = 1
         elif self.appearedTime is None:
@@ -67,7 +69,9 @@ class Tile:
                 scale = 0
         scale **= 5 #temp
         
-        pos = ((self.pos - topLeftPos) * tileSize + tileSize.multiply(1 - scale).divide(2)).toTuple()
+        pos = ((self.pos - topLeftPos) * tileSize + tileSize.multiply(1 - scale).divide(2))
+        pos = pos.multiply(self.factor).toTuple()
+        tileSize = tileSize.multiply(self.factor)
         win.blit(pygame.transform.scale(self.getTypeImage(), tileSize.multiply(scale).toTuple()), pos)
         
     def copy(self):

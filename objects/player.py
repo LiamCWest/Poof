@@ -14,6 +14,7 @@ class PlayerState:
         self.countedMovesMade = None
         self.acc = None
         self.deathTime = None
+        self.factor = 1
 
 class Player:
     offset = Vector2(5, 4)
@@ -29,7 +30,7 @@ class Player:
         if state is None:
             return
         
-        size = Vector2(50, 50)
+        size = Vector2(50 * self.factor, 50 * self.factor)
         
         if state.lastMove is None:
             img = images.images["player_down"]

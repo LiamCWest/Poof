@@ -9,6 +9,7 @@ class Scrollbar:
         self.y = y
         self.width = width
         self.length = length
+        self.factor = 1
         self.rectWidth = width if orientation == "v" else length
         self.rectHeight = length if orientation == "v" else width
         self.orientation = orientation
@@ -26,7 +27,8 @@ class Scrollbar:
         self.slider = Button("", self.x, self.y, buttonWidth, buttonHeight, self.fg, self.fg, lambda: None)
         
     def draw(self, screen):
-        pygame.draw.rect(screen, self.bg, (self.x, self.y, self.rectWidth, self.rectHeight))
+        pygame.draw.rect(screen, self.bg, (self.x * self.factor, self.y * self.factor, self.rectWidth * self.factor, self.rectHeight * self.factor))
+        self.slider.factor = self.factor
         self.slider.draw(screen)
     
     def moveTo(self, value):

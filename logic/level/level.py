@@ -55,7 +55,8 @@ class Level:
         
         self.player = self.createPlayer(self.playerStartPos, self.playerStartTime)
         
-        songPlayer.play()
+        songPlayer.seek(0)
+        songPlayer.unpause()
         self.tileAnim.restart(songPlayer.getPos())        
     
     def draw(self, win, timeSourceTime, topLeftPos, tileSize, drawPlayer = False, playerState = None, drawGrid = False, gridLineThickness = 2):
@@ -130,6 +131,7 @@ class Level:
                 return None
             tiles = loaded_data['tiles']
             tilesV2 = [Tile(Vector2.from_tuple(tile[0]), tile[1], tile[2], tile[3], tile[4]) for tile in tiles]
+            print([tile.appearedTime for tile in tilesV2])
             appearLength = loaded_data['appearLength']
             disappearLength = loaded_data['disappearLength']
             songPath = loaded_data['songPath']

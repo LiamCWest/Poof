@@ -17,9 +17,11 @@ class Level:
         self.disappearLength = disappearLength
         
         tileEvents = [self.createEventFromTile(tile) for tile in tiles]
+        self.tiles = tiles
         self.tileAnim = Animation(tileEvents, 0)
         self.pos = Vector2(0, 0)
         self.tileSize = Vector2(50, 50)
+        self.factor = 1
         
         self.playerStartPos = playerStartPos
         self.playerStartTime = playerStartTime
@@ -60,9 +62,14 @@ class Level:
         self.tileAnim.restart(songPlayer.getPos())        
     
     def draw(self, win, timeSourceTime, topLeftPos, tileSize, drawPlayer = False, playerState = None, drawGrid = False, gridLineThickness = 2):
+        
+        for tile in self.tiles:
+            tile.factor = self.factor
+            
         self.tileAnim.updateTime(timeSourceTime, win, topLeftPos, tileSize)
         
         if self.player is not None and drawPlayer:
+            self.player.factor = self.factor
             self.player.draw(win, playerState)
         
         if drawGrid:

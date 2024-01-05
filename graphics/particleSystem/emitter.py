@@ -10,6 +10,7 @@ class Emitter:
         self.lifeTime = lifeTime
         self.size = size
         self.particles = []
+        self.factor = 1
 
     def emit(self):
         if len(self.particles) < self.emitRate:
@@ -27,6 +28,7 @@ class Emitter:
             
     def draw(self, win):
         for particle in self.particles:
+            particle.factor = self.factor
             particle.draw(win)
 
     def reset(self):

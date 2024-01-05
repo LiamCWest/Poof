@@ -15,6 +15,12 @@ def draw():
         object.draw()
     for text in texts:
         text.draw()
+        
+def updateFactors(factor):
+    for object in objects:
+        object.factor = factor
+    for text in texts:
+        text.factor = factor
     
 def update():
     for object in objects:

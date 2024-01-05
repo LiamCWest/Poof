@@ -1,19 +1,18 @@
 from ui.button import Button
 from ui.text import Text
+from utils.polygon import Polygon
 from graphics import gui
 from input import input
 import pygame
 
 class InputBox(Button):
-    def __init__(self, text, x, y, width, height, color, textColor, textSize = 40):
+    def __init__(self, text, x, y, width, height, color, textColor, textSize = 40, sizeLocked = False, maxLength = 20):
         Button.__init__(self, text, x, y, width, height, color, textColor, self.select)
         self.active = False
-        self.input = ""
         self.textColor = textColor
-        self.text = Text(self.input, x + width//2, y + height//2, textColor, textSize)
+        self.highlightRect = Polygon.fromRect((self.x, self.y, self.width, self.height), self.textColor)
         
     def select(self):
-        print("select")
         if self.active: self.active = False
         else: self.active = True
         
@@ -33,4 +32,5 @@ class InputBox(Button):
     def draw(self, win):
         Button.draw(self, win)
         if self.active:
-            pygame.draw.rect(win, self.textColor, (self.x, self.y, self.width, self.height), 2)
+            self.highlightRect.scale = self.scale
+            self.highlightRect.draw(win, 2)

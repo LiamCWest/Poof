@@ -217,10 +217,10 @@ characterBindings = {
 }
 
 specialKeyBindings = {
-    "backspace": ButtonEvent("<8>", strict=True),
-    "delete": ButtonEvent("<46>", strict=True),
-    "enter": ButtonEvent("<13>", strict=True),
-    "escape": ButtonEvent("<27>", strict=True),
+    "backspace": ButtonEvent(("<8>", "<65288>"), strict=True),
+    "delete": ButtonEvent(("<46>", "<65535>"), strict=True),
+    "enter": ButtonEvent(("<13>", "<65293>"), strict=True),
+    "escape": ButtonEvent(("<27>", "<65307>"), strict=True),
 }
 
 keyActionBindings = {

@@ -85,12 +85,12 @@ class Level:
             gridHeight = screenSize.y + tileSize.y
             for i in range(math.floor(screenSize.x / tileSize.x) + 2):
                 pos = topLeftMod - tileSize + (Vector2(i, 0) * tileSize)
-                polygon1 = Polygon([(pos.x - ltHalf, pos.y), (pos.x + ltHalf, pos.y), (pos.x + ltHalf, pos.y + gridHeight), (pos.x - ltHalf, pos.y + gridHeight)])
+                polygon1 = Polygon.fromRect((pos.x - ltHalf, pos.y - ltHalf, gridLineThickness, gridHeight))
                 polygon1.draw(win)
                 
             for i in range(math.floor(screenSize.y / tileSize.y) + 2):
                 pos = topLeftMod - tileSize + (Vector2(0, i) * tileSize)
-                polygon1 = Polygon([(pos.x, pos.y - ltHalf), (pos.x, pos.y + ltHalf), (pos.x + gridWidth, pos.y + ltHalf), (pos.x + gridWidth, pos.y - ltHalf)])
+                polygon1 = Polygon.fromRect((pos.x - ltHalf, pos.y - ltHalf, gridWidth, gridLineThickness))
                 polygon1.draw(win)
             
     def getTileAt(self, pos, levelTime):

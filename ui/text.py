@@ -8,8 +8,9 @@ class Text:
         self.color = color
         self.font = font
         self.size = size
+        self.scale = 1
         self.factor = 1
         self.z = z
 
-    def draw(self):
-        gui.drawText(self.text, self.x * self.factor, self.y * self.factor, int(self.size * self.factor), self.color, self.font)
+    def draw(self, cutOff = None):
+        gui.drawText(self.text, self.x * self.factor, self.y * self.factor, int(self.size * self.factor * self.scale), self.color, self.font, cutOff)

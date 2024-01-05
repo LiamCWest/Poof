@@ -25,7 +25,7 @@ class Button:
         self.onRelease = onRelease
         
         if self.particles:
-            shape = Polygon([(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
+            shape = Polygon.fromRect((0, 0, self.width, self.height), (255, 255, 255))
             self.emitter = ShapedEmitter(shape, Vector2(self.x, self.y), Vector2(1,1), 10, 50, 5)
         
         self.onClick = onClick
@@ -35,10 +35,11 @@ class Button:
         y = self.y - (self.height * (self.scale - 1) / 2)
         width = self.width * self.scale
         height = self.height * self.scale
-        drawRectResized(screen, self.color, x, y, width, height, self.factor)
+        rect = drawRectResized(screen, self.color, x, y, width, height, self.factor)
         #pygame.draw.rect(screen, self.color, (x*self.factor, y*self.factor, width*self.factor, height*self.factor))
         self.text.factor = self.factor
-        self.text.draw()
+        self.text.scale = self.scale
+        self.text.draw(rect)
         if self.particles:
             self.emitter.factor = self.factor
             self.emitter.draw(screen)

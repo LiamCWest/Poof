@@ -27,12 +27,19 @@ def setScreen(name):
     
     activeScreen.show()
 
-def drawText(text, x, y, size, color, font = "Arial"):
+def drawText(text, x, y, size, color, font = "Arial", cutOff = None):
     global screen
     font = pygame.font.SysFont(font, size)
     text_surface = font.render(text, True, color)
     text_rect = text_surface.get_rect(center=(x, y))
-    screen.blit(text_surface, text_rect)
+
+    if cutOff:
+        cutOff_rect = pygame.Rect(cutOff)
+        if text_rect.colliderect(cutOff_rect):
+            cutOff_surface = screen.subsurface(cutOff_rect)
+            cutOff_surface.blit(text_surface, text_rect.move(-cutOff_rect.topleft[0], -cutOff_rect.topleft[1]))
+    else:
+        screen.blit(text_surface, text_rect)
     
 def clear():
     global screen

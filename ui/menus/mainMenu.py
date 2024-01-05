@@ -42,6 +42,10 @@ def update():
     for object in objects:
         object.update()
         
+    if objects[5].returned:
+        print(objects[5].output)
+        objects[5].accept()
+        
 def settings():
     hide()
     gui.setScreen("settings")

@@ -14,6 +14,13 @@ class InputBox(Button):
         self.highlightRect = Polygon.fromRect((self.x, self.y, self.width, self.height), self.textColor)
         self.clicked = False
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        self.output = ""
+        self.returned = False
+        
+    def accept(self):
+        self.returned = False
+        self.text.text = self.defaultText
+        self.output = ""
         
     def deselect(self):
         if self.active: 
@@ -23,7 +30,7 @@ class InputBox(Button):
             self.active = False
         
     def select(self):
-        if not self.active:
+        if not self.active and not self.returned:
             if not self.clicked:
                 self.text.text = ""
                 self.clicked = True
@@ -39,7 +46,12 @@ class InputBox(Button):
             if input.specialKeyBindings["backspace"].justPressed:
                 self.text.text = self.text.text[:-1]
                 
-            if input.specialKeyBindings["escape"].justPressed or input.specialKeyBindings["enter"].justPressed:
+            if input.specialKeyBindings["escape"].justPressed:
+                self.active = False
+                
+            if input.specialKeyBindings["enter"].justPressed:
+                self.output = self.text.text
+                self.returned = True
                 self.active = False
                 
             if input.mouseBindings["lmb"].justPressed:

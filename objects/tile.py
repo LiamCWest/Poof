@@ -9,6 +9,7 @@ class Tile:
         self.appearedTime = appearedTime        
         self.disappearTime = disappearTime
         self.type = type
+        self.factor = 1
         
         self.inputs = []
     
@@ -48,7 +49,9 @@ class Tile:
             scale = 0
         scale **= 5 #temp
         
-        pos = ((self.pos - topLeftPos) * tileSize + tileSize.multiply(1 - scale).divide(2)).toTuple()
+        pos = ((self.pos - topLeftPos) * tileSize + tileSize.multiply(1 - scale).divide(2))
+        pos = pos.multiply(self.factor).toTuple()
+        tileSize = tileSize.multiply(self.factor)
         win.blit(pygame.transform.scale(self.getTypeImage(), tileSize.multiply(scale).toTuple()), pos)
         
     def copy(self):

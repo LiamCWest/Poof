@@ -17,9 +17,11 @@ class Level:
         self.disappearLength = disappearLength
         
         tileEvents = [self.createEventFromTile(tile) for tile in tiles]
+        self.tiles = tiles
         self.tileAnim = Animation(tileEvents, 0)
         self.pos = Vector2(0, 0)
         self.tileSize = Vector2(50, 50)
+        self.factor = 1
         
         self.playerStartPos = playerStartPos
         self.playerStartTime = playerStartTime
@@ -60,9 +62,14 @@ class Level:
         self.tileAnim.restart(songPlayer.getPos())        
     
     def draw(self, win, timeSourceTime, topLeftPos, tileSize, drawPlayer = False, playerState = None, drawGrid = False, gridLineThickness = 2):
+        
+        for tile in self.tiles:
+            tile.factor = self.factor
+            
         self.tileAnim.updateTime(timeSourceTime, win, topLeftPos, tileSize)
         
         if self.player is not None and drawPlayer:
+            self.player.factor = self.factor
             self.player.draw(win, playerState)
         
         if drawGrid:
@@ -89,6 +96,17 @@ class Level:
                 return tile
         return None
             
+    def isTileValid(self, tile, oldTile):
+        if tile.appearedTime < 0 or tile.disappearTime < 0 or tile.appearedTime > songPlayer.getSongLength():
+            return False
+        if tile.appearedTime > tile.disappearTime:
+            return False
+        overlapping = self.tileAnim.tree.overlap(tile.appearedTime, tile.disappearTime)
+        for i in overlapping:
+            if i.data[1].pos == tile.pos and i.data[1] != oldTile:
+                return False
+        return True
+
     def save(self, levelFile):
         tileValues = [event.data[1].toValues() for event in self.tileAnim.tree]
         noV2sTiles = [[tile[0].toTuple(), tile[1], tile[2], tile[3], tile[4]] for tile in tileValues]
@@ -148,3 +166,6 @@ def signData(data):
 
 def checkSignature(data, signature):
     return signature == signData(data)
+
+def rangeOverlapsWithRange(range1, range2):
+    return range1[0] <= range2[1] and range2[0] <= range1[1]

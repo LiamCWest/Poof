@@ -15,6 +15,9 @@ def addOption(option, func, i):
     global toolbarButtons
     toolbarButtons.append(Button(option, toolbarPos.x + buttonSize*0.1 + i*(buttonSize*1.1), toolbarPos.y + buttonSize*0.1, buttonSize, buttonSize, (100, 100, 255), (0, 0, 0), func, textSize = 15, scaler=1.1))
 
+def updateFactors(factor):
+    level.factor = factor
+
 selected = None
 def select(option):
     global selected
@@ -30,7 +33,7 @@ def selectDivisor(d):
 
 selectedTile = None
 def checkInput():
-    global level, divisor
+    global level, divisor, selectedTile
     if input.keyBindings["play"].justPressed:
         if songPlayer.getIsPlaying():
             songPlayer.pause()
@@ -50,9 +53,12 @@ def checkInput():
         
         if input.keyBindings["increaseTileLength"].justPressed:
             newTileEndTime = songPlayer.getNextBeat(divisor, selectedTile.disappearTime)
-            if level.getTileAt(selectedTile.pos, newTileEndTime + level.disappearLength) is None:
+            newTile = selectedTile.copy()
+            newTile.disappearTime = newTileEndTime
+            if level.isTileValid(newTile, selectedTile):
+                print("valid")
                 level.removeTileAt(selectedTile.pos, selectedTile.appearedTime)
-                selectedTile.disappearTime = newTileEndTime
+                selectedTile = newTile.copy()
                 level.addTile(selectedTile)
         if input.keyBindings["decreaseTileLength"].justPressed:
             newTileEndTime = songPlayer.getPreviousBeat(divisor, selectedTile.disappearTime)
@@ -62,10 +68,30 @@ def checkInput():
                 level.addTile(selectedTile)
 
     if input.keyBindings["timeForwards"].justPressed:
+        oldTime = songPlayer.getPos()
         songPlayer.seek(songPlayer.getNextBeat(divisor))
+        delta = songPlayer.getPos() - oldTime
+        if selectedTile:
+            newTile = selectedTile.copy()
+            newTile.appearedTime += delta
+            newTile.disappearTime += delta
+            if level.isTileValid(newTile, selectedTile):
+                level.removeTileAt(selectedTile.pos, selectedTile.appearedTime)
+                selectedTile = newTile.copy()
+                level.addTile(selectedTile)
         
     if input.keyBindings["timeBackwards"].justPressed:
+        oldTime = songPlayer.getPos()
         songPlayer.seek(max(0, songPlayer.getPreviousBeat(divisor)))
+        delta = songPlayer.getPos() - oldTime
+        if selectedTile:
+            newTile = selectedTile.copy()
+            newTile.appearedTime += delta
+            newTile.disappearTime += delta
+            if level.isTileValid(newTile, selectedTile):
+                level.removeTileAt(selectedTile.pos, selectedTile.appearedTime)
+                selectedTile = newTile.copy()
+                level.addTile(selectedTile)
 
 levelPos = Vector2(0, 0)
 def update():
@@ -116,7 +142,7 @@ def posIn(pos, rect):
     return pos.x > rect[0] and pos.x < rect[0] + rect[2] and pos.y > rect[1] and pos.y < rect[1] + rect[3]
     
 def draw():
-    global levelPos
+    global levelPos, selectedTile
     level.draw(gui.screen, songPlayer.getPos(), levelPos, level.tileSize, drawGrid=True)
     toolbar.draw(gui.screen)
     for button in toolbarButtons:
@@ -124,13 +150,15 @@ def draw():
     scrollbar.draw(gui.screen)
     for button in divisorSelector:
         button.draw(gui.screen)
-        
-    if selectedTile:
+    
+    if selectedTile and selectedTile.appearedTime-level.appearLength <= songPlayer.getPos() <= selectedTile.disappearTime+level.disappearLength:
         s = pygame.Surface(level.tileSize.toTuple())
         s.set_alpha(128)
         s.fill((255,255,255))
         gui.screen.blit(s, ((selectedTile.pos - levelPos) * level.tileSize).toTuple())
-
+    elif selectedTile:
+        selectedTile = None
+        
 tiles = None
 level = None
 lastMousePos = Vector2(0, 0)

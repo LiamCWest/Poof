@@ -31,10 +31,23 @@ def getNextPoint(points, time):
         return None
     return points[index + 1]
 
-beatsElapsedEpsilon = 0.0001 #.01% of a beat
-def isBeatNumInt(beats):
-    global beatsElapsedEpsilon
-    return abs(beats - round(beats)) <= beatsElapsedEpsilon
+def isOnBeat(time, point, divisor, pointIsAfter = False): #haha yes i can remove the need for epsilon now
+    if pointIsAfter:
+        timeUntilPoint = point.time - time
+        dividedBeatLength = point.beatLength / divisor
+        beatsUntil = timeUntilPoint / dividedBeatLength
+        roundedBeatsUntil = round(beatsUntil)
+        
+        timeOfNearestBeat = -roundedBeatsUntil * dividedBeatLength + point.time
+        return timeOfNearestBeat == time
+    
+    timeSincePoint = time - point.time
+    dividedBeatLength = point.beatLength / divisor
+    beatsElapsed = timeSincePoint / dividedBeatLength
+    roundedBeatsElapsed = round(beatsElapsed)
+    
+    timeOfNearestBeat = roundedBeatsElapsed * dividedBeatLength + point.time
+    return timeOfNearestBeat == time
 
 def getPreviousBeat(points, time, divisor):
     if len(points) == 0:
@@ -46,7 +59,7 @@ def getPreviousBeat(points, time, divisor):
         timeUntilPoint = point.time - time
         dividedBeatLength = point.beatLength / divisor
         beatsUntil = timeUntilPoint / dividedBeatLength
-        if isBeatNumInt(beatsUntil): #if you're on a beat
+        if isOnBeat(time, point, divisor, True): #if you're on a beat
             realBeatsUntil = round(beatsUntil) + 1
             timeOfPreviousBeat = -realBeatsUntil * dividedBeatLength + point.time
         else:
@@ -59,7 +72,7 @@ def getPreviousBeat(points, time, divisor):
     timeSincePoint = time - point.time
     dividedBeatLength = point.beatLength / divisor
     beatsElapsed = timeSincePoint / dividedBeatLength
-    if not isBeatNumInt(beatsElapsed): #if you're not on a beat
+    if not isOnBeat(time, point, divisor): #if you're not on a beat
         flooredBeatsElapsed = math.floor(beatsElapsed)
         timeOfPreviousBeat = flooredBeatsElapsed * dividedBeatLength + point.time
         return timeOfPreviousBeat
@@ -102,7 +115,7 @@ def getNextBeat(points, time, divisor, countSameBeat = False): #TODO: Make sure 
         timeUntilPoint = point.time - time
         dividedBeatLength = point.beatLength / divisor
         beatsUntil = timeUntilPoint / dividedBeatLength
-        if isBeatNumInt(beatsUntil): #if you're on a beat
+        if isOnBeat(time, point, divisor, True): #if you're on a beat
             realBeatsUntil = round(beatsUntil) - 1
             timeOfPreviousBeat = -realBeatsUntil * dividedBeatLength + point.time
         else:
@@ -134,20 +147,20 @@ def getNextBeat(points, time, divisor, countSameBeat = False): #TODO: Make sure 
                 timeOfNextBeat = nextPoint.time
                 
         return timeOfNextBeat
+
+    timeSincePoint = time - point.time
+    dividedBeatLength = point.beatLength / divisor
+    beatsElapsed = timeSincePoint / dividedBeatLength
+    if isOnBeat(time, point, divisor): #if you're on a beat
+        realBeatsElapsed = round(beatsElapsed) + 1
+        timeOfNextBeat = realBeatsElapsed * dividedBeatLength + point.time
     else:
-        timeSincePoint = time - point.time
-        dividedBeatLength = point.beatLength / divisor
-        beatsElapsed = timeSincePoint / dividedBeatLength
-        if isBeatNumInt(beatsElapsed): #if you're on a beat
-            realBeatsElapsed = round(beatsElapsed) + 1
-            timeOfNextBeat = realBeatsElapsed * dividedBeatLength + point.time
-        else:
-            ceiledBeatsElapsed = math.ceil(beatsElapsed)
-            timeOfNextBeat = ceiledBeatsElapsed * dividedBeatLength + point.time
+        ceiledBeatsElapsed = math.ceil(beatsElapsed)
+        timeOfNextBeat = ceiledBeatsElapsed * dividedBeatLength + point.time
     
-    if len(points) > pointIndex + 1: #if the beat found surpasses the time of the next point
+    if len(points) > pointIndex + 1:
         nextPoint = points[pointIndex + 1]
-        if timeOfNextBeat > nextPoint.time:
+        if timeOfNextBeat > nextPoint.time: #if the beat found surpasses the time of the next point
             timeOfNextBeat = nextPoint.time
     
     return timeOfNextBeat

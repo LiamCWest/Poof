@@ -48,13 +48,13 @@ def checkInput():
             songPlayer.unpause()
        
     if selectedTile:
-        if input.keyBindings["moveTileLeft"].justPressed and not input.modifierBindings["shift"].pressed:
+        if input.keyBindings["moveTileLeft"].justPressed:
             selectedTile.pos += Vector2(-1, 0)
-        if input.keyBindings["moveTileRight"].justPressed and not input.modifierBindings["shift"].pressed:
+        if input.keyBindings["moveTileRight"].justPressed:
             selectedTile.pos += Vector2(1, 0)
-        if input.keyBindings["moveTileUp"].justPressed and not input.modifierBindings["shift"].pressed:
+        if input.keyBindings["moveTileUp"].justPressed:
             selectedTile.pos += Vector2(0, -1)
-        if input.keyBindings["moveTileDown"].justPressed and not input.modifierBindings["shift"].pressed:
+        if input.keyBindings["moveTileDown"].justPressed:
             selectedTile.pos += Vector2(0, 1)
         
         if input.keyBindings["increaseTileLength"].justPressed:

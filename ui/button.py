@@ -6,6 +6,7 @@ from graphics.particleSystem.shapedEmitter import ShapedEmitter
 from utils.vector2 import Vector2
 from utils.polygon import Polygon
 from ui.text import Text
+from utils.resizingFuncs import drawRectResized
 
 class Button:
     def __init__(self, text, x, y, width, height, color, textColor, onClick, onRelease = lambda: None,z = 0, particles = False, textSize = 20, scaler = 1.25):
@@ -34,7 +35,8 @@ class Button:
         y = self.y - (self.height * (self.scale - 1) / 2)
         width = self.width * self.scale
         height = self.height * self.scale
-        pygame.draw.rect(screen, self.color, (x*self.factor, y*self.factor, width*self.factor, height*self.factor))
+        drawRectResized(screen, self.color, x, y, width, height, self.factor)
+        #pygame.draw.rect(screen, self.color, (x*self.factor, y*self.factor, width*self.factor, height*self.factor))
         self.text.factor = self.factor
         self.text.draw()
         if self.particles:

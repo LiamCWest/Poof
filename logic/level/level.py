@@ -66,13 +66,14 @@ class Level:
         for tile in self.tiles:
             tile.factor = self.factor
             
-        self.tileAnim.updateTime(timeSourceTime, win, topLeftPos, tileSize)
+        self.tileAnim.updateTime(timeSourceTime, win, topLeftPos.divide(self.factor), tileSize)
         
         if self.player is not None and drawPlayer:
             self.player.factor = self.factor
             self.player.draw(win, playerState)
         
         if drawGrid:
+            tileSize = tileSize.multiply(self.factor)
             ltHalf = gridLineThickness / 2
             screenSize = Vector2(gui.screen.get_size()[0], gui.screen.get_size()[1])
             topLeftMod = self.tilePosToScreenPos(topLeftPos, Vector2(0, 0)) % tileSize

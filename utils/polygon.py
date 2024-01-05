@@ -8,6 +8,7 @@ class Polygon:
         self.points = points
         self.color = color
         self.calc()
+        self.factor = 1
 
     def calc(self):
         self.edges = []
@@ -18,7 +19,7 @@ class Polygon:
     def draw(self, screen):
         points = []
         for i in range(len(self.points)):
-            points.append((Vector2.from_tuple(self.points[i]) + self.pos).toTuple())
+            points.append((Vector2.from_tuple(self.points[i]) + self.pos).multiply(self.factor).toTuple())
         pygame.draw.polygon(screen, self.color, points)
         
     def move(self, delta):

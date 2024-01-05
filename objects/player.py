@@ -3,6 +3,7 @@ import pygame
 from utils.vector2 import Vector2
 from utils.binarySearch import binarySearch
 from graphics.animation import *
+from utils.resizingFuncs import blitResized
 
 class PlayerState:
     def __init__(self):
@@ -30,7 +31,7 @@ class Player:
         if state is None:
             return
         
-        size = Vector2(50 * self.factor, 50 * self.factor)
+        size = 50
         
         if state.lastMove is None:
             img = images.images["player_down"]
@@ -51,7 +52,8 @@ class Player:
                 }
             img = imgs[state.lastMove[0]]
         
-        win.blit(pygame.transform.scale(img, size.toTuple()), (size * self.offset).toTuple())
+        blitResized(win, img, self.offset, size, self.factor)
+        #win.blit(pygame.transform.scale(img, size.toTuple()), (size * self.offset).toTuple())
         
     def move(self, diff, time):
         self.moves.append((diff, time))

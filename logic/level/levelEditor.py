@@ -17,6 +17,12 @@ def addOption(option, func, i):
 
 def updateFactors(factor):
     level.factor = factor
+    toolbar.factor = factor
+    for button in toolbarButtons:
+        button.factor = factor
+    for button in divisorSelector:
+        button.factor = factor
+    scrollbar.factor = factor
 
 selected = None
 def select(option):

@@ -60,5 +60,5 @@ objects = [Button("Start", 200, 262, 200, 100, (0, 255, 0), (255, 0, 0), startGa
            Button("Level Editor", 200, 487, 200, 100, (0, 255, 0), (255, 0, 0), levelEditor),
            Button("Quit", 200, 600, 200, 100, (0, 255, 0), (255, 0, 0), quit),
            Scrollbar(800, 75, 20, 400, "h", None, 7, True),
-           InputBox("",800, 600, 200, 100, (0, 255, 0), (255, 0, 0))]
+           InputBox("INPUT",800, 600, 200, 100, (0, 255, 0), (255, 0, 0))]
 texts = [Text(title, 400, 150, (255, 0, 0), 100)]

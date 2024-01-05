@@ -34,7 +34,7 @@ def drawText(text, x, y, size, color, font = "Arial", cutOff = None):
     text_rect = text_surface.get_rect(center=(x, y))
 
     if cutOff:
-        cutOff_rect = pygame.Rect(cutOff)
+        cutOff_rect = pygame.Rect(cutOff).clip(screen.get_rect())
         if text_rect.colliderect(cutOff_rect):
             cutOff_surface = screen.subsurface(cutOff_rect)
             cutOff_surface.blit(text_surface, text_rect.move(-cutOff_rect.topleft[0], -cutOff_rect.topleft[1]))

@@ -180,7 +180,7 @@ def getNearestBeat(points, time, divisor):
         timeUntilPoint = point.time - time
         dividedBeatLength = point.beatLength / divisor
         beatsUntil = timeUntilPoint / dividedBeatLength
-        if isBeatNumInt(beatsUntil): #if you're on a beat
+        if isOnBeat(time, point, divisor, True): #if you're on a beat
             return time
         previousBeat = getPreviousBeat(points, time, divisor)
         nextBeat = getNextBeat(points, time, divisor)
@@ -191,7 +191,7 @@ def getNearestBeat(points, time, divisor):
     timeSincePoint = time - point.time
     dividedBeatLength = point.beatLength / divisor
     beatsElapsed = timeSincePoint / dividedBeatLength
-    if isBeatNumInt(beatsElapsed): #if you're on a beat
+    if isOnBeat(time, point, divisor): #if you're on a beat
         return time
     previousBeat = getPreviousBeat(points, time, divisor)
     nextBeat = getNextBeat(points, time, divisor)

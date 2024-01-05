@@ -62,7 +62,6 @@ def checkInput():
             newTile = selectedTile.copy()
             newTile.disappearTime = newTileEndTime
             if level.isTileValid(newTile, selectedTile):
-                print("valid")
                 level.removeTileAt(selectedTile.pos, selectedTile.appearedTime)
                 selectedTile = newTile.copy()
                 level.addTile(selectedTile)

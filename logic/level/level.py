@@ -150,7 +150,6 @@ class Level:
                 return None
             tiles = loaded_data['tiles']
             tilesV2 = [Tile(Vector2.from_tuple(tile[0]), tile[1], tile[2], tile[3], tile[4]) for tile in tiles]
-            print([tile.appearedTime for tile in tilesV2])
             appearLength = loaded_data['appearLength']
             disappearLength = loaded_data['disappearLength']
             songPath = loaded_data['songPath']

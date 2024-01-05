@@ -225,9 +225,6 @@ def onMouseScroll(x, y, dx, dy):
     
     mouseScroll.scroll(Vector2(dx, dy))
 
-def toKeyStr(key):
-    return key.char if hasattr(key, "char") else str(key)
-
 kblistener = None
 mouseListener = None
 justPressedKeys = []

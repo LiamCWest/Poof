@@ -31,9 +31,9 @@ def draw():
 
 def genLevelButton(level, i):
     rowLength = 5
-    x = 100 + (i % rowLength) * 100
-    y = 100 + (i // rowLength) * 100
-    return Button(getLevelName(level), x, y, 100, 100, (0,0,0), (255,255,255), lambda: loadLevel(level))
+    x = 100 + (i % rowLength) * 200
+    y = 100 + (i // rowLength) * 150
+    return Button(getLevelName(level), x, y, 200, 200, (0,0,0), (255,255,255), lambda: loadLevel(level))
 
 def getLevelName(level):
     return level.split("/")[-1].split(".")[0]

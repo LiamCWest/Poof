@@ -5,12 +5,12 @@ from input import input
 import pygame
 
 class InputBox(Button):
-    def __init__(self, text, x, y, width, height, color, textColor, textSize = 20):
+    def __init__(self, text, x, y, width, height, color, textColor, textSize = 40):
         Button.__init__(self, text, x, y, width, height, color, textColor, self.select)
         self.active = False
         self.input = ""
         self.textColor = textColor
-        self.text = Text(self.input, x, y, textColor, textSize)
+        self.text = Text(self.input, x + width//2, y + height//2, textColor, textSize)
         
     def select(self):
         print("select")

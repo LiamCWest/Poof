@@ -28,4 +28,4 @@ def update():
         
 title = "Settings Menu"
 objects = []
-texts = [Text(title, 200, 100, (255, 0, 0), 50)]
+texts = [Text(title, 400, 150, (255, 0, 0), 100)]

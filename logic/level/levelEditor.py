@@ -13,7 +13,7 @@ import hashlib
 
 def addOption(option, func, i):
     global toolbarButtons
-    toolbarButtons.append(Button(option, toolbarPos.x + buttonSize*0.1 + i*(buttonSize*1.1), toolbarPos.y + buttonSize*0.1, buttonSize, buttonSize, (100, 100, 255), (0, 0, 0), func, textSize = 15, scaler=1.1))
+    toolbarButtons.append(Button(option, toolbarPos.x + buttonSize*0.1 + i*(buttonSize*1.1), toolbarPos.y + buttonSize*0.1, buttonSize, buttonSize, (100, 100, 255), (0, 0, 0), func, textSize = 30, scaler=1.1))
 
 def updateFactors(factor):
     level.factor = factor
@@ -136,6 +136,7 @@ def update():
             if level.getTileAt(tilePos, tileTime) is None:
                 level.addTile(Tile(tilePos, None, tileTime, tileTime, selected))
                 selectedTile = level.getTileAt(tilePos, tileTime)
+                selectedTile.factor = level.factor
             
         if selected == "delete" and input.mouseBindings["lmb"].justPressed:
             tilePos = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
@@ -177,7 +178,7 @@ def show():
         addOption(option, toolbarFuncs[option], i)
     select("move")
     for i, d in enumerate(divisors):
-        divisorSelector.append(Button(str(d), toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize/2.75*0.1 + buttonSize/2.75*1.1*i, toolbarPos.y + buttonSize*1.2/4-5 + 20, buttonSize/2.75, buttonSize/2.75, (100, 100, 255), (0, 0, 0), lambda x=d: selectDivisor(x), textSize = 15, scaler=1.1))
+        divisorSelector.append(Button(str(d), toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize/2.75*0.5 + buttonSize/2.75*1.1*i, toolbarPos.y + buttonSize*1.2/4-5 + 30, buttonSize/2.75, buttonSize/2.75, (100, 100, 255), (0, 0, 0), lambda x=d: selectDivisor(x), textSize = 30, scaler=1.1))
     selectDivisor(1)
     lastMousePos = input.mousePos.pos
     
@@ -200,10 +201,10 @@ toolbarFuncs = {
     "save": lambda: level.save(levelF),
     "load": lambda: loadLevel("level_data.json")
 }
-buttonSize = 55
+buttonSize = 90
 toolbarPos = Vector2(buttonSize*0.1, buttonSize*0.1)
 selected = "move"
-scrollbar = Scrollbar(toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.1, toolbarPos.y+buttonSize*1.2/4-5, 10, 100, "h", sliderWidth=25)
+scrollbar = Scrollbar(toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.1, toolbarPos.y+buttonSize*1.2/4-5, 20, 200, "h", sliderWidth=25)
 toolbar = Polygon.fromRect((toolbarPos.x, toolbarPos.y, len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.2 + scrollbar.length, buttonSize*1.2), (25, 25, 100))
 divisors = [1, 2, 4, 8, 16]
 divisorSelector = []

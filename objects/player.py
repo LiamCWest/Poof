@@ -31,7 +31,7 @@ class Player:
         if state is None:
             return
         
-        size = 50
+        size = 100
         
         if state.lastMove is None:
             img = images.images["player_down"]

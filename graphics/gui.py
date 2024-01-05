@@ -10,7 +10,7 @@ activeScreen = None
 activeScreenName = None
 def init():
     global screen, screens, activeScreen, activeScreenName
-    screen = pygame.display.set_mode((640, 480), pygame.RESIZABLE)
+    screen = pygame.display.set_mode((1280, 720))
     screen.fill((255, 255, 255))
     
     screens = {"main": mainMenu, "game": game, "settings": settingsMenu, "levelEditor": levelEditor, "levelMenu": levelMenu}
@@ -40,15 +40,15 @@ def clear():
     
 def update():
     global activeScreen
-    factor = resizeFactor()
+    #factor = resizeFactor()
     if activeScreen: 
-        activeScreen.updateFactors(factor)
+        #activeScreen.updateFactors(factor)
         activeScreen.update()
     draw()
     
 def resizeFactor():
     global screen
-    factor = min(screen.get_width()/640, screen.get_height()/480)
+    factor = min(screen.get_width()/1280, screen.get_height()/720)
     return factor
     
 def draw():

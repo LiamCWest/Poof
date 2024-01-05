@@ -20,7 +20,7 @@ class Level:
         self.tiles = tiles
         self.tileAnim = Animation(tileEvents, 0)
         self.pos = Vector2(0, 0)
-        self.tileSize = Vector2(50, 50)
+        self.tileSize = Vector2(100, 100)
         self.factor = 1
         
         self.playerStartPos = playerStartPos
@@ -66,7 +66,10 @@ class Level:
         for tile in self.tiles:
             tile.factor = self.factor
             
-        self.tileAnim.updateTime(timeSourceTime, win, topLeftPos.divide(self.factor), tileSize)
+        if drawGrid:
+            self.tileAnim.updateTime(timeSourceTime, win, topLeftPos.divide(self.factor), tileSize)
+        else:
+            self.tileAnim.updateTime(timeSourceTime, win, topLeftPos, tileSize)
         
         if self.player is not None and drawPlayer:
             self.player.factor = self.factor

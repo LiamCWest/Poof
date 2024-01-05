@@ -142,7 +142,7 @@ def toKeyStr(key):
     return str(kbListener.canonical(key))
 
 def onKeyPress(key):
-    global keyBindings, modifierBindings
+    global keyBindings, modifierBindings, justPressedKeys
     
     keyStr = toKeyStr(key)
         
@@ -154,9 +154,17 @@ def onKeyPress(key):
         if any(map(lambda i: keyStr == i, event.bindings)) and not event.pressed:
             if event.modifiers == (None,) or all(map(lambda i: modifierBindings[i].pressed, event.modifiers)):
                 event.press()
+    
+    for k in justPressedKeys:
+        if not k.justPressed:
+            justPressedKeys.remove(k)
+            
+    keyEvent = ButtonEvent(keyStr)
+    keyEvent.press()
+    justPressedKeys.append(keyEvent)
 
 def onKeyRelease(key):
-    global keyBindings, modifierBindings
+    global keyBindings, modifierBindings, justReleasedKeys
     
     keyStr = toKeyStr(key)
 
@@ -170,6 +178,14 @@ def onKeyRelease(key):
         
         if any(map(lambda i: keyStr == i, event.bindings)) and event.pressed:
             event.release()
+            
+    for k in justReleasedKeys:
+        if not k.justReleased:
+            justReleasedKeys.remove(k)
+            
+    keyEvent = ButtonEvent(keyStr)
+    keyEvent.release()
+    justReleasedKeys.append(keyEvent)
             
 def toMouseStr(button):
     return str(button)
@@ -209,8 +225,13 @@ def onMouseScroll(x, y, dx, dy):
     
     mouseScroll.scroll(Vector2(dx, dy))
 
+def toKeyStr(key):
+    return key.char if hasattr(key, "char") else str(key)
+
 kblistener = None
 mouseListener = None
+justPressedKeys = []
+justReleasedKeys = []
 def init():
     global kbListener, mouseListener
     kbListener = keyboard.Listener(on_press=onKeyPress, on_release=onKeyRelease)

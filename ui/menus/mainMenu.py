@@ -3,6 +3,7 @@ from ui.button import Button
 from ui.text import Text
 from ui.scrollbar import Scrollbar
 from ui.menus import levelMenu
+from ui.inputBox import InputBox
 from logic.level import levelEditor as LE
 from logic.game import game
 
@@ -58,5 +59,6 @@ objects = [Button("Start", 100, 175, 100, 50, (0, 255, 0), (255, 0, 0), startGam
            Button("Settings", 100, 250, 100, 50, (0, 255, 0), (255, 0 ,0), settings),
            Button("Level Editor", 100, 325, 100, 50, (0, 255, 0), (255, 0, 0), levelEditor),
            Button("Quit", 100, 400, 100, 50, (0, 255, 0), (255, 0, 0), quit),
-           Scrollbar(400, 50, 10, 200, "h", None, 3, True)]
+           Scrollbar(400, 50, 10, 200, "h", None, 3, True),
+           InputBox("",400, 400, 100, 50, (0, 255, 0), (255, 0, 0))]
 texts = [Text(title, 200, 100, (255, 0, 0), 50)]

@@ -116,6 +116,76 @@ modifierBindings = {
     "alt": ButtonEvent("Key.alt"),
 }
 
+keyboardBindings = {
+    "a": ButtonEvent("'a'"),
+    "b": ButtonEvent("'b'"),
+    "c": ButtonEvent("'c'"),
+    "d": ButtonEvent("'d'"),
+    "e": ButtonEvent("'e'"),
+    "f": ButtonEvent("'f'"),
+    "g": ButtonEvent("'g'"),
+    "h": ButtonEvent("'h'"),
+    "i": ButtonEvent("'i'"),
+    "j": ButtonEvent("'j'"),
+    "k": ButtonEvent("'k'"),
+    "l": ButtonEvent("'l'"),
+    "m": ButtonEvent("'m'"),
+    "n": ButtonEvent("'n'"),
+    "o": ButtonEvent("'o'"),
+    "p": ButtonEvent("'p'"),
+    "q": ButtonEvent("'q'"),
+    "r": ButtonEvent("'r'"),
+    "s": ButtonEvent("'s'"),
+    "t": ButtonEvent("'t'"),
+    "u": ButtonEvent("'u'"),
+    "v": ButtonEvent("'v'"),
+    "w": ButtonEvent("'w'"),
+    "x": ButtonEvent("'x'"),
+    "y": ButtonEvent("'y'"),
+    "z": ButtonEvent("'z'"),
+    "A": ButtonEvent("'A'"),
+    "B": ButtonEvent("'B'"),
+    "C": ButtonEvent("'C'"),
+    "D": ButtonEvent("'D'"),
+    "E": ButtonEvent("'E'"),
+    "F": ButtonEvent("'F'"),
+    "G": ButtonEvent("'G'"),
+    "H": ButtonEvent("'H'"),
+    "I": ButtonEvent("'I'"),
+    "J": ButtonEvent("'J'"),
+    "K": ButtonEvent("'K'"),
+    "L": ButtonEvent("'L'"),
+    "M": ButtonEvent("'M'"),
+    "N": ButtonEvent("'N'"),
+    "O": ButtonEvent("'O'"),
+    "P": ButtonEvent("'P'"),
+    "Q": ButtonEvent("'Q'"),
+    "R": ButtonEvent("'R'"),
+    "S": ButtonEvent("'S'"),
+    "T": ButtonEvent("'T'"),
+    "U": ButtonEvent("'U'"),
+    "V": ButtonEvent("'V'"),
+    "W": ButtonEvent("'W'"),
+    "X": ButtonEvent("'X'"),
+    "Y": ButtonEvent("'Y'"),
+    "Z": ButtonEvent("'Z'"),
+    "0": ButtonEvent("'0'"),
+    "1": ButtonEvent("'1'"),
+    "2": ButtonEvent("'2'"),
+    "3": ButtonEvent("'3'"),
+    "4": ButtonEvent("'4'"),
+    "5": ButtonEvent("'5'"),
+    "6": ButtonEvent("'6'"),
+    "7": ButtonEvent("'7'"),
+    "8": ButtonEvent("'8'"),
+    "9": ButtonEvent("'9'"),
+    "backspace": ButtonEvent("<>"),
+    "return": ButtonEvent("<>"),
+    "space": ButtonEvent("<32>"),
+    "tab": ButtonEvent("<>"),
+    "esc": ButtonEvent("<>"),
+}
+
 keyBindings = {
     #In game bindings
     "left": ButtonEvent("'a'"),
@@ -203,14 +273,6 @@ def onKeyRelease(key):
     for event in keyBindings.values():
         if shouldBeReleased(event, keyStr):
             event.release()
-            
-    for k in justReleasedKeys:
-        if not k.justReleased:
-            justReleasedKeys.remove(k)
-            
-    keyEvent = ButtonEvent(keyStr)
-    keyEvent.release()
-    justReleasedKeys.append(keyEvent)
             
 def handleEvent(mouseEvent):
     global mouseBindings

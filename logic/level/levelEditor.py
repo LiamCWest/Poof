@@ -135,10 +135,10 @@ def update():
             level.removeTileAt(tilePos, tileTime)
             selectedTile = None
 
-def metronomeUpdate():
+def metronomeUpdate(): #TODO: make beat number apear on each beat
     point = songPlayer.getPreviousPoint() if songPlayer.getPreviousPoint() else songPlayer.currentTimingPoints[0]
     distanceFromPoint = songPlayer.getPos() - point.time if songPlayer.getPos() > point.time else None
-    b = 1 if distanceFromPoint is None else math.floor(distanceFromPoint / point.beatLength) % 4 + 1
+    b = 1 if distanceFromPoint is None else math.floor(distanceFromPoint / point.beatLength) % point.timeSignature.num + 1
     selectMetBeat(b)
             
 def selectMetBeat(b):

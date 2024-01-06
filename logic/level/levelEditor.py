@@ -1,5 +1,8 @@
 from objects.tile import Tile
 from ui.button import Button
+from ui.toolbar import Toolbar, ToolbarOption
+from ui.inputBox import InputBox
+from ui.text import Text
 from utils.vector2 import Vector2
 import input.input as input
 from logic.level.level import Level
@@ -11,25 +14,14 @@ import pygame
 import json
 import hashlib
 
-def addOption(option, func, i):
-    global toolbarButtons
-    toolbarButtons.append(Button(option, toolbarPos.x + buttonSize*0.1 + i*(buttonSize*1.1), toolbarPos.y + buttonSize*0.1, buttonSize, buttonSize, (100, 100, 255), (0, 0, 0), func, textSize = 30, scaler=1.1))
-
 def updateFactors(factor):
     level.factor = factor
-    toolbar.factor = factor
-    for button in toolbarButtons:
-        button.factor = factor
-    for button in divisorSelector:
-        button.factor = factor
-    scrollbar.factor = factor
 
-selected = None
-def select(option):
-    global selected
-    toolbarButtons[toolbarModes.index(selected)].color = (100, 100, 255)
-    selected = option
-    toolbarButtons[toolbarModes.index(selected)].color = (50, 50, 255)
+def selectMode(option):
+    global selectedMode
+    topBar.objects[modes.index(selectedMode)].baseObj.color = (100, 100, 255)
+    selectedMode = option
+    topBar.objects[modes.index(selectedMode)].baseObj.color = (50, 50, 255)
 
 def selectDivisor(d):
     global divisor
@@ -101,13 +93,10 @@ def checkInput():
 levelPos = Vector2(0, 0)
 def update():
     checkInput()
-    for button in toolbarButtons:
-        button.update()
-    for button in divisorSelector:
-        button.update()
+    topBar.update()
+    bottomBar.update()
     
     global lastScrollbarValue, divisor
-    scrollbar.update()
     songLen = songPlayer.getSongLength()
     if scrollbar.getValue() != lastScrollbarValue: 
         songPos = songLen * scrollbar.getValue()
@@ -118,27 +107,27 @@ def update():
         scrollbar.moveTo(songPlayer.getPos() / songLen)
     lastScrollbarValue = scrollbar.getValue()
 
-    if not posIn(input.mousePos.pos, (toolbarPos.x, toolbarPos.y, toolbar.getWidth(), toolbar.getHeight())):
+    if not posIn(input.mousePos.pos, topBar.getRect()) and input.mousePos.pos.y < bottomBar.pos.y:
         global lastMousePos, levelPos, selectedTile
-        if selected == "move" and input.mouseBindings["lmb"].pressed:
+        if selectedMode == "move" and input.mouseBindings["lmb"].pressed:
             currentMousePos = input.mousePos.pos
             levelPos -= (currentMousePos - lastMousePos) / level.tileSize
             lastMousePos = currentMousePos
         else:
             lastMousePos = input.mousePos.pos
             
-        if selected == "select" and input.mouseBindings["lmb"].justPressed:
+        if selectedMode == "select" and input.mouseBindings["lmb"].justPressed:
             selectedTile = level.getTileAt(level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos), songPlayer.getPos())
         
-        if selected in ["platform", "wall", "rest"] and input.mouseBindings["lmb"].justPressed:
+        if selectedMode in ["platform", "wall", "rest"] and input.mouseBindings["lmb"].justPressed:
             tilePos = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
             tileTime = songPlayer.getNearestBeat(divisor, songPlayer.getPos())
             if level.getTileAt(tilePos, tileTime) is None:
-                level.addTile(Tile(tilePos, None, tileTime, tileTime, selected))
+                level.addTile(Tile(tilePos, None, tileTime, tileTime, selectedMode))
                 selectedTile = level.getTileAt(tilePos, tileTime)
                 selectedTile.factor = level.factor
             
-        if selected == "delete" and input.mouseBindings["lmb"].justPressed:
+        if selectedMode == "delete" and input.mouseBindings["lmb"].justPressed:
             tilePos = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
             tileTime = songPlayer.getNearestBeat(divisor, songPlayer.getPos())
             level.removeTileAt(tilePos, tileTime)
@@ -150,12 +139,8 @@ def posIn(pos, rect):
 def draw():
     global levelPos, selectedTile
     level.draw(gui.screen, songPlayer.getPos(), levelPos, level.tileSize, drawGrid=True)
-    toolbar.draw(gui.screen)
-    for button in toolbarButtons:
-        button.draw(gui.screen)
-    scrollbar.draw(gui.screen)
-    for button in divisorSelector:
-        button.draw(gui.screen)
+    topBar.draw(gui.screen)
+    bottomBar.draw(gui.screen)
     
     if selectedTile and selectedTile.appearedTime-level.appearLength <= songPlayer.getPos() <= selectedTile.disappearTime+level.disappearLength:
         s = pygame.Surface(level.tileSize.toTuple())
@@ -169,17 +154,8 @@ tiles = None
 level = None
 lastMousePos = Vector2(0, 0)
 def show():
-    global tiles, level, lastMousePos
-    
-    for i, option in enumerate(toolbarModes):
-        addOption(option, lambda x=option: select(x), i)
-    for option in toolbarB:
-        i += 1
-        addOption(option, toolbarFuncs[option], i)
-    select("move")
-    for i, d in enumerate(divisors):
-        divisorSelector.append(Button(str(d), toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize/2.75*0.5 + buttonSize/2.75*1.1*i, toolbarPos.y + buttonSize*1.2/4-5 + 30, buttonSize/2.75, buttonSize/2.75, (100, 100, 255), (0, 0, 0), lambda x=d: selectDivisor(x), textSize = 30, scaler=1.1))
-    selectDivisor(1)
+    global lastMousePos
+    init()
     lastMousePos = input.mousePos.pos
     
     update()
@@ -193,20 +169,77 @@ def loadLevel(levelFile):
 def checkSignature(data, signature):
     return hashlib.sha256(json.dumps(data).encode('utf-8')).hexdigest() == signature
 
-toolbarModes = ["move", "select", "platform", "wall", "rest", "delete"]
-toolbarB = ["save", "load"]
-toolbarOptions = toolbarModes + toolbarB
-toolbarButtons = []
-toolbarFuncs = {
-    "save": lambda: level.save(levelF),
-    "load": lambda: loadLevel("level_data.json")
-}
-buttonSize = 90
-toolbarPos = Vector2(buttonSize*0.1, buttonSize*0.1)
-selected = "move"
-scrollbar = Scrollbar(toolbarPos.x + len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.1, toolbarPos.y+buttonSize*1.2/4-5, 20, 200, "h", sliderWidth=25)
-toolbar = Polygon.fromRect((toolbarPos.x, toolbarPos.y, len(toolbarOptions)*(buttonSize*1.1) + buttonSize*0.2 + scrollbar.length, buttonSize*1.2), (25, 25, 100))
-divisors = [1, 2, 4, 8, 16]
-divisorSelector = []
-lastScrollbarValue = 0
-divisor = 1
+initailized = False
+def init():
+    global topBar, bottomBar, modes, divisorSelector, divisors, scrollbar, selectedMode, divisor, initailized, lastScrollbarValue
+    if initailized: return
+    initailized = True
+    # vars
+    buttonSize = 90
+    lastScrollbarValue = 0
+    fontSize = 20
+
+    # top bar #
+    w = buttonSize*10 # width of the top bar
+    topBar = Toolbar(Vector2(10, 1), Vector2((gui.screen.get_width()-w)//2, 0), w, buttonSize) # toolbar for the top bar
+
+    modes = ["move", "select", "platform", "wall", "rest", "delete"] # possible modes
+    topbarButtons = { # buttons on the top bar
+        "save": lambda: level.save(levelF), 
+        "load": lambda: loadLevel("level_data.json")
+    }
+    bpmText = Text("BPM", buttonSize/2, buttonSize/4, (0,0,0), fontSize, bgColor=(100, 100, 255), width = buttonSize, height = buttonSize/2) # text for bpm
+    bpmBox = InputBox("", 0, buttonSize/2, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1) # input box for bpm
+    bpm = [bpmText, bpmBox] # bpm text and input box
+    timeSigNum = InputBox("", 0, 0, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1) # input box for time signature numerator
+    timeSigDenom = InputBox("", 0, buttonSize/2, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1) # input box for time signature denominator
+    timeSig = [timeSigNum, timeSigDenom] # time signature numerator and denominator
+
+    # fuction to create buttons for the toolbar, could probably be moved somewhere else. ToolbarOption.fromButton?
+    barButton = lambda option, func: Button(
+        option, 0, 0, buttonSize, buttonSize, (100, 100, 255), 
+        (0, 0, 0), func, textSize = fontSize, scaler=1.1
+    )
+    # adding modes and buttons to the toolbar
+    for i, mode in enumerate(modes):
+        topBar.addOption(ToolbarOption(mode, barButton(mode, lambda x=mode: selectMode(x))), Vector2(i, 0))
+    for button in topbarButtons.keys():
+        i += 1
+        topBar.addOption(ToolbarOption(button, barButton(button, topbarButtons[button])), Vector2(i, 0))
+    selectedMode = "move"
+    selectMode("move")
+
+    # add bpm and time signature to the top bar
+    i += 1
+    topBar.addOption(ToolbarOption(bpm, bpm), Vector2(i, 0))
+    i += 1
+    topBar.addOption(ToolbarOption(timeSig, timeSig), Vector2(i, 0))
+
+
+    # bottom bar #
+    bottomBar = Toolbar(Vector2(3, 2), Vector2(0, gui.screen.get_height()-buttonSize), gui.screen.get_width(), buttonSize) # toolbar for the bottom bar
+
+    scrollbar = Scrollbar(0, 0, bottomBar.height/2, gui.screen.get_width(), "h", sliderWidth=25, bg = (50,50,50)) # scrollbar for the bottom bar
+
+    divisor = 1
+    divisors = [1, 2, 4, 8, 16]
+    divisorSelector = []
+    divisorSize = bottomBar.width/(3*len(divisors))
+    if divisorSize > buttonSize/2: divisorSize=buttonSize/2
+    for i, d in enumerate(divisors):
+        divisorSelector.append(Button(str(d), i*divisorSize, 0, divisorSize, divisorSize, (100, 100, 255), (0,0,0), lambda x=d: selectDivisor(x), textSize = 30, scaler=1.1))
+    selectDivisor(1)
+        
+    prevPoint = songPlayer.getPreviousPoint()
+    prevPoint = prevPoint if prevPoint else songPlayer.currentTimingPoints[0]
+    metronomeLen = prevPoint.timeSignature.num # length of a measure
+    metronome = []
+    metronomeSize = bottomBar.width/(3*metronomeLen)
+    if metronomeSize > buttonSize/2: metronomeSize = buttonSize/2
+    for i in range(metronomeLen):
+        metronome.append(Polygon.fromRect((i*metronomeSize, 0, metronomeSize, metronomeSize), (100, 100, 255)))
+    
+    #adding to bottom bar
+    bottomBar.addOption(ToolbarOption("scrollbar", scrollbar), Vector2(0,1))
+    bottomBar.addOption(ToolbarOption("divisor", divisorSelector), Vector2(0,0))
+    bottomBar.addOption(ToolbarOption("metronome", metronome), Vector2(2,0))

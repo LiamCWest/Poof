@@ -1,13 +1,13 @@
 from ui.button import Button
 from ui.text import Text
 from utils.polygon import Polygon
-from graphics import gui
+from utils.vector2 import Vector2
 from input import input
 import pygame
 
 class InputBox(Button):
-    def __init__(self, text, x, y, width, height, color, textColor, textSize = 40, sizeLocked = False, maxLength = 20):
-        Button.__init__(self, text, x, y, width, height, color, textColor, self.select)
+    def __init__(self, text, x, y, width, height, color, textColor, textSize = 40, sizeLocked = False, maxLength = 20, scaler = 1.25):
+        Button.__init__(self, text, x, y, width, height, color, textColor, self.select, textSize=textSize, scaler=scaler)
         self.defaultText = text
         self.active = False
         self.textColor = textColor
@@ -36,8 +36,8 @@ class InputBox(Button):
                 self.clicked = True
             self.active = True
         
-    def update(self):
-        Button.update(self)
+    def update(self, pos = Vector2(0, 0)):
+        Button.update(self, pos)
         if self.active:
             for key, value in input.characterBindings.items():
                 if value.justPressed:
@@ -58,8 +58,8 @@ class InputBox(Button):
                 if not self.rect.collidepoint(pygame.mouse.get_pos()):
                     self.deselect()
         
-    def draw(self, win):
-        Button.draw(self, win)
+    def draw(self, win, pos = Vector2(0, 0)):
+        Button.draw(self, win, pos)
         if self.active:
             self.highlightRect.scale = self.scale
-            self.highlightRect.draw(win, 2)
+            self.highlightRect.draw(win, 2, pos = pos)

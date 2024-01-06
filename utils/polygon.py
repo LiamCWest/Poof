@@ -17,14 +17,14 @@ class Polygon:
         self.calcEdges()
         self.calcNormals()
 
-    def draw(self, screen, outlineWidth = 0):
+    def draw(self, screen, outlineWidth = 0, pos = Vector2(0,0)):
         points = []
         for i in range(len(self.points)):
             point = Vector2.from_tuple(self.points[i])
             # scale
             point = point.multiply(self.factor * self.scale)
             # translate
-            point += self.pos
+            point += self.pos + pos
             points.append(point.toTuple())
         if outlineWidth != 0:
             pygame.draw.polygon(screen, self.color, points, outlineWidth)

@@ -2,6 +2,7 @@ import math
 import pygame
 from ui.button import Button
 import input.input as input
+from utils.vector2 import Vector2
 
 class Scrollbar:
     def __init__(self, x, y, width, length, orientation, sliderWidth = None, numSteps = None, snapToSteps = False, bg = (0, 0, 0), fg = (255, 255, 255), z = 0):
@@ -26,10 +27,12 @@ class Scrollbar:
         buttonHeight = self.sliderWidth if self.orientation == "v" else self.width
         self.slider = Button("", self.x, self.y, buttonWidth, buttonHeight, self.fg, self.fg, lambda: None)
         
-    def draw(self, screen):
-        pygame.draw.rect(screen, self.bg, (self.x * self.factor, self.y * self.factor, self.rectWidth * self.factor, self.rectHeight * self.factor))
+    def draw(self, screen, pos = Vector2(0,0)):
+        x = self.x + pos.x
+        y = self.y + pos.y
+        pygame.draw.rect(screen, self.bg, (x * self.factor, y * self.factor, self.rectWidth * self.factor, self.rectHeight * self.factor))
         self.slider.factor = self.factor
-        self.slider.draw(screen)
+        self.slider.draw(screen, pos)
     
     def moveTo(self, value):
         if self.snapToSteps:
@@ -37,8 +40,8 @@ class Scrollbar:
         
         self.setValue(value)
     
-    def update(self):
-        self.slider.update()
+    def update(self, pos = Vector2(0,0)):
+        self.slider.update(pos)
         if self.slider.held:
             wantedPos = input.mousePos.pos.y if self.orientation == "v" else input.mousePos.pos.x - self.sliderWidth / 2
             minPos = self.y if self.orientation == "v" else self.x

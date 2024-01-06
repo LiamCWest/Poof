@@ -30,30 +30,30 @@ class Button:
         
         self.onClick = onClick
 
-    def draw(self, screen):
-        x = self.x - (self.width * (self.scale - 1) / 2)
-        y = self.y - (self.height * (self.scale - 1) / 2)
+    def draw(self, screen, pos = Vector2(0, 0)):
+        x = self.x - (self.width * (self.scale - 1) / 2) + pos.x
+        y = self.y - (self.height * (self.scale - 1) / 2) + pos.y
         width = self.width * self.scale
         height = self.height * self.scale
         rect = drawRectResized(screen, self.color, x, y, width, height, self.factor)
         #pygame.draw.rect(screen, self.color, (x*self.factor, y*self.factor, width*self.factor, height*self.factor))
         self.text.factor = self.factor
         self.text.scale = self.scale
-        self.text.draw(rect)
+        self.text.draw(rect, pos)
         if self.particles:
             self.emitter.factor = self.factor
             self.emitter.draw(screen)
         
-    def isOver(self, pos):
+    def isOver(self, pos, pos2):
         if pos is None:
             return False
-        return (self.x * self.factor) < pos.x < ((self.x + self.width)*self.factor) and (self.y * self.factor) < pos.y < ((self.y + self.height) * self.factor)
+        return (pos2.x * self.factor) < pos.x < ((pos2.x + self.width)*self.factor) and (pos2.y * self.factor) < pos.y < ((pos2.y + self.height) * self.factor)
     
-    def update(self):
+    def update(self, pos = Vector2(0, 0)):
         if self.particles:
             self.emitter.update()
 
-        if self.isOver(input.mousePos.pos):
+        if self.isOver(input.mousePos.pos, Vector2(self.x, self.y) + pos):
             self.scale = self.scaler
             if input.mouseBindings["lmb"].justPressed:
                 self.held = True

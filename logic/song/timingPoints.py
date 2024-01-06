@@ -10,8 +10,9 @@ class TimingPoint:
     def __init__(self, time, bpm, timeSignature):
         self.time = time
         self.bpm = bpm
-        self.beatLength = 60 / bpm
         self.timeSignature = timeSignature
+        
+    beatLength = property(lambda self: 60/self.bpm)
         
     def toValues(self):
         return [self.time, self.bpm, self.timeSignature.num, self.timeSignature.denom]

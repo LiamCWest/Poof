@@ -209,7 +209,7 @@ def adjustTimingPointValues():
     timeSig[1].changeText(str(point.timeSignature.denom))
 
 def genMetronome():
-    global metronome, metronomeSize, beat
+    global metronome, metronomeSize, beat, bottomBar
     prevPoint = songPlayer.getPreviousPoint()
     prevPoint = prevPoint if prevPoint else songPlayer.currentTimingPoints[0]
     metronomeLen = prevPoint.timeSignature.num # length of a measure
@@ -219,6 +219,8 @@ def genMetronome():
     for i in range(metronomeLen):
         metronome.append(Polygon.fromRect((i*metronomeSize, 0, metronomeSize, metronomeSize), (100, 100, 255)))
     metronome.append(Text(str(beat), metronomeSize/2, metronomeSize/2, (0,0,0), 30, width=metronomeSize, height=metronomeSize, bgColor=(0, 150, 200)))
+    if bottomBar.grid[0][2]:
+        bottomBar.grid[0][2].baseObj = metronome
 
 initailized = False
 def init():

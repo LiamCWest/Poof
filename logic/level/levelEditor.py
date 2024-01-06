@@ -145,7 +145,12 @@ def timingPointUpdate():
             point.timeSignature.denom = int(timeSig[1].output)
         else:
             #new timing point
-            pass
+            if songPlayer.getNearestBeat() == songPlayer.getPos():
+                #full new point
+                pass
+            else:
+                #only change bpm
+                pass
 
 def metronomeUpdate(): #TODO: make beat number apear on each beat
     point = songPlayer.getPreviousPoint() if songPlayer.getPreviousPoint() else songPlayer.currentTimingPoints[0]

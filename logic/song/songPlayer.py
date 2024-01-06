@@ -82,8 +82,3 @@ def getNearestBeat(divisor, time = None):
     if time is None:
         time = getPos()
     return timingPoints.getNearestBeat(currentTimingPoints, time, divisor)
-
-def test():
-    timingPoint1 = timingPoints.TimingPoint(2.108, 170, timingPoints.TimeSignature(4, 4))
-    load(r"D:\Files\Godot Projects\KEYBEATS GD4\TESTFOLDER\MAPS\Abyss Of Destiny 2\Song.MP3", [timingPoint1])
-    play()

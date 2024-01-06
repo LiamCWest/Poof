@@ -13,6 +13,7 @@ from ui.scrollbar import Scrollbar
 import pygame
 import json
 import hashlib
+import math
 
 def updateFactors(factor):
     level.factor = factor
@@ -93,6 +94,7 @@ def checkInput():
 levelPos = Vector2(0, 0)
 def update():
     checkInput()
+    metronomeUpdate()
     topBar.update()
     bottomBar.update()
     
@@ -133,6 +135,17 @@ def update():
             level.removeTileAt(tilePos, tileTime)
             selectedTile = None
 
+def metronomeUpdate():
+    point = songPlayer.getPreviousPoint() if songPlayer.getPreviousPoint() else songPlayer.currentTimingPoints[0]
+    distanceFromPoint = songPlayer.getPos() - point.time if songPlayer.getPos() > point.time else None
+    b = 1 if distanceFromPoint is None else math.floor(distanceFromPoint / point.beatLength) % 4 + 1
+    selectMetBeat(b)
+            
+def selectMetBeat(b):
+    global beat, metronome
+    metronome[beat-1].color = (100, 100, 255)
+    beat = b
+    metronome[b-1].color = (50, 50, 255) if beat != 1 else (0, 150, 200)
 def posIn(pos, rect):
     return pos.x > rect[0] and pos.x < rect[0] + rect[2] and pos.y > rect[1] and pos.y < rect[1] + rect[3]
     
@@ -171,7 +184,7 @@ def checkSignature(data, signature):
 
 initailized = False
 def init():
-    global topBar, bottomBar, modes, divisorSelector, divisors, scrollbar, selectedMode, divisor, initailized, lastScrollbarValue
+    global topBar, bottomBar, modes, divisorSelector, divisors, scrollbar, selectedMode, divisor, initailized, lastScrollbarValue, beat, metronome
     if initailized: return
     initailized = True
     # vars
@@ -238,6 +251,8 @@ def init():
     if metronomeSize > buttonSize/2: metronomeSize = buttonSize/2
     for i in range(metronomeLen):
         metronome.append(Polygon.fromRect((i*metronomeSize, 0, metronomeSize, metronomeSize), (100, 100, 255)))
+    beat = 1
+    selectMetBeat(1)
     
     #adding to bottom bar
     bottomBar.addOption(ToolbarOption("scrollbar", scrollbar), Vector2(0,1))

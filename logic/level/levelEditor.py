@@ -11,9 +11,6 @@ import graphics.gui as gui
 from utils.polygon import Polygon
 from ui.scrollbar import Scrollbar
 import pygame
-import json
-import hashlib
-import math
 
 def updateFactors(factor):
     level.factor = factor
@@ -95,6 +92,7 @@ levelPos = Vector2(0, 0)
 def update():
     checkInput()
     metronomeUpdate()
+    timingPointUpdate()
     topBar.update()
     bottomBar.update()
     
@@ -135,12 +133,26 @@ def update():
             level.removeTileAt(tilePos, tileTime)
             selectedTile = None
 
+def timingPointUpdate():
+    global bpm, timeSig
+    point = songPlayer.getPreviousPoint() if songPlayer.getPreviousPoint() else songPlayer.currentTimingPoints[0]
+    if (int(bpm[1].output) != point.bpm or 
+        int(timeSig[0].output) != point.timeSignature.num or
+        int(timeSig[1].output) != point.timeSignature.denom):
+        if point.time == songPlayer.getPos():
+            point.bpm = int(bpm[1].output)
+            point.timeSignature.num = int(timeSig[0].output)
+            point.timeSignature.denom = int(timeSig[1].output)
+        else:
+            #new timing point
+            pass
+
 def metronomeUpdate(): #TODO: make beat number apear on each beat
     point = songPlayer.getPreviousPoint() if songPlayer.getPreviousPoint() else songPlayer.currentTimingPoints[0]
     if len(metronome) != point.timeSignature.num + 1:
         genMetronome()
     distanceFromPoint = songPlayer.getPos() - point.time if songPlayer.getPos() > point.time else None
-    b = 1 if distanceFromPoint is None else math.floor(distanceFromPoint / point.beatLength) % point.timeSignature.num + 1
+    b = 1 if not distanceFromPoint else round(distanceFromPoint / point.beatLength) % point.timeSignature.num + 1
     selectMetBeat(b)
             
 def selectMetBeat(b):
@@ -150,6 +162,7 @@ def selectMetBeat(b):
     metronome[b-1].color = (50, 50, 255) if beat != 1 else (0, 150, 200)
     metronome[-1].text = str(beat)
     metronome[-1].x = metronome[b-1].pos.x
+
 def posIn(pos, rect):
     return pos.x > rect[0] and pos.x < rect[0] + rect[2] and pos.y > rect[1] and pos.y < rect[1] + rect[3]
     
@@ -182,9 +195,13 @@ def loadLevel(levelFile):
     levelF = levelFile
     songPlayer.unload()
     level = Level.fromFile(levelFile)
-
-def checkSignature(data, signature):
-    return hashlib.sha256(json.dumps(data).encode('utf-8')).hexdigest() == signature
+    
+def adjustTimingPointValues():
+    global timeSig, bpm
+    point = songPlayer.getPreviousPoint() if songPlayer.getPreviousPoint() else songPlayer.currentTimingPoints[0]
+    bpm[1].changeText(str(point.bpm))
+    timeSig[0].changeText(str(point.timeSignature.num))
+    timeSig[1].changeText(str(point.timeSignature.denom))
 
 def genMetronome():
     global metronome, metronomeSize, beat
@@ -200,7 +217,7 @@ def genMetronome():
 
 initailized = False
 def init():
-    global topBar, bottomBar, modes, divisorSelector, divisors, scrollbar, selectedMode, divisor, initailized, lastScrollbarValue, beat, metronome, metronomeSize, buttonSize
+    global topBar, bottomBar, modes, divisorSelector, divisors, scrollbar, selectedMode, divisor, initailized, lastScrollbarValue, beat, metronome, metronomeSize, buttonSize, bpm, timeSig
     if initailized: return
     initailized = True
     # vars
@@ -218,10 +235,10 @@ def init():
         "load": lambda: loadLevel("level_data.json")
     }
     bpmText = Text("BPM", buttonSize/2, buttonSize/4, (0,0,0), fontSize, bgColor=(100, 100, 255), width = buttonSize, height = buttonSize/2) # text for bpm
-    bpmBox = InputBox("", 0, buttonSize/2, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1) # input box for bpm
+    bpmBox = InputBox("", 0, buttonSize/2, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1, clearOnInput=False, numOnly=True) # input box for bpm
     bpm = [bpmText, bpmBox] # bpm text and input box
-    timeSigNum = InputBox("", 0, 0, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1) # input box for time signature numerator
-    timeSigDenom = InputBox("", 0, buttonSize/2, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1) # input box for time signature denominator
+    timeSigNum = InputBox("", 0, 0, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1, clearOnInput=False, numOnly=True) # input box for time signature numerator
+    timeSigDenom = InputBox("", 0, buttonSize/2, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1, clearOnInput=False, numOnly=True) # input box for time signature denominator
     timeSig = [timeSigNum, timeSigDenom] # time signature numerator and denominator
 
     # fuction to create buttons for the toolbar, could probably be moved somewhere else. ToolbarOption.fromButton?
@@ -267,3 +284,6 @@ def init():
     bottomBar.addOption(ToolbarOption("scrollbar", scrollbar), Vector2(0,1))
     bottomBar.addOption(ToolbarOption("divisor", divisorSelector), Vector2(0,0))
     bottomBar.addOption(ToolbarOption("metronome", metronome), Vector2(2,0))
+    
+    
+    adjustTimingPointValues()

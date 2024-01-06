@@ -137,6 +137,8 @@ def update():
 
 def metronomeUpdate(): #TODO: make beat number apear on each beat
     point = songPlayer.getPreviousPoint() if songPlayer.getPreviousPoint() else songPlayer.currentTimingPoints[0]
+    if len(metronome) != point.timeSignature.num + 1:
+        genMetronome()
     distanceFromPoint = songPlayer.getPos() - point.time if songPlayer.getPos() > point.time else None
     b = 1 if distanceFromPoint is None else math.floor(distanceFromPoint / point.beatLength) % point.timeSignature.num + 1
     selectMetBeat(b)
@@ -146,6 +148,8 @@ def selectMetBeat(b):
     metronome[beat-1].color = (100, 100, 255)
     beat = b
     metronome[b-1].color = (50, 50, 255) if beat != 1 else (0, 150, 200)
+    metronome[-1].text = str(beat)
+    metronome[-1].x = metronome[b-1].pos.x
 def posIn(pos, rect):
     return pos.x > rect[0] and pos.x < rect[0] + rect[2] and pos.y > rect[1] and pos.y < rect[1] + rect[3]
     
@@ -182,9 +186,21 @@ def loadLevel(levelFile):
 def checkSignature(data, signature):
     return hashlib.sha256(json.dumps(data).encode('utf-8')).hexdigest() == signature
 
+def genMetronome():
+    global metronome, metronomeSize, beat
+    prevPoint = songPlayer.getPreviousPoint()
+    prevPoint = prevPoint if prevPoint else songPlayer.currentTimingPoints[0]
+    metronomeLen = prevPoint.timeSignature.num # length of a measure
+    metronome = []
+    metronomeSize = bottomBar.width/(3*metronomeLen)
+    if metronomeSize > buttonSize/2: metronomeSize = buttonSize/2
+    for i in range(metronomeLen):
+        metronome.append(Polygon.fromRect((i*metronomeSize, 0, metronomeSize, metronomeSize), (100, 100, 255)))
+    metronome.append(Text(str(beat), metronomeSize/2, metronomeSize/2, (0,0,0), 30, width=metronomeSize, height=metronomeSize, bgColor=(0, 150, 200)))
+
 initailized = False
 def init():
-    global topBar, bottomBar, modes, divisorSelector, divisors, scrollbar, selectedMode, divisor, initailized, lastScrollbarValue, beat, metronome
+    global topBar, bottomBar, modes, divisorSelector, divisors, scrollbar, selectedMode, divisor, initailized, lastScrollbarValue, beat, metronome, metronomeSize, buttonSize
     if initailized: return
     initailized = True
     # vars
@@ -243,15 +259,8 @@ def init():
         divisorSelector.append(Button(str(d), i*divisorSize, 0, divisorSize, divisorSize, (100, 100, 255), (0,0,0), lambda x=d: selectDivisor(x), textSize = 30, scaler=1.1))
     selectDivisor(1)
         
-    prevPoint = songPlayer.getPreviousPoint()
-    prevPoint = prevPoint if prevPoint else songPlayer.currentTimingPoints[0]
-    metronomeLen = prevPoint.timeSignature.num # length of a measure
-    metronome = []
-    metronomeSize = bottomBar.width/(3*metronomeLen)
-    if metronomeSize > buttonSize/2: metronomeSize = buttonSize/2
-    for i in range(metronomeLen):
-        metronome.append(Polygon.fromRect((i*metronomeSize, 0, metronomeSize, metronomeSize), (100, 100, 255)))
     beat = 1
+    genMetronome()
     selectMetBeat(1)
     
     #adding to bottom bar

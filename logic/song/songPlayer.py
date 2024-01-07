@@ -1,14 +1,12 @@
 import pygame.mixer as mixer
 import logic.song.timingPoints as timingPoints
 
-currentTimingPoints = None
 songLength = None
-def load(songPath, timingPoints):
-    global currentTimingPoints, songLength
+def load(songPath):
+    global songLength
     mixer.music.load(filename=songPath)
     song = mixer.Sound(songPath)
     songLength = song.get_length()
-    currentTimingPoints = timingPoints
 
     seek(0) #so it's playing
 
@@ -56,33 +54,3 @@ def setVolume(volume):
     
 def getVolume():
     return mixer.music.get_volume()
-
-def getPreviousPoint():
-    global currentTimingPoints
-    return timingPoints.getPreviousPoint(currentTimingPoints, getPos())
-
-def getNextPoint():
-    global currentTimingPoints
-    return timingPoints.getNextPoint(currentTimingPoints, getPos())
-
-def getPreviousBeat(divisor, time = None):
-    global currentTimingPoints
-    if time is None:
-        time = getPos()
-    return timingPoints.getPreviousBeat(currentTimingPoints, time, divisor)
-
-def getNextBeat(divisor, time = None):
-    global currentTimingPoints
-    if time is None:
-        time = getPos()
-    return timingPoints.getNextBeat(currentTimingPoints, time, divisor)
-
-def getNearestBeat(divisor, time = None):
-    global currentTimingPoints
-    if time is None:
-        time = getPos()
-    return timingPoints.getNearestBeat(currentTimingPoints, time, divisor)
-
-def addTimingPoint(timingPoint):
-    global currentTimingPoints
-    currentTimingPoints.append(timingPoint)

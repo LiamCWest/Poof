@@ -7,10 +7,12 @@ from utils.vector2 import Vector2
 import input.input as input
 from logic.level.level import Level
 import logic.song.songPlayer as songPlayer
-from logic.song.timingPoints import TimingPoint, TimeSignature, getBeatsSincePoint
+import logic.song.timingPoints as timingPoints
+from logic.song.timingPoints import TimingPoint, TimeSignature
 import graphics.gui as gui
 from utils.polygon import Polygon
 from ui.scrollbar import Scrollbar
+import bisect
 import pygame
 
 def updateFactors(factor):
@@ -34,7 +36,7 @@ def checkInput():
     if input.keyActionBindings["play"].justPressed:
         if songPlayer.getIsPlaying():
             songPlayer.pause()
-            songPlayer.seek(songPlayer.getNearestBeat(divisor))
+            songPlayer.seek(timingPoints.getNearestBeat(level.timingPoints, songPlayer.getPos(), divisor))
         else:
             songPlayer.unpause()
        
@@ -49,7 +51,7 @@ def checkInput():
             selectedTile.pos += Vector2(0, 1)
         
         if input.keyActionBindings["increaseTileLength"].justPressed:
-            newTileEndTime = songPlayer.getNextBeat(divisor, selectedTile.disappearTime)
+            newTileEndTime = timingPoints.getNextBeat(level.timingPoints, selectedTile.disappearTime, divisor)
             newTile = selectedTile.copy()
             newTile.disappearTime = newTileEndTime
             if level.isTileValid(newTile, selectedTile):
@@ -57,7 +59,7 @@ def checkInput():
                 selectedTile = newTile.copy()
                 level.addTile(selectedTile)
         if input.keyActionBindings["decreaseTileLength"].justPressed:
-            newTileEndTime = songPlayer.getPreviousBeat(divisor, selectedTile.disappearTime)
+            newTileEndTime = timingPoints.getPreviousBeat(level.timingPoints, selectedTile.disappearTime, divisor)
             if newTileEndTime >= selectedTile.appearedTime:
                 level.removeTileAt(selectedTile.pos, selectedTile.appearedTime)
                 selectedTile.disappearTime = newTileEndTime
@@ -65,7 +67,7 @@ def checkInput():
 
     if input.keyActionBindings["timeForwards"].justPressed:
         oldTime = songPlayer.getPos()
-        songPlayer.seek(songPlayer.getNextBeat(divisor))
+        songPlayer.seek(min(timingPoints.getNextBeat(level.timingPoints, oldTime, divisor), songPlayer.getSongLength()))
         delta = songPlayer.getPos() - oldTime
         if selectedTile:
             newTile = selectedTile.copy()
@@ -78,7 +80,7 @@ def checkInput():
         
     if input.keyActionBindings["timeBackwards"].justPressed:
         oldTime = songPlayer.getPos()
-        songPlayer.seek(max(0, songPlayer.getPreviousBeat(divisor)))
+        songPlayer.seek(max(0, timingPoints.getPreviousBeat(level.timingPoints, oldTime, divisor)))
         delta = songPlayer.getPos() - oldTime
         if selectedTile:
             newTile = selectedTile.copy()
@@ -101,7 +103,7 @@ def update():
     songLen = songPlayer.getSongLength()
     if scrollbar.getValue() != lastScrollbarValue: 
         songPos = songLen * scrollbar.getValue()
-        roundedSongPos = songPlayer.getNearestBeat(divisor, songPos)
+        roundedSongPos = timingPoints.getNearestBeat(level.timingPoints, songPos, divisor)
         songPlayer.seek(roundedSongPos)
         scrollbar.moveTo(roundedSongPos / songLen)
     else: 
@@ -122,7 +124,7 @@ def update():
         
         if selectedMode in ["platform", "wall", "rest"] and input.mouseBindings["lmb"].justPressed:
             tilePos = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
-            tileTime = songPlayer.getNearestBeat(divisor, songPlayer.getPos())
+            tileTime = timingPoints.getNearestBeat(level.timingPoints, songPlayer.getPos(), divisor)
             if level.getTileAt(tilePos, tileTime) is None:
                 level.addTile(Tile(tilePos, None, tileTime, tileTime, selectedMode))
                 selectedTile = level.getTileAt(tilePos, tileTime)
@@ -130,14 +132,19 @@ def update():
             
         if selectedMode == "delete" and input.mouseBindings["lmb"].justPressed:
             tilePos = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
-            tileTime = songPlayer.getNearestBeat(divisor, songPlayer.getPos())
+            tileTime = timingPoints.getNearestBeat(level.timingPoints, songPlayer.getPos(), divisor)
             level.removeTileAt(tilePos, tileTime)
             selectedTile = None
 
 def timingPointUpdate():
     global bpm, timeSig, divisor
-    point = songPlayer.getPreviousPoint() if songPlayer.getPreviousPoint() else songPlayer.currentTimingPoints[0]
-    if songPlayer.getNearestBeat(divisor) == point.time:
+    pos = songPlayer.getPos()
+    nearestBeat = timingPoints.getNearestBeat(level.timingPoints, pos, divisor)
+    point = timingPoints.getPreviousPoint(level.timingPoints, pos)
+    if point is None:
+        point = level.timingPoints[0]
+    
+    if nearestBeat == point.time:
         onPointColor = (50, 50, 255)
         bpm[0].bgColor = onPointColor
         bpm[1].color = onPointColor
@@ -149,42 +156,32 @@ def timingPointUpdate():
         bpm[1].color = offPointColor
         timeSig[0].color = offPointColor
         timeSig[1].color = offPointColor
-    if songPlayer.getNearestBeat(divisor) == songPlayer.getPos():
-        #if on a beat
-        timeSig[0].editable = True
-        timeSig[1].editable = True
-    else:
-        #if not on a beat
-        timeSig[0].editable = False
-        timeSig[1].editable = False
+
     if (int(bpm[1].output) != point.bpm or 
         int(timeSig[0].output) != point.timeSignature.num or
         int(timeSig[1].output) != point.timeSignature.denom):
-        if point.time == songPlayer.getPos():
+        if point.time == nearestBeat:
             point.bpm = int(bpm[1].output)
             point.timeSignature.num = int(timeSig[0].output)
             point.timeSignature.denom = int(timeSig[1].output)
         else:
-            #new timing point
-            if songPlayer.getNearestBeat(divisor) == songPlayer.getPos():
-                #full new point
-                level.addTimingPoint(TimingPoint(songPlayer.getPos(), int(bpm[1].output), TimeSignature(int(timeSig[0].output), int(timeSig[1].output))))
-                pass
-            else:
-                #only change bpm
-                level.addTimingPoint(TimingPoint(songPlayer.getPos(), int(bpm[1].output), point.timeSignature))
-                pass
+            pointToInsert = TimingPoint(songPlayer.getPos(), int(bpm[1].output), TimeSignature(int(timeSig[0].output), int(timeSig[1].output)))
+            bisect.insort_left(level.timingPoints, pointToInsert, key=lambda point: point.time)
 
 def metronomeUpdate(): #TODO: make beat number apear on each beat
-    point = songPlayer.getPreviousPoint() if songPlayer.getPreviousPoint() else songPlayer.currentTimingPoints[0]
+    pos = songPlayer.getPos()
+    point = timingPoints.getPreviousPoint(level.timingPoints, pos)
+    if point is None:
+        point = level.timingPoints[0]
+        
     if len(metronome) != point.timeSignature.num + 1:
         genMetronome()
         
-    if songPlayer.getPos() < point.time:
+    if pos < point.time:
         selectMetBeat(1)
         return
 
-    beatsSincePoint = getBeatsSincePoint(songPlayer.getPos(), point, 1)
+    beatsSincePoint = timingPoints.getBeatsSincePoint(pos, point, 1)
     selectMetBeat(beatsSincePoint % point.timeSignature.num + 1)
             
 def selectMetBeat(b):
@@ -230,16 +227,22 @@ def loadLevel(levelFile):
     
 def adjustTimingPointValues():
     global timeSig, bpm
-    point = songPlayer.getPreviousPoint() if songPlayer.getPreviousPoint() else songPlayer.currentTimingPoints[0]
+    pos = songPlayer.getPos()
+    point = timingPoints.getPreviousPoint(level.timingPoints, pos)
+    if point is None:
+        point = level.timingPoints[0]
+        
     bpm[1].changeText(str(point.bpm))
     timeSig[0].changeText(str(point.timeSignature.num))
     timeSig[1].changeText(str(point.timeSignature.denom))
 
 def genMetronome():
     global metronome, metronomeSize, beat, bottomBar
-    prevPoint = songPlayer.getPreviousPoint()
-    prevPoint = prevPoint if prevPoint else songPlayer.currentTimingPoints[0]
-    metronomeLen = prevPoint.timeSignature.num # length of a measure
+    pos = songPlayer.getPos()
+    point = timingPoints.getPreviousPoint(level.timingPoints, pos)
+    if point is None:
+        point = level.timingPoints[0]
+    metronomeLen = point.timeSignature.num # length of a measure
     metronome = []
     metronomeSize = bottomBar.width/(3*metronomeLen)
     if metronomeSize > buttonSize/2: metronomeSize = buttonSize/2
@@ -318,6 +321,5 @@ def init():
     bottomBar.addOption(ToolbarOption("scrollbar", scrollbar), Vector2(0,1))
     bottomBar.addOption(ToolbarOption("divisor", divisorSelector), Vector2(0,0))
     bottomBar.addOption(ToolbarOption("metronome", metronome), Vector2(2,0))
-    
     
     adjustTimingPointValues()

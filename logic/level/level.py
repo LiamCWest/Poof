@@ -52,6 +52,10 @@ class Level:
             return Player(playerStartPos, playerStartTime)
         return None
     
+    def addTimingPoint(self, timingPoint):
+        self.timingPoints.append(timingPoint)
+        songPlayer.addTimingPoint(timingPoint)
+    
     def restart(self):
         self.pos = Vector2(0, 0)
         

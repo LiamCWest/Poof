@@ -7,6 +7,7 @@ from utils.vector2 import Vector2
 import input.input as input
 from logic.level.level import Level
 import logic.song.songPlayer as songPlayer
+from logic.song.timingPoints import TimingPoint, TimeSignature
 import graphics.gui as gui
 from utils.polygon import Polygon
 from ui.scrollbar import Scrollbar
@@ -136,6 +137,26 @@ def update():
 def timingPointUpdate():
     global bpm, timeSig
     point = songPlayer.getPreviousPoint() if songPlayer.getPreviousPoint() else songPlayer.currentTimingPoints[0]
+    if songPlayer.getNearestBeat(divisor) == point.time:
+        onPointColor = (50, 50, 255)
+        bpm[0].bgColor = onPointColor
+        bpm[1].color = onPointColor
+        timeSig[0].color = onPointColor
+        timeSig[1].color = onPointColor
+    else:
+        offPointColor = (100, 100, 255)
+        bpm[0].bgColor = offPointColor
+        bpm[1].color = offPointColor
+        timeSig[0].color = offPointColor
+        timeSig[1].color = offPointColor
+    if songPlayer.getNearestBeat(divisor) == songPlayer.getPos():
+        #if on a beat
+        timeSig[0].editable = True
+        timeSig[1].editable = True
+    else:
+        #if not on a beat
+        timeSig[0].editable = False
+        timeSig[1].editable = False
     if (int(bpm[1].output) != point.bpm or 
         int(timeSig[0].output) != point.timeSignature.num or
         int(timeSig[1].output) != point.timeSignature.denom):
@@ -147,9 +168,11 @@ def timingPointUpdate():
             #new timing point
             if songPlayer.getNearestBeat() == songPlayer.getPos():
                 #full new point
+                level.addTimingPoint(TimingPoint(songPlayer.getPos(), int(bpm[1].output), TimeSignature(int(timeSig[0].output), int(timeSig[1].output))))
                 pass
             else:
                 #only change bpm
+                level.addTimingPoint(TimingPoint(songPlayer.getPos(), int(bpm[1].output), point.timeSignature))
                 pass
 
 def metronomeUpdate(): #TODO: make beat number apear on each beat

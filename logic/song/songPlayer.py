@@ -82,3 +82,7 @@ def getNearestBeat(divisor, time = None):
     if time is None:
         time = getPos()
     return timingPoints.getNearestBeat(currentTimingPoints, time, divisor)
+
+def addTimingPoint(timingPoint):
+    global currentTimingPoints
+    currentTimingPoints.append(timingPoint)

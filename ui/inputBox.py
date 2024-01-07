@@ -18,6 +18,7 @@ class InputBox(Button):
         self.output = "" if self.clearOnInput else self.text.text
         self.returned = False
         self.numOnly = numOnly
+        self.editable = True
         
     def accept(self):
         self.returned = False
@@ -33,7 +34,7 @@ class InputBox(Button):
             self.active = False
         
     def select(self):
-        if not self.active and (not self.returned or not self.clearOnInput):
+        if not self.active and (not self.returned or not self.clearOnInput) and self.editable:
             if not self.clicked:
                 self.text.text = ""
                 self.clicked = True
@@ -47,6 +48,9 @@ class InputBox(Button):
     def update(self, pos = Vector2(0, 0)):
         Button.update(self, pos)
         if self.active:
+            if not self.editable:
+                self.deselect()
+                return
             for key, value in input.characterBindings.items():
                 if value.justPressed:
                     if not self.numOnly or key.isdigit(): self.text.text += key 

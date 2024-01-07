@@ -135,7 +135,7 @@ def update():
             selectedTile = None
 
 def timingPointUpdate():
-    global bpm, timeSig
+    global bpm, timeSig, divisor
     point = songPlayer.getPreviousPoint() if songPlayer.getPreviousPoint() else songPlayer.currentTimingPoints[0]
     if songPlayer.getNearestBeat(divisor) == point.time:
         onPointColor = (50, 50, 255)
@@ -166,7 +166,7 @@ def timingPointUpdate():
             point.timeSignature.denom = int(timeSig[1].output)
         else:
             #new timing point
-            if songPlayer.getNearestBeat() == songPlayer.getPos():
+            if songPlayer.getNearestBeat(divisor) == songPlayer.getPos():
                 #full new point
                 level.addTimingPoint(TimingPoint(songPlayer.getPos(), int(bpm[1].output), TimeSignature(int(timeSig[0].output), int(timeSig[1].output))))
                 pass

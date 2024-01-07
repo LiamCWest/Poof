@@ -7,7 +7,7 @@ from utils.vector2 import Vector2
 import input.input as input
 from logic.level.level import Level
 import logic.song.songPlayer as songPlayer
-from logic.song.timingPoints import TimingPoint, TimeSignature
+from logic.song.timingPoints import TimingPoint, TimeSignature, getBeatsSincePoint
 import graphics.gui as gui
 from utils.polygon import Polygon
 from ui.scrollbar import Scrollbar
@@ -179,9 +179,13 @@ def metronomeUpdate(): #TODO: make beat number apear on each beat
     point = songPlayer.getPreviousPoint() if songPlayer.getPreviousPoint() else songPlayer.currentTimingPoints[0]
     if len(metronome) != point.timeSignature.num + 1:
         genMetronome()
-    distanceFromPoint = songPlayer.getPos() - point.time if songPlayer.getPos() > point.time else None
-    b = 1 if not distanceFromPoint else round(distanceFromPoint / point.beatLength) % point.timeSignature.num + 1
-    selectMetBeat(b)
+        
+    if songPlayer.getPos() < point.time:
+        selectMetBeat(1)
+        return
+
+    beatsSincePoint = getBeatsSincePoint(songPlayer.getPos(), point, 1)
+    selectMetBeat(beatsSincePoint % point.timeSignature.num + 1)
             
 def selectMetBeat(b):
     global beat, metronome

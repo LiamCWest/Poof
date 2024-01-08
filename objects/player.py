@@ -23,6 +23,7 @@ class Player:
     def __init__(self, startPos, startTime):
         self.startPos = startPos
         self.startTime = startTime
+        self.fallingScaler = 1
                 
         self.moves = [] #Tuple of (diff, time)
         self.deathTime = None
@@ -52,8 +53,11 @@ class Player:
                 }
             img = imgs[state.lastMove[0]]
         
-        blitResized(win, img, self.offset, size, self.factor)
-        #win.blit(pygame.transform.scale(img, size.toTuple()), (size * self.offset).toTuple())
+        #blitResized(win, img, self.offset, size * self.fallingScaler, self.factor)
+        size *= self.factor
+        pos = self.offset.multiply(size)
+        pos = pos.add(size/2)
+        win.blit(pygame.transform.scale(img, (size * self.fallingScaler,size * self.fallingScaler)), (pos.x - (size*self.fallingScaler)/2, pos.y - (size*self.fallingScaler)/2))
         
     def move(self, diff, time):
         self.moves.append((diff, time))

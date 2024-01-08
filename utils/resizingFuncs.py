@@ -1,8 +1,9 @@
 import pygame
 
-def blitResized(surface, image, pos, size, factor):
+def blitResized(surface, image, pos, size, factor, scale):
     size *= factor
-    surface.blit(pygame.transform.scale(image, (size,size)), (pos.x*size, pos.y*size))
+    pos = pos.multiply(size)
+    surface.blit(pygame.transform.scale(image, (scale,scale)), (pos.x - scale/2, pos.y - scale/2))
 
 def drawRectResized(surface, color, x, y, width, height, factor):
     rect = (x*factor, y*factor, width*factor, height*factor)

@@ -10,7 +10,7 @@ import json
 import hashlib
 
 class Level:
-    deathTimeBuffer = 0.25
+    deathTimeBuffer = 3
     def __init__(self, tiles, appearLength, disappearLength, songPath, timingPoints, playerStartPos = None, playerStartTime = None):
         self.win = None
         self.appearLength = appearLength

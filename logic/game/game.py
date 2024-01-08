@@ -4,6 +4,7 @@ from objects.player import Player
 from utils.vector2 import Vector2
 from logic.level.level import Level
 import input.input as input
+from graphics.animation import easeInPow
 import logic.song.songPlayer as songPlayer
 from logic.song.timingPoints import TimingPoint, TimeSignature
 from ui.text import Text
@@ -53,10 +54,12 @@ def draw():
     timeSourceTime = songPlayer.getPos()
     
     playerState = level.player.calculateState(level, timeSourceTime)
+    playerFallTime = 1
     if playerState.deathTime is None:
         level.draw(gui.screen, timeSourceTime, playerState.visiblePos - Player.offset, level.tileSize, drawPlayer=True, playerState=playerState)
     elif playerState.deathTime + level.deathTimeBuffer >= timeSourceTime:
-        level.draw(gui.screen, timeSourceTime, playerState.visiblePos - Player.offset, level.tileSize)
+        level.player.fallingScaler = easeInPow(1, 0, playerState.deathTime, playerState.deathTime + playerFallTime, 2, timeSourceTime)
+        level.draw(gui.screen, timeSourceTime, playerState.visiblePos - Player.offset, level.tileSize, drawPlayer=True, playerState=playerState)
     else:
         level.restart()
     

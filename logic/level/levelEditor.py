@@ -197,9 +197,9 @@ def selectMetBeat(b):
     global beat, metronome
     for i, met in enumerate(metronome[:-1]):
         if i == b:
-            met.color = (100, 100, 255)
+            met.color = (50, 50, 255) if b != 0 else (150, 150, 255)
         else:
-            met.color = (50, 50, 255)
+            met.color = (100, 100, 255)
 
     metronome[-1].x = metronome[b].pos.x
     metronome[-1].text = str(b + 1)

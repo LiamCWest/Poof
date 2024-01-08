@@ -62,7 +62,6 @@ class Level:
         self.tileAnim.restart(songPlayer.getPos())        
     
     def draw(self, win, timeSourceTime, topLeftPos, tileSize, drawPlayer = False, playerState = None, drawGrid = False, gridLineThickness = 2):
-        
         for tile in self.tiles:
             tile.factor = self.factor
             

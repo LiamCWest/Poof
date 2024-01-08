@@ -32,15 +32,23 @@ def checkSignature(data, signature):
 def checkInput():
     if input.keyActionBindings["left"].justPressed:
         level.player.move(Vector2(-1, 0), input.keyActionBindings["left"].songTimeLastPressed)
+    elif input.keyActionBindings["left"].justReleased:
+        level.player.stopMove(Vector2(-1, 0), input.keyActionBindings["left"].songTimeLastReleased)
     
     if input.keyActionBindings["right"].justPressed:
         level.player.move(Vector2(1, 0), input.keyActionBindings["right"].songTimeLastPressed)
+    elif input.keyActionBindings["right"].justReleased:
+        level.player.stopMove(Vector2(1, 0), input.keyActionBindings["right"].songTimeLastReleased)
         
     if input.keyActionBindings["up"].justPressed:
         level.player.move(Vector2(0, -1), input.keyActionBindings["up"].songTimeLastPressed)
+    elif input.keyActionBindings["up"].justReleased:
+        level.player.stopMove(Vector2(0, -1), input.keyActionBindings["up"].songTimeLastReleased)
         
     if input.keyActionBindings["down"].justPressed:
         level.player.move(Vector2(0, 1), input.keyActionBindings["down"].songTimeLastPressed)
+    elif input.keyActionBindings["down"].justReleased:
+        level.player.stopMove(Vector2(0, 1), input.keyActionBindings["dpwn"].songTimeLastReleased)
 
 def updateFactors(factor):
     level.factor = factor

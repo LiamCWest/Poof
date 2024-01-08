@@ -118,7 +118,7 @@ def getPreviousBeat(points, time, divisor):
         
     return points[0].time - (points[0].beatLength / divisor) #if you are exactly on the first timing point
 
-def getNextBeat(points, time, divisor, countSameBeat = False): #TODO: Make sure none of these getBeat functions have subtle errors
+def getNextBeat(points, time, divisor):
     if len(points) == 0: #if you're before the first point
         return None
 

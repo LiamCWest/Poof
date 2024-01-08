@@ -9,12 +9,13 @@ from ui.text import Text
 from utils.resizingFuncs import drawRectResized
 
 class Button:
-    def __init__(self, text, x, y, width, height, color, textColor, onClick, onRelease = lambda: None,z = 0, particles = False, textSize = 40, scaler = 1.25):
+    def __init__(self, text, x, y, width, height, color, textColor, onClick, onRelease = lambda: None,z = 0, particles = False, textSize = 40, scaler = 1.25, hColor = None):
         self.text = Text(text, x + width//2, y+height//2, textColor, textSize)
         self.x = x
         self.y = y
         self.width = width
         self.height = height
+        self.baseColor = color
         self.color = color
         self.scale = 1
         self.scaler = scaler
@@ -23,6 +24,7 @@ class Button:
         self.particles = particles
         self.held = False
         self.onRelease = onRelease
+        self.hColor = hColor if hColor else color
         
         if self.particles:
             shape = Polygon.fromRect((0, 0, self.width, self.height), (255, 255, 255))
@@ -53,13 +55,16 @@ class Button:
         if self.particles:
             self.emitter.update()
 
+        canColorChange = True if self.color in [self.baseColor, self.hColor] else False
         if self.isOver(input.mousePos.pos, Vector2(self.x, self.y) + pos):
             self.scale = self.scaler
+            if canColorChange: self.color = self.hColor
             if input.mouseBindings["lmb"].justPressed:
                 self.held = True
                 self.onClick()
         else:
             self.scale = 1
+            if canColorChange: self.color = self.baseColor
                 
         if self.held and not input.mouseBindings["lmb"].pressed:
             self.held = False

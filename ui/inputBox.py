@@ -6,8 +6,8 @@ from input import input
 import pygame
 
 class InputBox(Button):
-    def __init__(self, text, x, y, width, height, color, textColor, textSize = 40, sizeLocked = False, maxLength = 20, scaler = 1.25, clearOnInput = True, numOnly = False):
-        Button.__init__(self, text, x, y, width, height, color, textColor, self.select, textSize=textSize, scaler=scaler)
+    def __init__(self, text, x, y, width, height, color, textColor, textSize = 40, sizeLocked = False, maxLength = 20, scaler = 1.25, clearOnInput = True, numOnly = False, hColor = None):
+        Button.__init__(self, text, x, y, width, height, color, textColor, self.select, textSize=textSize, scaler=scaler, hColor=hColor)
         self.defaultText = text
         self.clearOnInput = clearOnInput
         self.active = False

@@ -50,6 +50,18 @@ def isOnBeat(time, point, divisor, pointIsAfter = False): #haha yes i can remove
     timeOfNearestBeat = roundedBeatsElapsed * dividedBeatLength + point.time
     return timeOfNearestBeat == time
 
+def getBeatsSincePoint(time, point, divisor):
+    timeSincePoint = time - point.time
+    dividedBeatLength = point.beatLength / divisor
+    beatsElapsed = timeSincePoint / dividedBeatLength
+    roundedBeatsElapsed = round(beatsElapsed)
+    
+    timeOfNearestBeat = roundedBeatsElapsed * dividedBeatLength + point.time
+    
+    if time >= timeOfNearestBeat:
+        return roundedBeatsElapsed
+    return roundedBeatsElapsed - 1
+
 def getPreviousBeat(points, time, divisor):
     if len(points) == 0:
         return None

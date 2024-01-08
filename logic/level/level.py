@@ -29,7 +29,7 @@ class Level:
         
         self.songPath = songPath
         self.timingPoints = timingPoints
-        songPlayer.load(self.songPath, self.timingPoints)
+        songPlayer.load(self.songPath)
     
     def createEventFromTile(self, tile):
         startTime = tile.appearedTime - self.appearLength
@@ -51,10 +51,6 @@ class Level:
         if playerStartPos is not None and playerStartTime is not None:
             return Player(playerStartPos, playerStartTime)
         return None
-    
-    def addTimingPoint(self, timingPoint):
-        self.timingPoints.append(timingPoint)
-        songPlayer.addTimingPoint(timingPoint)
     
     def removeTimingPoint(self, timingPoint):
         self.timingPoints.remove(timingPoint)

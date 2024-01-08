@@ -18,7 +18,7 @@ class PlayerState:
         self.factor = 1
 
 class Player:
-    offset = Vector2(5, 4)
+    offset = Vector2(5.9, 3.1) #TODO: Don't hardcode these values
     moveLength = 0.2
     def __init__(self, startPos, startTime):
         self.startPos = startPos

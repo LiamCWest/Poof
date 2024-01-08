@@ -136,37 +136,42 @@ def update():
             level.removeTileAt(tilePos, tileTime)
             selectedTile = None
 
+lastTimingPoint = None
 def timingPointUpdate():
-    global bpm, timeSig, divisor
+    global bpm, timeSig, divisor, lastTimingPoint
     pos = songPlayer.getPos()
     nearestBeat = timingPoints.getNearestBeat(level.timingPoints, pos, divisor)
     point = timingPoints.getPreviousPoint(level.timingPoints, pos)
     if point is None:
         point = level.timingPoints[0]
     
+    changingPoint = (int(bpm[1].output) != point.bpm or 
+        int(timeSig[0].output) != point.timeSignature.num or
+        int(timeSig[1].output) != point.timeSignature.denom) and point == lastTimingPoint
+    
+    lastTimingPoint = point
+    
     if nearestBeat == point.time:
+        if changingPoint:
+            point.bpm = int(bpm[1].output)
+            point.timeSignature.num = int(timeSig[0].output)
+            point.timeSignature.denom = int(timeSig[1].output)
+            
         onPointColor = (50, 50, 255)
         bpm[0].bgColor = onPointColor
         bpm[1].color = onPointColor
         timeSig[0].color = onPointColor
-        timeSig[1].color = onPointColor
+        timeSig[1].color = onPointColor            
     else:
+        if changingPoint:
+            pointToInsert = TimingPoint(songPlayer.getPos(), int(bpm[1].output), TimeSignature(int(timeSig[0].output), int(timeSig[1].output)))
+            bisect.insort_left(level.timingPoints, pointToInsert, key=lambda point: point.time)
+            
         offPointColor = (100, 100, 255)
         bpm[0].bgColor = offPointColor
         bpm[1].color = offPointColor
         timeSig[0].color = offPointColor
         timeSig[1].color = offPointColor
-
-    if (int(bpm[1].output) != point.bpm or 
-        int(timeSig[0].output) != point.timeSignature.num or
-        int(timeSig[1].output) != point.timeSignature.denom):
-        if point.time == nearestBeat:
-            point.bpm = int(bpm[1].output)
-            point.timeSignature.num = int(timeSig[0].output)
-            point.timeSignature.denom = int(timeSig[1].output)
-        else:
-            pointToInsert = TimingPoint(songPlayer.getPos(), int(bpm[1].output), TimeSignature(int(timeSig[0].output), int(timeSig[1].output)))
-            bisect.insort_left(level.timingPoints, pointToInsert, key=lambda point: point.time)
 
 def metronomeUpdate(): #TODO: make beat number apear on each beat
     pos = songPlayer.getPos()
@@ -297,7 +302,6 @@ def init():
     topBar.addOption(ToolbarOption(bpm, bpm), Vector2(i, 0))
     i += 1
     topBar.addOption(ToolbarOption(timeSig, timeSig), Vector2(i, 0))
-
 
     # bottom bar #
     bottomBar = Toolbar(Vector2(3, 2), Vector2(0, gui.screen.get_height()-buttonSize), gui.screen.get_width(), buttonSize) # toolbar for the bottom bar

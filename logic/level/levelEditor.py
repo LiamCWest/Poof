@@ -265,8 +265,8 @@ def genMetronome():
     metronomeSize = bottomBar.width/(3*metronomeLen)
     if metronomeSize > buttonSize/2: metronomeSize = buttonSize/2
     for i in range(metronomeLen):
-        metronome.append(Polygon.fromRect((i*metronomeSize, 0, metronomeSize, metronomeSize), (100, 100, 255)))
-    metronome.append(Text("1", metronomeSize/2, metronomeSize/2, (0,0,0), 30, width=metronomeSize, height=metronomeSize))
+        metronome.append(Polygon.fromRect((i*metronomeSize, (buttonSize/2-metronomeSize)/2, metronomeSize, metronomeSize), (100, 100, 255)))
+    metronome.append(Text("1", metronomeSize/2, metronomeSize/2+(buttonSize/2-metronomeSize)/2, (0,0,0), round(metronomeSize*0.66), width=metronomeSize, height=metronomeSize))
     if bottomBar.grid[0][2]:
         bottomBar.grid[0][2].baseObj = metronome
 

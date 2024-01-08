@@ -160,13 +160,14 @@ def timingPointUpdate():
     if (int(bpm[1].output) != point.bpm or 
         int(timeSig[0].output) != point.timeSignature.num or
         int(timeSig[1].output) != point.timeSignature.denom):
+        print("adding point")
         if point.time == songPlayer.getPos():
             point.bpm = int(bpm[1].output)
             point.timeSignature.num = int(timeSig[0].output)
             point.timeSignature.denom = int(timeSig[1].output)
         else:
             #new timing point
-            if songPlayer.getNearestBeat() == songPlayer.getPos():
+            if songPlayer.getNearestBeat(divisor) == songPlayer.getPos():
                 #full new point
                 level.addTimingPoint(TimingPoint(songPlayer.getPos(), int(bpm[1].output), TimeSignature(int(timeSig[0].output), int(timeSig[1].output))))
                 pass
@@ -174,22 +175,23 @@ def timingPointUpdate():
                 #only change bpm
                 level.addTimingPoint(TimingPoint(songPlayer.getPos(), int(bpm[1].output), point.timeSignature))
                 pass
+            print(level.timingPoints)
 
-def metronomeUpdate(): #TODO: make beat number apear on each beat
+def metronomeUpdate():
     point = songPlayer.getPreviousPoint() if songPlayer.getPreviousPoint() else songPlayer.currentTimingPoints[0]
     if len(metronome) != point.timeSignature.num + 1:
         genMetronome()
     distanceFromPoint = songPlayer.getPos() - point.time if songPlayer.getPos() > point.time else None
     b = 1 if not distanceFromPoint else round(distanceFromPoint / point.beatLength) % point.timeSignature.num + 1
-    selectMetBeat(b)
+    if b != beat: selectMetBeat(b)
             
 def selectMetBeat(b):
     global beat, metronome
     metronome[beat-1].color = (100, 100, 255)
     beat = b
-    metronome[b-1].color = (50, 50, 255) if beat != 1 else (0, 150, 200)
+    metronome[beat-1].color = (50, 50, 255) if beat != 1 else (0, 150, 200)
     metronome[-1].text = str(beat)
-    metronome[-1].x = metronome[b-1].pos.x
+    metronome[-1].x = metronome[beat-1].pos.x
 
 def posIn(pos, rect):
     return pos.x > rect[0] and pos.x < rect[0] + rect[2] and pos.y > rect[1] and pos.y < rect[1] + rect[3]
@@ -245,6 +247,12 @@ def genMetronome():
     if bottomBar.grid[0][2]:
         bottomBar.grid[0][2].baseObj = metronome
 
+def deletePoint():
+    global level
+    point = songPlayer.getPreviousPoint() if songPlayer.getPreviousPoint() else songPlayer.currentTimingPoints[0]
+    level.removeTimingPoint(point.time)
+    print(level.timingPoints)
+
 initailized = False
 def init():
     global topBar, bottomBar, modes, divisorSelector, divisors, scrollbar, selectedMode, divisor, initailized, lastScrollbarValue, beat, metronome, metronomeSize, buttonSize, bpm, timeSig
@@ -257,12 +265,13 @@ def init():
 
     # top bar #
     w = buttonSize*10 # width of the top bar
-    topBar = Toolbar(Vector2(10, 1), Vector2((gui.screen.get_width()-w)//2, 0), w, buttonSize) # toolbar for the top bar
+    topBar = Toolbar(Vector2(11, 1), Vector2((gui.screen.get_width()-w)//2, 0), w, buttonSize) # toolbar for the top bar
 
     modes = ["move", "select", "platform", "wall", "rest", "delete"] # possible modes
     topbarButtons = { # buttons on the top bar
         "save": lambda: level.save(levelF), 
-        "load": lambda: loadLevel("level_data.json")
+        "load": lambda: loadLevel("level_data.json"),
+        "delete\npoint": lambda: deletePoint(),
     }
     bpmText = Text("BPM", buttonSize/2, buttonSize/4, (0,0,0), fontSize, bgColor=(100, 100, 255), width = buttonSize, height = buttonSize/2) # text for bpm
     bpmBox = InputBox("", 0, buttonSize/2, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1, clearOnInput=False, numOnly=True) # input box for bpm

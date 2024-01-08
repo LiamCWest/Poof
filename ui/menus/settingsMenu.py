@@ -2,6 +2,7 @@ from graphics import gui
 from ui.button import Button
 from ui.text import Text
 from logic.game import game
+import input.input as input
 
 def show():
     gui.clear()
@@ -16,6 +17,10 @@ def draw():
     for text in texts:
         text.draw()
         
+def checkInput():
+    if input.specialKeyBindings["escape"].justPressed:
+        gui.setScreen("main")
+        
 def updateFactors(factor):
     for object in objects:
         object.factor = factor
@@ -23,6 +28,7 @@ def updateFactors(factor):
         text.factor = factor
     
 def update():
+    checkInput()
     for object in objects:
         object.update()
         

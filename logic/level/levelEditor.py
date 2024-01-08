@@ -42,6 +42,9 @@ def checkInput():
         else:
             songPlayer.unpause()
        
+    if input.specialKeyBindings["escape"].justPressed:
+        gui.setScreen("main")
+       
     if selectedTile:
         if input.keyActionBindings["moveTileLeft"].justPressed:
             selectedTile.pos += Vector2(-1, 0)
@@ -345,3 +348,11 @@ def init():
     bottomBar.addOption(ToolbarOption("metronome", metronome), Vector2(2,0))
     
     adjustTimingPointValues()
+    
+def hide():
+    gui.clear()
+    songPlayer.unload()
+    initailized = False
+    global selectedTile, lastTimingPoint
+    selectedTile = None
+    lastTimingPoint = None

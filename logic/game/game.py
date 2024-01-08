@@ -51,18 +51,6 @@ def update():
     if playing:
         checkInput()
     
-    timeSourceTime = songPlayer.getPos()
-    
-    playerState = level.player.calculateState(level, timeSourceTime)
-    if playerState.deathTime is None:
-        level.draw(gui.screen, timeSourceTime, playerState.visiblePos - Player.offset, level.tileSize, drawPlayer=True, playerState=playerState)
-    elif playerState.deathTime + level.deathTimeBuffer >= timeSourceTime:
-        level.draw(gui.screen, timeSourceTime, playerState.visiblePos - Player.offset, level.tileSize)
-    else:
-        level.restart()
-    
-    accText.text = f"{int(playerState.acc * 1000)}ms"
-    
 def pause():
     global playing
     songPlayer.pause()
@@ -75,6 +63,17 @@ def play():
 
 def draw():
     global accText
+    timeSourceTime = songPlayer.getPos()
+    
+    playerState = level.player.calculateState(level, timeSourceTime)
+    if playerState.deathTime is None:
+        level.draw(gui.screen, timeSourceTime, playerState.visiblePos - Player.offset, level.tileSize, drawPlayer=True, playerState=playerState)
+    elif playerState.deathTime + level.deathTimeBuffer >= timeSourceTime:
+        level.draw(gui.screen, timeSourceTime, playerState.visiblePos - Player.offset, level.tileSize)
+    else:
+        level.restart()
+    
+    accText.text = f"{int(playerState.acc * 1000)}ms"
     accText.draw()
         
 accText = Text("0ms", 100, 100)

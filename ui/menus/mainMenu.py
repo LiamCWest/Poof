@@ -42,10 +42,6 @@ def update():
     for object in objects:
         object.update()
         
-    if objects[5].returned:
-        print(objects[5].output)
-        objects[5].accept()
-        
 def settings():
     hide()
     gui.setScreen("settings")
@@ -62,7 +58,5 @@ title = "Main Menu"
 objects = [Button("Start", 200, 262, 200, 100, (0, 255, 0), (255, 0, 0), startGame, particles=True),
            Button("Settings", 200, 375, 200, 100, (0, 255, 0), (255, 0 ,0), settings),
            Button("Level Editor", 200, 487, 200, 100, (0, 255, 0), (255, 0, 0), levelEditor),
-           Button("Quit", 200, 600, 200, 100, (0, 255, 0), (255, 0, 0), quit),
-           Scrollbar(800, 75, 20, 400, "h", None, 7, True),
-           InputBox("INPUT",800, 600, 200, 100, (0, 255, 0), (255, 0, 0))]
+           Button("Quit", 200, 600, 200, 100, (0, 255, 0), (255, 0, 0), quit),]
 texts = [Text(title, 400, 150, (255, 0, 0), 100)]

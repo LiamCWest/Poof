@@ -12,11 +12,12 @@ import hashlib
 
 tiles = None
 level = None
+playing = False
 
 def show():
     global level
     level.restart()
-    update()
+    play()
     
 def hide():
     gui.clear()
@@ -46,10 +47,10 @@ def updateFactors(factor):
     level.factor = factor
 
 def update():
-    checkInput()
+    global playing, level, accText
+    if playing:
+        checkInput()
     
-def draw():
-    global accText
     timeSourceTime = songPlayer.getPos()
     
     playerState = level.player.calculateState(level, timeSourceTime)
@@ -61,6 +62,19 @@ def draw():
         level.restart()
     
     accText.text = f"{int(playerState.acc * 1000)}ms"
+    
+def pause():
+    global playing
+    songPlayer.pause()
+    playing = False
+
+def play():
+    global playing
+    songPlayer.unpause()
+    playing = True
+
+def draw():
+    global accText
     accText.draw()
         
 accText = Text("0ms", 100, 100)

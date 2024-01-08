@@ -15,6 +15,8 @@ from ui.scrollbar import Scrollbar
 import bisect
 import pygame
 
+hColor = (150, 150, 255)
+
 def updateFactors(factor):
     level.factor = factor
 
@@ -210,8 +212,6 @@ def posIn(pos, rect):
 def draw():
     global levelPos, selectedTile
     level.draw(gui.screen, songPlayer.getPos(), levelPos, level.tileSize, drawGrid=True)
-    topBar.draw(gui.screen)
-    bottomBar.draw(gui.screen)
     
     if selectedTile and selectedTile.appearedTime-level.appearLength <= songPlayer.getPos() <= selectedTile.disappearTime+level.disappearLength:
         s = pygame.Surface(level.tileSize.toTuple())
@@ -220,6 +220,9 @@ def draw():
         gui.screen.blit(s, ((selectedTile.pos - levelPos) * level.tileSize).toTuple())
     elif selectedTile:
         selectedTile = None
+    
+    topBar.draw(gui.screen)
+    bottomBar.draw(gui.screen)
         
 tiles = None
 level = None
@@ -269,7 +272,6 @@ def deletePoint():
     prevPoint = timingPoints.getPreviousPoint(level.timingPoints, songPlayer.getPos())
     point = prevPoint if prevPoint else level.timingPoints[0]
     level.timingPoints.remove(point)
-    print(level.timingPoints)
 
 initailized = False
 def init():
@@ -282,8 +284,9 @@ def init():
     fontSize = 20
 
     # top bar #
-    w = buttonSize*10 # width of the top bar
-    topBar = Toolbar(Vector2(11, 1), Vector2((gui.screen.get_width()-w)//2, 0), w, buttonSize) # toolbar for the top bar
+    numButtons = 11
+    w = buttonSize*numButtons # width of the top bar
+    topBar = Toolbar(Vector2(numButtons, 1), Vector2((gui.screen.get_width()-w)//2, 0), w, buttonSize) # toolbar for the top bar
 
     modes = ["move", "select", "platform", "wall", "rest", "delete"] # possible modes
     topbarButtons = { # buttons on the top bar
@@ -292,16 +295,16 @@ def init():
         "delete\npoint": lambda: deletePoint(),
     }
     bpmText = Text("BPM", buttonSize/2, buttonSize/4, (0,0,0), fontSize, bgColor=(100, 100, 255), width = buttonSize, height = buttonSize/2) # text for bpm
-    bpmBox = InputBox("", 0, buttonSize/2, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1, clearOnInput=False, numOnly=True) # input box for bpm
+    bpmBox = InputBox("", 0, buttonSize/2, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1, clearOnInput=False, numOnly=True, hColor=hColor) # input box for bpm
     bpm = [bpmText, bpmBox] # bpm text and input box
-    timeSigNum = InputBox("", 0, 0, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1, clearOnInput=False, numOnly=True) # input box for time signature numerator
-    timeSigDenom = InputBox("", 0, buttonSize/2, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1, clearOnInput=False, numOnly=True) # input box for time signature denominator
+    timeSigNum = InputBox("", 0, 0, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1, clearOnInput=False, numOnly=True, hColor=hColor) # input box for time signature numerator
+    timeSigDenom = InputBox("", 0, buttonSize/2, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1, clearOnInput=False, numOnly=True, hColor=hColor) # input box for time signature denominator
     timeSig = [timeSigNum, timeSigDenom] # time signature numerator and denominator
 
     # fuction to create buttons for the toolbar, could probably be moved somewhere else. ToolbarOption.fromButton?
     barButton = lambda option, func: Button(
         option, 0, 0, buttonSize, buttonSize, (100, 100, 255), 
-        (0, 0, 0), func, textSize = fontSize, scaler=1.1
+        (0, 0, 0), func, textSize = fontSize, scaler=1, hColor=hColor
     )
     # adding modes and buttons to the toolbar
     for i, mode in enumerate(modes):
@@ -324,12 +327,13 @@ def init():
     scrollbar = Scrollbar(0, 0, bottomBar.height/2, gui.screen.get_width(), "h", sliderWidth=25, bg = (50,50,50)) # scrollbar for the bottom bar
 
     divisor = 1
-    divisors = [1, 2, 4, 8, 16]
+    divisors = [1, 2, 3, 4, 5, 6, 7, 8, 12, 16]
     divisorSelector = []
     divisorSize = bottomBar.width/(3*len(divisors))
     if divisorSize > buttonSize/2: divisorSize=buttonSize/2
+    print(buttonSize, divisorSize, buttonSize-divisorSize)
     for i, d in enumerate(divisors):
-        divisorSelector.append(Button(str(d), i*divisorSize, 0, divisorSize, divisorSize, (100, 100, 255), (0,0,0), lambda x=d: selectDivisor(x), textSize = 30, scaler=1.1))
+        divisorSelector.append(Button(str(d), i*divisorSize, (buttonSize/2-divisorSize)/2, divisorSize, divisorSize, (100, 100, 255), (0,0,0), lambda x=d: selectDivisor(x), textSize = 30, scaler=1, hColor=hColor))
     selectDivisor(1)
         
     genMetronome()

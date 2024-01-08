@@ -254,8 +254,9 @@ def genMetronome():
 
 def deletePoint():
     global level
-    point = songPlayer.getPreviousPoint() if songPlayer.getPreviousPoint() else songPlayer.currentTimingPoints[0]
-    level.removeTimingPoint(point.time)
+    prevPoint = timingPoints.getPreviousPoint(level.timingPoints, songPlayer.getPos())
+    point = prevPoint if prevPoint else level.timingPoints[0]
+    level.timingPoints.remove(point)
     print(level.timingPoints)
 
 initailized = False

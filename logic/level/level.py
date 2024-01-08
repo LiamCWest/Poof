@@ -52,10 +52,6 @@ class Level:
             return Player(playerStartPos, playerStartTime)
         return None
     
-    def removeTimingPoint(self, timingPoint):
-        self.timingPoints.remove(timingPoint)
-        songPlayer.removeTimingPoint(timingPoint)
-    
     def restart(self):
         self.pos = Vector2(0, 0)
         

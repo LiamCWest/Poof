@@ -48,6 +48,19 @@ class Polygon:
         x = random.uniform(edge.p1.x, edge.p2.x)
         y = random.uniform(edge.p1.y, edge.p2.y)
         return Vector2(x,y)+self.pos
+    
+    def randomPointOnParallelRectangleSides(self, H_or_V = "H"):
+        if len(self.edges) != 4:
+            print("Don't use this function on non-quadrilateral shapes")
+        
+        if H_or_V == "H":
+            edge = random.choice([self.edges[0],self.edges[2]])
+        else:
+            edge = random.choice([self.edges[1],self.edges[3]])
+        
+        x = random.uniform(edge.p1.x, edge.p2.x)
+        y = random.uniform(edge.p1.y, edge.p2.y)
+        return Vector2(x,y)+self.pos
             
     def dirAt(self, pos):
         #angle from pos to center of polygon as a vector2 (normalized)

@@ -5,16 +5,15 @@ from utils.vector2 import Vector2
 from utils.binarySearch import binarySearch
 from graphics.animation import *
 from utils.resizingFuncs import blitResized
-from logic.song.timingPoints import getNextBeat, getPreviousBeat
+from logic.song.timingPoints import getNextBeat, getPreviousBeat, getNearestBeat
 
 class PlayerState:
     def __init__(self):
         self.time = None
         self.pos = None
         self.visiblePos = None
-        self.lastMove = None
-        self.lastCountedMove = None
-        self.countedMovesMade = None
+        self.direction = None
+        self.animState = None
         self.acc = None
         self.deathTime = None
         self.gliding = False
@@ -36,24 +35,21 @@ class Player:
         
         size = 100
         
-        if state.lastMove is None:
-            img = images.images["player_down"]
+        if state.pos != state.visiblePos: #moving
+            imgs = {
+                Vector2(-1, 0): images.images["player_left_moving"],
+                Vector2(0, -1): images.images["player_up_moving"],
+                Vector2(1, 0): images.images["player_right_moving"],
+                Vector2(0, 1): images.images["player_down_moving"]
+            }
         else:
-            if state.pos != state.visiblePos: #moving
-                imgs = {
-                    Vector2(-1, 0): images.images["player_left_moving"],
-                    Vector2(0, -1): images.images["player_up_moving"],
-                    Vector2(1, 0): images.images["player_right_moving"],
-                    Vector2(0, 1): images.images["player_down_moving"]
-                }
-            else:
-                imgs = {
-                    Vector2(-1, 0): images.images["player_left"],
-                    Vector2(0, -1): images.images["player_up"],
-                    Vector2(1, 0): images.images["player_right"],
-                    Vector2(0, 1): images.images["player_down"]
-                }
-            img = imgs[state.lastMove[0]]
+            imgs = {
+                Vector2(-1, 0): images.images["player_left"],
+                Vector2(0, -1): images.images["player_up"],
+                Vector2(1, 0): images.images["player_right"],
+                Vector2(0, 1): images.images["player_down"]
+            }
+        img = imgs[Vector2(0, 1)]
         
         blitResized(win, img, self.offset, size, self.factor)
         #win.blit(pygame.transform.scale(img, size.toTuple()), (size * self.offset).toTuple())
@@ -72,26 +68,12 @@ class Player:
             thisAcc = abs(tileTime - time)
             return (currentAcc * (movesMade - 1) + thisAcc) / movesMade #weighted average
         
-        def calculateGlide(startTime, divisor, time): #returns list of tuples of (distanceAway, timeGlidedTo)
-            glides = []
-            beatsElapsed = 0
-            nextBeat = startTime
-            while True:
-                nextBeat = getNextBeat(level.timingPoints, nextBeat, divisor)
-                beatsElapsed += 1
-                glides.append((beatsElapsed, nextBeat))
-                if nextBeat > time:
-                    break
-            #prevBeat = getPreviousBeat(level.timingPoints, nextBeat, divisor)
-            #visibleDistance = lerp(beatsElapsed, beatsElapsed + 1, prevBeat, nextBeat, time)
-            #actualDistance = round(visibleDistance)
-            return(glides)
-        
         def addPosMovesDeathTimeAcc(state):            
             state.countedMovesMade = 0
             state.acc = 0
             
             state.pos = self.startPos.copy()
+            state.visiblePos = state.pos
             currentTile = None
             
             tile = level.getTileAt(state.pos, self.startTime)
@@ -125,10 +107,7 @@ class Player:
                     state.gliding = True
                     state.glideStartPos = tile.pos
                     state.glideDir = move[0]
-                    
-                    glideStartTime = move[1]
-                    glideTile = level.getTileAt(state.glideStartPos, glideStartTime)
-                    
+
                     nextMoveTime = float("inf")
                     j = i + 1
                     while j < len(self.moves):
@@ -136,9 +115,24 @@ class Player:
                             nextMoveTime = self.moves[j][1] #get the time of the next press move
                             break
                         j += 1
-                    calcGlideTime = min(state.time, nextMoveTime) #calculate the glide until that time
+                    glideEndTime = min(state.time, nextMoveTime) #calculate the glide until that time
+
+                    glides = []
+                    beatsElapsed = 0
                     
-                    glides = calculateGlide(move[1], glideTile.divisor, calcGlideTime) #get all the tiles glided over until the next move made
+                    glideTimeOffset = move[1] - tile.disappearTime #the time off of the perfect glide time that you're gliding
+                    
+                    if getNearestBeat(level.timingPoints, tile.disappearTime, tile.divisor) == tile.disappearTime and state.time >= tile.disappearTime:
+                        beatsElapsed += 1 #add a beat if on beat
+                        glides.append((beatsElapsed, tile.disappearTime + glideTimeOffset))
+                    
+                    nextBeat = tile.disappearTime
+                    while True:
+                        nextBeat = getNextBeat(level.timingPoints, nextBeat, tile.divisor)
+                        beatsElapsed += 1 #add a beat for every beat since
+                        glides.append((beatsElapsed, nextBeat + glideTimeOffset))
+                        if nextBeat > glideEndTime:
+                            break
                     
                     tileHit = None
                     for i, glide in enumerate(glides[:-1]): #check if you hit a tile while you were gliding
@@ -150,6 +144,7 @@ class Player:
                     
                     if tileHit is not None: #if you hit a tile, your pos is on that tile
                         state.pos = tileHit.pos
+                        state.visiblePos = state.pos
                         state.gliding = False #and you're on a tile so you're not gliding anymore
                         state.glideStartPos = None
                         state.glideDir = None
@@ -157,18 +152,18 @@ class Player:
                         continue
                     
                     #else you're still gliding
-                    if len(glides) == 1:
-                        pass #pos stays the same
-                    else:
+                    if len(glides) > 1:
                         state.pos = state.glideStartPos + move[0].multiply(glides[-2][0]) #pos goes to glide pos
-                        currentTile = None #you're not on a tile anymore
+                        state.visiblePos = state.glideStartPos + move[0].multiply(lerp(glides[-2][0], glides[-1][0], glides[-2][1], glides[-1][1], state.time))
+                        state.visiblePos = state.pos
+                        currentTile = None #you're not on a tile cause you're gliding
                     
                 else: #else move normally
                     state.gliding = False
                     state.glideStartPos = None
                     state.glideDir = None
-                    #print(move[0], "WOOOO MOVE")
                     state.pos += move[0] #Make the move you were trying to make
+                    state.visiblePos = state.pos
                     tile = level.getTileAt(state.pos, moveTime)
                     if tile is None:
                         print("death3")
@@ -195,7 +190,6 @@ class Player:
         state.time = searchTime
         addPosMovesDeathTimeAcc(state)
         if not state.gliding:
-            addVisiblePos(state) #if it is gliding, the visible pos is already added in the other function
-            
-        state.visiblePos = state.pos #TEMP
+            #addVisiblePos(state) #if it is gliding, the visible pos is already added in the other function
+            pass
         return state

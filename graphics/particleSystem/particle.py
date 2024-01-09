@@ -22,7 +22,10 @@ class Particle:
         self.anim.updateTime(input.getRealTime())
         
     def draw(self, win):
-        draw_rect_alpha(win, self.color, self.position.multiply(self.factor).toTuple() + (self.size * self.factor, self.size * self.factor))
+        newpos =  self.position.multiply(self.factor)
+        newpos.x -= self.size/2
+        newpos.y -= self.size/2
+        draw_rect_alpha(win, self.color, newpos.toTuple() + (self.size * self.factor, self.size * self.factor))
         
 def draw_rect_alpha(surface, color, rect):
     shape_surf = pygame.Surface(pygame.Rect(rect).size, pygame.SRCALPHA)

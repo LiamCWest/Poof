@@ -29,10 +29,13 @@ class Button:
         self.hColor = hColor if hColor else color
         
         if self.particles:
-            shape = Polygon.fromRect((0, 0, self.width, self.height), (255, 255, 255))
+            w = self.width*(self.scaler-1)
+            h = self.height*(self.scaler-1)
             if self.particlesOnOver:
+                shape = Polygon.fromRect((0 - w/2, 0 - h/2, self.width + w, self.height + h), (255, 255, 255))
                 self.emitter = ToggleableShapedEmitter(shape, Vector2(self.x, self.y), Vector2(4,4), 250, 25, 10, H_or_V = "V")
             else:
+                shape = Polygon.fromRect((0, 0, self.width, self.height), (255, 255, 255))
                 self.emitter = ShapedEmitter(shape, Vector2(self.x, self.y), Vector2(2,2), 100, 25, 10)
         
         self.onClick = onClick

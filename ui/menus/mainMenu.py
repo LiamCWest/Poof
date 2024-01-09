@@ -52,8 +52,8 @@ def levelEditor():
         gui.setScreen("levelEditor")
         
 title = "Main Menu"
-objects = [Button("Start", 200, 200, 880, 100, (80, 93, 112), (255, 255, 255), startGame, particles=True, textFontPath= "ROGFONTS-REGULAR.ttf", particlesOnOver=True, scaler = 1.03),
-           Button("Settings", 200, 320, 880, 100, (80, 93, 112), (255, 255, 255), settings, particles=True, textFontPath= "ROGFONTS-REGULAR.ttf", particlesOnOver=True, scaler = 1.03),
-           Button("Level Editor", 200, 440, 880, 100, (80, 93, 112), (255, 255, 255), levelEditor, particles=True, textFontPath= "ROGFONTS-REGULAR.ttf", particlesOnOver=True, scaler = 1.03),
-           Button("Quit", 200, 560, 880, 100, (80, 93, 112), (255, 255, 255), quit, particles=True, textFontPath= "ROGFONTS-REGULAR.ttf", particlesOnOver=True, scaler = 1.03),]
+objects = [Button("Start", 200, 200, 880, 100, (80, 93, 112), (255, 255, 255), startGame, particles=True, textFontPath= "ROGFONTS-REGULAR.ttf", particlesOnOver=True, scaler = 1.05),
+           Button("Settings", 200, 320, 880, 100, (80, 93, 112), (255, 255, 255), settings, particles=True, textFontPath= "ROGFONTS-REGULAR.ttf", particlesOnOver=True, scaler = 1.05),
+           Button("Level Editor", 200, 440, 880, 100, (80, 93, 112), (255, 255, 255), levelEditor, particles=True, textFontPath= "ROGFONTS-REGULAR.ttf", particlesOnOver=True, scaler = 1.05),
+           Button("Quit", 200, 560, 880, 100, (80, 93, 112), (255, 255, 255), quit, particles=True, textFontPath= "ROGFONTS-REGULAR.ttf", particlesOnOver=True, scaler = 1.05),]
 texts = [Text(title, 640, 100, (255, 255, 255), 100, fontPath= "ROGFONTS-REGULAR.ttf")]

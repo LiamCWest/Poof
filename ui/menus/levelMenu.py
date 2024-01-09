@@ -14,6 +14,7 @@ popups = []
 def show():
     global levels, buttons, popupOpen, popups
     if isLE: buttons.append(Button("New Level", gui.screen.get_width()/2-100, 500, 200, 50, (255,0,0), (0,0,0), newLevel))
+    else: buttons = []
     levels = getLevels("levels")
     levelButtons = []
     for i, level in enumerate(levels):

@@ -98,6 +98,15 @@ class Level:
             if tile.pos == pos:
                 return tile
         return None
+    
+    def getTilesOverlapping(self, pos, startTime, endTime):
+        tiles = []
+        for i in self.tileAnim.tree.overlap(startTime, endTime):
+            tile = i.data[1]
+            if tile.pos == pos:
+                tiles.append(tile)
+        tiles.sort(key=lambda tile: tile.appearedTime)
+        return tiles
             
     def isTileValid(self, tile, oldTile):
         if tile.appearedTime < 0 or tile.disappearTime < 0 or tile.appearedTime > songPlayer.getSongLength():
@@ -112,8 +121,8 @@ class Level:
 
     def save(self, levelFile):
         tileValues = [event.data[1].toValues() for event in self.tileAnim.tree]
-        noV2sTiles = [[tile[0].toTuple(), tile[1], tile[2], tile[3], tile[4]] for tile in tileValues]
-            
+        noV2sTiles = [[tile[0].toTuple(), tile[1], tile[2], tile[3], tile[4], tile[5]] for tile in tileValues]
+    
         timingPoints = [point.toValues() for point in self.timingPoints]
             
         levelData = {
@@ -151,7 +160,7 @@ class Level:
                 print("Level file corrupted")
                 return None
             tiles = loaded_data['tiles']
-            tilesV2 = [Tile(Vector2.from_tuple(tile[0]), tile[1], tile[2], tile[3], tile[4]) for tile in tiles]
+            tilesV2 = [Tile(Vector2.from_tuple(tile[0]), tile[1], tile[2], tile[3], tile[4], tile[5]) for tile in tiles]
             appearLength = loaded_data['appearLength']
             disappearLength = loaded_data['disappearLength']
             songPath = loaded_data['songPath']

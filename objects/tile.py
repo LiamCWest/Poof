@@ -27,7 +27,7 @@ class Tile:
         return timeIntoAppearAnim / appearLength
     
     def toValues(self):
-        return [self.pos, self.color, self.appearedTime, self.disappearTime, self.type]
+        return [self.pos, self.color, self.appearedTime, self.disappearTime, self.type, self.divisor]
     
     def getScaleFromDisappearAnimTime(self, timeIntoDisappearAnim, disappearLength): #temp, to be replaced with proper animation
         return 1 - (timeIntoDisappearAnim / disappearLength)    
@@ -52,4 +52,4 @@ class Tile:
         win.blit(pygame.transform.scale(self.getTypeImage(), tileSize.multiply(scale).toTuple()), pos)
         
     def copy(self):
-        return Tile(self.pos, self.color, self.appearedTime, self.disappearTime, self.type)
+        return Tile(self.pos, self.color, self.appearedTime, self.disappearTime, self.type, self.divisor)

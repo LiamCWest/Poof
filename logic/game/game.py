@@ -48,7 +48,7 @@ def checkInput():
     if input.keyActionBindings["down"].justPressed:
         level.player.move(Vector2(0, 1), input.keyActionBindings["down"].songTimeLastPressed)
     elif input.keyActionBindings["down"].justReleased:
-        level.player.stopMove(Vector2(0, 1), input.keyActionBindings["dpwn"].songTimeLastReleased)
+        level.player.stopMove(Vector2(0, 1), input.keyActionBindings["down"].songTimeLastReleased)
 
 def updateFactors(factor):
     level.factor = factor

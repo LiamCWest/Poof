@@ -43,7 +43,6 @@ def update():
         object.update()
         
     if objects[5].returned:
-        print(objects[5].output)
         objects[5].accept()
         
 def settings():

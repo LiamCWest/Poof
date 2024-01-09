@@ -30,3 +30,4 @@ def update():
 title = "Settings Menu"
 objects = []
 texts = [Text(title, 400, 150, (255, 0, 0), 100)]
+popupOpen = False

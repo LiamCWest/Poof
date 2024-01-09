@@ -15,6 +15,7 @@ from ui.scrollbar import Scrollbar
 import bisect
 import pygame
 
+popupOpen = False
 hColor = (150, 150, 255)
 
 def updateFactors(factor):
@@ -331,7 +332,6 @@ def init():
     divisorSelector = []
     divisorSize = bottomBar.width/(3*len(divisors))
     if divisorSize > buttonSize/2: divisorSize=buttonSize/2
-    print(buttonSize, divisorSize, buttonSize-divisorSize)
     for i, d in enumerate(divisors):
         divisorSelector.append(Button(str(d), i*divisorSize, (buttonSize/2-divisorSize)/2, divisorSize, divisorSize, (100, 100, 255), (0,0,0), lambda x=d: selectDivisor(x), textSize = 30, scaler=1, hColor=hColor))
     selectDivisor(1)

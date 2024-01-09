@@ -37,7 +37,11 @@ def back():
 
 def checkInput():
     if input.specialKeyBindings["escape"].justPressed:
-        if activeScreenName not in ["game", "main"]: back()
+        if activeScreenName not in ["game", "main"]:
+            if activeScreen.popupOpen:
+                activeScreen.popupClose()
+            else:
+                back()
         elif activeScreenName == "game":
             activeScreen.pause()
             setScreen("pause")

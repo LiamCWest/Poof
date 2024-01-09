@@ -17,7 +17,7 @@ class Polygon:
         self.calcEdges()
         self.calcNormals()
 
-    def draw(self, screen, outlineWidth = 0, pos = Vector2(0,0)):
+    def draw(self, screen, outlineWidth = 0, outlineColor = None, pos = Vector2(0,0)):
         points = []
         for i in range(len(self.points)):
             point = Vector2.from_tuple(self.points[i])
@@ -27,7 +27,8 @@ class Polygon:
             point += self.pos + pos
             points.append(point.toTuple())
         if outlineWidth != 0:
-            pygame.draw.polygon(screen, self.color, points, outlineWidth)
+            color = outlineColor if outlineColor else self.color
+            pygame.draw.polygon(screen, color, points, outlineWidth)
         else:
             pygame.draw.polygon(screen, self.color, points)
     

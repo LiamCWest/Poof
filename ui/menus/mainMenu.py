@@ -25,7 +25,6 @@ def draw():
         text.draw()
 
 def startGame():
-    hide()
     levelMenu.setLoad(lambda level: load(level))
     gui.setScreen("levelMenu")
     def load(level):
@@ -43,11 +42,9 @@ def update():
         object.update()
         
 def settings():
-    hide()
     gui.setScreen("settings")
     
 def levelEditor():
-    hide()
     levelMenu.setLoad(lambda level: load(level))
     gui.setScreen("levelMenu")
     def load(level):

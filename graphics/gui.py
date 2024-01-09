@@ -1,6 +1,6 @@
 import pygame
 
-from ui.menus import mainMenu, settingsMenu, levelMenu
+from ui.menus import mainMenu, settingsMenu, levelMenu, pauseMenu
 import logic.level.levelEditor as levelEditor
 from logic.game import game
 from utils.stack import Stack
@@ -16,7 +16,7 @@ def init():
     screen = pygame.display.set_mode((1280, 720))
     screen.fill((255, 255, 255))
     
-    screens = {"main": mainMenu, "game": game, "settings": settingsMenu, "levelEditor": levelEditor, "levelMenu": levelMenu}
+    screens = {"main": mainMenu, "game": game, "settings": settingsMenu, "levelEditor": levelEditor, "levelMenu": levelMenu, "pause": pauseMenu}
     setScreen("main")
 
 def setScreen(name, back = False):
@@ -37,7 +37,10 @@ def back():
 
 def checkInput():
     if input.specialKeyBindings["escape"].justPressed:
-        back()
+        if activeScreenName not in ["game", "main"]: back()
+        elif activeScreenName == "game":
+            activeScreen.pause()
+            setScreen("pause")
 
 def drawText(text, x, y, size, color, font = "Arial", cutOff = None):
     global screen

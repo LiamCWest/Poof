@@ -14,10 +14,16 @@ import hashlib
 tiles = None
 level = None
 playing = False
+started = False
+
+def init():
+    global started
+    started = True
+    level.restart()
 
 def show():
-    global level
-    level.restart()
+    global level, started
+    if not started: init()
     play()
     
 def hide():

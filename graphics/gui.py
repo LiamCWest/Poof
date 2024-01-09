@@ -42,9 +42,8 @@ def checkInput():
             activeScreen.pause()
             setScreen("pause")
 
-def drawText(text, x, y, size, color, font = "Arial", cutOff = None):
+def drawText(text, x, y, size, color, font, cutOff = None):
     global screen
-    font = pygame.font.SysFont(font, size)
     text_surface = font.render(text, True, color)
     text_rect = text_surface.get_rect(center=(x, y))
 

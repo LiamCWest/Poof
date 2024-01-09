@@ -7,13 +7,15 @@ from utils.vector2 import Vector2
 from utils.polygon import Polygon
 from ui.text import Text
 from utils.resizingFuncs import drawRectResized
+from graphics.particleSystem.toggleableEmitter import ToggleableShapedEmitter
 
 class Button:
-    def __init__(self, text, x, y, width, height, color, textColor, onClick, onRelease = lambda: None,z = 0, particles = False, textSize = 40, scaler = 1.25, hColor = None):
-        self.text = Text(text, x + width//2, y+height//2, textColor, textSize)
+    def __init__(self, text, x, y, width, height, color, textColor, onClick, onRelease = lambda: None,z = 0, particles = False, textSize = 40, scaler = 1.25, hColor = None, textFont = "Arial", particlesOnOver = False, textFontPath = None):
+        self.text = Text(text, x + width//2, y+height//2, textColor, textSize, font = textFont, fontPath = textFontPath)
         self.x = x
         self.y = y
         self.width = width
+        self.particlesOnOver = particlesOnOver
         self.height = height
         self.baseColor = color
         self.color = color
@@ -28,7 +30,10 @@ class Button:
         
         if self.particles:
             shape = Polygon.fromRect((0, 0, self.width, self.height), (255, 255, 255))
-            self.emitter = ShapedEmitter(shape, Vector2(self.x, self.y), Vector2(1,1), 10, 50, 5)
+            if self.particlesOnOver:
+                self.emitter = ToggleableShapedEmitter(shape, Vector2(self.x, self.y), Vector2(4,4), 250, 25, 10, H_or_V = "V")
+            else:
+                self.emitter = ShapedEmitter(shape, Vector2(self.x, self.y), Vector2(2,2), 100, 25, 10)
         
         self.onClick = onClick
 
@@ -57,12 +62,16 @@ class Button:
 
         canColorChange = True if self.color in [self.baseColor, self.hColor] else False
         if self.isOver(input.mousePos.pos, Vector2(self.x, self.y) + pos):
+            if self.particlesOnOver:
+                self.emitter.go = True
             self.scale = self.scaler
             if canColorChange: self.color = self.hColor
             if input.mouseBindings["lmb"].justPressed:
                 self.held = True
                 self.onClick()
         else:
+            if self.particlesOnOver:
+                self.emitter.go = False
             self.scale = 1
             if canColorChange: self.color = self.baseColor
                 

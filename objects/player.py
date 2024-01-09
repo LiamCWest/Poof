@@ -129,21 +129,19 @@ class Player:
                     
                     glideStartTime = self.moves[i-1][1]
                     glideTile = level.getTileAt(state.glideStartPos, glideStartTime)
-                    if len(self.moves) > i + 1:
+                    if len(self.moves) > i + 1: #glide until the next move if there is one
                         nextMoveTime = self.moves[i + 1][1]
                         calcGlideTime = min(state.time, nextMoveTime)
-                    else:
+                    else: #if not glide until now
                         calcGlideTime = state.time
                     glides = calculateGlide(self.moves[i-1][1], glideTile.divisor, calcGlideTime) #get all the tiles glided over until the next move made
                     
                     tileHit = None
-                    #timeHit = None
                     for i, glide in enumerate(glides[:-1]): #check if you hit a tile while you were gliding
                         pos = state.glideStartPos + move[0].multiply(glide[0])
                         tilesHit = level.getTilesOverlapping(pos, glide[1], glides[i + 1][1])
                         if len(tilesHit) > 0:
                             tileHit = tilesHit[0]
-                            #timeHit = max(glide[1], tileHit.appearedTime - level.appearLength)
                             break
                     
                     if tileHit is not None: #if you hit a tile, your pos is on that tile

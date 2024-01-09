@@ -6,6 +6,9 @@ from ui.popup import Popup
 from ui.inputBox import InputBox
 from ui.text import Text
 from utils.vector2 import Vector2
+from logic.level.level import Level
+from logic.song.timingPoints import TimeSignature, TimingPoint
+from objects.tile import Tile
 
 popups = []
 def show():
@@ -22,15 +25,16 @@ def show():
     popups = {
         "newLevel": Popup(Vector2((1280-nLW)/2, 0), nLW, 650, 
                         [
-                            InputBox("Level Name", (nLW-300)/2, 200, 300, 50, (255, 0, 0), (0,0,0), 30),
-                            InputBox("Offset", (nLW-300)/2, 300, 140, 50, (255, 0, 0), (0,0,0), 30, numOnly=True),
-                            InputBox("BPM", (nLW-300)/2, 350, 140, 50, (255, 0, 0), (0,0,0), 30, numOnly=True),
-                            InputBox("Num", (nLW)/2+10, 300, 140, 50, (255, 0, 0), (0,0,0), 30, numOnly=True),
-                            InputBox("Denom", (nLW)/2+10, 350, 140, 50, (255, 0, 0), (0,0,0), 30, numOnly=True),
+                            InputBox("Level Name", (nLW-300)/2, 150, 300, 50, (255, 0, 0), (0,0,0), 30),
+                            InputBox("Song File", (nLW-300)/2, 225, 300, 50, (255, 0, 0), (0,0,0), 30),
+                            InputBox("Offset", (nLW-300)/2, 325, 140, 50, (255, 0, 0), (0,0,0), 30, numOnly=True),
+                            InputBox("BPM", (nLW-300)/2, 375, 140, 50, (255, 0, 0), (0,0,0), 30, numOnly=True),
+                            InputBox("Num", (nLW)/2+10, 325, 140, 50, (255, 0, 0), (0,0,0), 30, numOnly=True),
+                            InputBox("Denom", (nLW)/2+10, 375, 140, 50, (255, 0, 0), (0,0,0), 30, numOnly=True),
                             Button("Create", (nLW-125)/2, 475, 125, 50, (255, 0, 0), (0,0,0), createLevel),
                             Button("Close", (nLW-125)/2, 550, 125, 50, (255, 0, 0), (0,0,0), popupClose),
                          ],
-                        [Text("New Level", nLW/2, 100, (255, 0, 0), 40)]),
+                        [Text("New Level", nLW/2, 75, (255, 0, 0), 40)]),
     }
 
 isLE = False
@@ -74,8 +78,20 @@ def newLevel():
 
 def createLevel():
     global popups, popupOpen
-    if any([inputBox.output != "" for inputBox in popups["newLevel"].objects[:5]]):
+    levelPopup = popups["newLevel"]
+    if any([inputBox.output != "" for inputBox in levelPopup.objects[:2]]):
         print("filled")
+        levelName = levelPopup.objects[0].output
+        song = levelPopup.objects[1].output
+        offset = float(levelPopup.objects[2].output)
+        bpm = int(levelPopup.objects[3].output)
+        num = int(levelPopup.objects[4].output)
+        denom = int(levelPopup.objects[5].output)
+        timeSig = TimeSignature(num, denom)
+        timingPoint = TimingPoint(offset, bpm, timeSig)
+        
+        nLevel = Level([Tile(Vector2(0, 0), None, 0, offset, "platform")], 1, 1, song, [timingPoint], Vector2(0,0), 0)
+        nLevel.save("levels/" + levelName + ".json")
     
 def popupClose():
     global popups, popupOpen

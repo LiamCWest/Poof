@@ -53,7 +53,7 @@ class InputBox(Button):
                 return
             for key, value in input.characterBindings.items():
                 if value.justPressed:
-                    if not self.numOnly or key.isdigit(): self.text.text += key 
+                    if not self.numOnly or (key.isdigit() or key == "."): self.text.text += key 
                     
             if input.specialKeyBindings["backspace"].justPressed:
                 self.text.text = self.text.text[:-1]

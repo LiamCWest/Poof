@@ -19,6 +19,7 @@ class PlayerState:
         self.deathTime = None
         self.gliding = False
         self.glideStartPos = None
+        self.glideDir = None
 
 class Player:
     offset = Vector2(5.9, 3.1) #TODO: Don't hardcode these values
@@ -86,9 +87,7 @@ class Player:
             #actualDistance = round(visibleDistance)
             return(glides)
         
-        def addPosMovesDeathTimeAcc(state):
-            tilesMovedTo = set() #So you cant get acc counted twice off the same tile
-            
+        def addPosMovesDeathTimeAcc(state):            
             state.countedMovesMade = 0
             state.acc = 0
             
@@ -107,10 +106,9 @@ class Player:
                 if moveTime > searchTime:
                     return #If you've reached the time you want to, then you are alive and at your current pos
                 
-                state.lastMove = move
-                
-                if move[2] == False: #if your last move is a key release
-                    if state.gliding: #if you release a move while you're gliding, that means you must be over the void and die
+                if not move[2]: #if your last move is a key release
+                    if state.gliding and state.glideDir == move[0]: #if you release the glide while you're gliding, that means you must be over the void and die
+                        print("death0")
                         state.deathTime = move[1]
                         return
                     else: #else dont care about releases
@@ -123,18 +121,24 @@ class Player:
                     state.deathTime = currentTile.disappearTime + level.disappearLength #If you're not on the same tile as before when you start moving, then you died
                     return
                 
-                if tile is not None and tile.type == "glide": #if you're gliding, then move like you're gliding
+                if tile is not None and tile.type == "glide": #if you move off a glide tile
                     state.gliding = True
                     state.glideStartPos = tile.pos
+                    state.glideDir = move[0]
                     
-                    glideStartTime = self.moves[i-1][1]
+                    glideStartTime = move[1]
                     glideTile = level.getTileAt(state.glideStartPos, glideStartTime)
-                    if len(self.moves) > i + 1: #glide until the next move if there is one
-                        nextMoveTime = self.moves[i + 1][1]
-                        calcGlideTime = min(state.time, nextMoveTime)
-                    else: #if not glide until now
-                        calcGlideTime = state.time
-                    glides = calculateGlide(self.moves[i-1][1], glideTile.divisor, calcGlideTime) #get all the tiles glided over until the next move made
+                    
+                    nextMoveTime = float("inf")
+                    j = i + 1
+                    while j < len(self.moves):
+                        if self.moves[j][2] == True:
+                            nextMoveTime = self.moves[j][1] #get the time of the next press move
+                            break
+                        j += 1
+                    calcGlideTime = min(state.time, nextMoveTime) #calculate the glide until that time
+                    
+                    glides = calculateGlide(move[1], glideTile.divisor, calcGlideTime) #get all the tiles glided over until the next move made
                     
                     tileHit = None
                     for i, glide in enumerate(glides[:-1]): #check if you hit a tile while you were gliding
@@ -148,6 +152,7 @@ class Player:
                         state.pos = tileHit.pos
                         state.gliding = False #and you're on a tile so you're not gliding anymore
                         state.glideStartPos = None
+                        state.glideDir = None
                         currentTile = tileHit
                         continue
                     
@@ -161,7 +166,8 @@ class Player:
                 else: #else move normally
                     state.gliding = False
                     state.glideStartPos = None
-                    print(move[0], "WOOOO MOVE")
+                    state.glideDir = None
+                    #print(move[0], "WOOOO MOVE")
                     state.pos += move[0] #Make the move you were trying to make
                     tile = level.getTileAt(state.pos, moveTime)
                     if tile is None:
@@ -170,13 +176,6 @@ class Player:
                         return
                     
                     currentTile = tile #Otherwise that's the tile you're on
-                    
-                    tileTuple = (tile.pos.x, tile.pos.y, tile.appearedTime, tile.disappearTime)
-                    if tileTuple not in tilesMovedTo:
-                        tilesMovedTo.add(tileTuple)
-                        state.lastCountedMove = move
-                        state.countedMovesMade += 1
-                        state.acc = calculateAcc(state.acc, state.countedMovesMade, tile.appearedTime, moveTime)
                 
             tile = level.getTileAt(state.pos, searchTime) #If your last move was made before the search time
             if tile != currentTile and not state.gliding:

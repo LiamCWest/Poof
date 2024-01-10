@@ -44,7 +44,6 @@ def checkInput():
                 back()
         elif activeScreenName == "game":
             activeScreen.pause()
-            setScreen("pause")
 
 def drawText(text, x, y, size, color, font, cutOff = None):
     global screen

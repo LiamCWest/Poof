@@ -31,10 +31,10 @@ class Emitter:
             if particle.lifeTime <= 0:
                 self.particles.remove(particle)
             
-    def draw(self, win):
+    def draw(self, win, pos = Vector2(0,0)):
         for particle in self.particles:
             particle.factor = self.factor
-            particle.draw(win)
+            particle.draw(win, pos)
 
     def reset(self):
         self.particles = []

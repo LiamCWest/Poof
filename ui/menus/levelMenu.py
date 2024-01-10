@@ -81,7 +81,6 @@ def createLevel():
     global popups, popupOpen
     levelPopup = popups["newLevel"]
     if any([inputBox.output != "" for inputBox in levelPopup.objects[:2]]):
-        print("filled")
         levelName = levelPopup.objects[0].output
         song = levelPopup.objects[1].output
         offset = float(levelPopup.objects[2].output)

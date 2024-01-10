@@ -8,6 +8,8 @@ from graphics.animation import easeInPow
 import logic.song.songPlayer as songPlayer
 from logic.song.timingPoints import TimingPoint, TimeSignature
 from ui.text import Text
+from ui.popup import Popup
+from ui.button import Button
 import json
 import hashlib
 
@@ -15,16 +17,30 @@ tiles = None
 level = None
 playing = False
 started = False
+playWait = False
 
+title = "Pause"
+popups = {}
 def init():
-    global started
+    global started, popups, popupOpen
     started = True
-    level.restart()
+    
+    popupOpen = False
+    pW = 500
+    popups = {
+        "pause": Popup(Vector2((1280-pW)/2, 0), pW, 650, 
+                [Button("Resume", 200, 262, 200, 100, (0, 255, 0), (255, 0, 0), resume, particles=True),
+                Button("Main Menu", 200, 375, 200, 100, (0, 255, 0), (255, 0, 0), lambda: gui.setScreen("main")),
+                Button("Settings", 200, 487, 200, 100, (0, 255, 0), (255, 0 ,0), lambda: gui.setScreen("settings")),
+                Button("Quit", 200, 600, 200, 100, (0, 255, 0), (255, 0, 0), quit),],
+                [Text(title, 400, 150, (255, 0, 0), 100)]),
+    }
 
 def show():
-    global level, started
-    if not started: init()
-    play()
+    global level, started, popupOpen
+    if not started: 
+        init()
+    if not popupOpen: play()
     
 def hide():
     gui.clear()
@@ -32,6 +48,7 @@ def hide():
 def loadLevel(levelFile):
     global level
     songPlayer.unload()
+    init()
     level = Level.fromFile(levelFile)
     
 def checkSignature(data, signature):
@@ -54,14 +71,34 @@ def updateFactors(factor):
     level.factor = factor
 
 def update():
-    global playing, level, accText
-    if playing:
+    global playing, popupOpen, popups, playWait
+    if playing and not popupOpen:
         checkInput()
+    for popup in popups.values():
+        popup.update()
+        
+    if playWait and popups["pause"].closed:
+        playWait = False
+        play()
     
 def pause():
-    global playing
+    global playing, popups, popupOpen
     songPlayer.pause()
     playing = False
+    
+    popupOpen = True
+    popups["pause"].show()
+
+def popupClose():
+    global popups, popupOpen
+    popupOpen = False
+    for popup in popups.values():
+        if popup.open: popup.hide()
+
+def resume():
+    global playWait
+    popupClose()
+    playWait = True
 
 def play():
     global playing
@@ -84,5 +121,8 @@ def draw():
     
     accText.text = f"{int(playerState.acc * 1000)}ms"
     accText.draw()
+    
+    for popup in popups.values():
+        popup.draw()
         
 accText = Text("0ms", 100, 100)

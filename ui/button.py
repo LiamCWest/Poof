@@ -52,7 +52,7 @@ class Button:
         self.text.draw(rect, pos)
         if self.particles:
             self.emitter.factor = self.factor
-            self.emitter.draw(screen)
+            self.emitter.draw(screen, pos)
         
     def isOver(self, pos, pos2):
         if pos is None:

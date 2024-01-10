@@ -13,7 +13,7 @@ from objects.tile import Tile
 popups = []
 def show():
     global levels, buttons, popupOpen, popups
-    if isLE: buttons.append(Button("New Level", gui.screen.get_width()/2-100, 500, 200, 50, (255,0,0), (0,0,0), newLevel))
+    if isLE: buttons.append(Button("New Level", gui.screen.get_width()/2-150, 500, 300, 50, (255,0,0), (0,0,0), newLevel))
     else: buttons = []
     levels = getLevels("levels")
     levelButtons = []
@@ -24,7 +24,7 @@ def show():
     popupOpen = False
     nLW = 500
     popups = {
-        "newLevel": Popup(Vector2((1280-nLW)/2, 0), nLW, 650, 
+        "newLevel": Popup(Vector2((1280-nLW)/2, 0), nLW, 650, (0,0,0), None,
                         [
                             InputBox("Level Name", (nLW-300)/2, 150, 300, 50, (255, 0, 0), (0,0,0), 30),
                             InputBox("Song File", (nLW-300)/2, 225, 300, 50, (255, 0, 0), (0,0,0), 30),
@@ -35,7 +35,7 @@ def show():
                             Button("Create", (nLW-125)/2, 475, 125, 50, (255, 0, 0), (0,0,0), createLevel),
                             Button("Close", (nLW-125)/2, 550, 125, 50, (255, 0, 0), (0,0,0), popupClose),
                          ],
-                        [Text("New Level", nLW/2, 75, (255, 0, 0), 40)]),
+                        [Text("New Level", nLW/2, 75, (255, 0, 0), 40, fontPath = "ROGFONTS-REGULAR.ttf")]),
     }
 
 isLE = False

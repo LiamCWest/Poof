@@ -4,7 +4,7 @@ from utils.vector2 import Vector2
 import pygame
 
 class Text:
-    def __init__(self, text, x, y, color=(0, 0, 0), size=25, font="Arial", bgColor=None, width=0, height=0, z=0, fontPath = None,):
+    def __init__(self, text, x, y, color=(0, 0, 0), size=25, font="Arial", bgColor=None, width=0, height=0, z=0, fontPath = "ROGFONTS-REGULAR.ttf"):
         self.text = text
         self.x = x
         self.y = y

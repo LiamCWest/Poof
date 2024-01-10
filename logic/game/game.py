@@ -28,12 +28,12 @@ def init():
     popupOpen = False
     pW = 500
     popups = {
-        "pause": Popup(Vector2((1280-pW)/2, 0), pW, 650, 
-                [Button("Resume", 200, 262, 200, 100, (0, 255, 0), (255, 0, 0), resume, particles=True),
-                Button("Main Menu", 200, 375, 200, 100, (0, 255, 0), (255, 0, 0), lambda: gui.setScreen("main")),
-                Button("Settings", 200, 487, 200, 100, (0, 255, 0), (255, 0 ,0), lambda: gui.setScreen("settings")),
-                Button("Quit", 200, 600, 200, 100, (0, 255, 0), (255, 0, 0), quit),],
-                [Text(title, 400, 150, (255, 0, 0), 100)]),
+        "pause": Popup(Vector2((1280-pW)/2, 0), pW, 650, (0,0,0), None,
+                [Button("Resume", 50, 162, 400, 100, (80, 93, 112), (255, 255, 255), resume, particles=True, particlesOnOver=True, textFontPath= "ROGFONTS-REGULAR.ttf", scaler= 1.1),
+                Button("Main Menu", 50, 275, 400, 100, (80, 93, 112), (255, 255, 255), lambda: gui.setScreen("main"), textFontPath= "ROGFONTS-REGULAR.ttf", scaler = 1.1),
+                Button("Settings", 50, 387, 400, 100, (80, 93, 112), (255, 255 ,255), lambda: gui.setScreen("settings"), textFontPath= "ROGFONTS-REGULAR.ttf", scaler = 1.1),
+                Button("Quit", 50, 500, 400, 100, (80, 93, 112), (255, 255, 255), quit, textFontPath= "ROGFONTS-REGULAR.ttf", scaler = 1.1),],
+                [Text(title, 250, 80, (255, 255, 255), 100, fontPath= "ROGFONTS-REGULAR.ttf"),]),
     }
 
 def show():

@@ -2,8 +2,8 @@ from graphics.particleSystem.shapedEmitter import ShapedEmitter
 import input.input as input
 
 class ToggleableShapedEmitter(ShapedEmitter):
-    def __init__(self, shape, pos, velocity, emitRate, lifeTime, size=5, go = False, H_or_V = None):
-        ShapedEmitter.__init__(self, shape, pos, velocity, emitRate, lifeTime, size, H_or_V = H_or_V)
+    def __init__(self, shape, pos, velocity, emitRate, lifeTime, size=5, go = False, edges = None):
+        ShapedEmitter.__init__(self, shape, pos, velocity, emitRate, lifeTime, size, edges = edges)
         self.go = go
     
     def update(self):

@@ -21,6 +21,7 @@ class Button:
         self.color = color
         self.scale = 1
         self.scaler = scaler
+        self.emitter = None
         self.factor = 1
         self.z = z
         self.particles = particles
@@ -29,14 +30,19 @@ class Button:
         self.hColor = hColor if hColor else color
         
         if self.particles:
+            self.emitter = self.particles
+            
             w = self.width*(self.scaler-1)
             h = self.height*(self.scaler-1)
+            
             if self.particlesOnOver:
-                shape = Polygon.fromRect((0 - w/2, 0 - h/2, self.width + w, self.height + h), (255, 255, 255))
-                self.emitter = ToggleableShapedEmitter(shape, Vector2(self.x, self.y), Vector2(4,4), 250, 25, 10, H_or_V = "V")
+                self.emitter.shape = Polygon.fromRect((0 - w/2, 0 - h/2, self.width + w, self.height + h), (255, 255, 255))
+                #self.emitter = ToggleableShapedEmitter(shape, Vector2(self.x, self.y), Vector2(4,4), 250, 25, 10, H_or_V = "V")
             else:
-                shape = Polygon.fromRect((0, 0, self.width, self.height), (255, 255, 255))
-                self.emitter = ShapedEmitter(shape, Vector2(self.x, self.y), Vector2(2,2), 100, 25, 10)
+                self.emitter.shape = Polygon.fromRect((0, 0, self.width, self.height), (255, 255, 255))
+                #self.emitter = ShapedEmitter(shape, Vector2(self.x, self.y), Vector2(2,2), 100, 25, 10)
+            
+            self.emitter.pos = Vector2(self.x, self.y)
         
         self.onClick = onClick
 
@@ -45,14 +51,14 @@ class Button:
         y = self.y - (self.height * (self.scale - 1) / 2) + pos.y
         width = self.width * self.scale
         height = self.height * self.scale
+        if self.particles:
+            self.emitter.factor = self.factor
+            self.emitter.draw(screen, pos)
         rect = drawRectResized(screen, self.color, x, y, width, height, self.factor)
         #pygame.draw.rect(screen, self.color, (x*self.factor, y*self.factor, width*self.factor, height*self.factor))
         self.text.factor = self.factor
         self.text.scale = self.scale
         self.text.draw(rect, pos)
-        if self.particles:
-            self.emitter.factor = self.factor
-            self.emitter.draw(screen, pos)
         
     def isOver(self, pos, pos2):
         if pos is None:
@@ -67,6 +73,10 @@ class Button:
         if self.isOver(input.mousePos.pos, Vector2(self.x, self.y) + pos):
             if self.particlesOnOver:
                 self.emitter.go = True
+            if self.emitter:
+                w = self.width*(self.scaler-1)
+                h = self.height*(self.scaler-1)
+                self.emitter.shape = Polygon.fromRect((0 - w/2, 0 - h/2, self.width + w, self.height + h), (255, 255, 255))
             self.scale = self.scaler
             if canColorChange: self.color = self.hColor
             if input.mouseBindings["lmb"].justPressed:
@@ -76,6 +86,8 @@ class Button:
             if self.particlesOnOver:
                 self.emitter.go = False
             self.scale = 1
+            if self.emitter:
+                self.emitter.shape = Polygon.fromRect((0, 0, self.width, self.height), (255, 255, 255))
             if canColorChange: self.color = self.baseColor
                 
         if self.held and not input.mouseBindings["lmb"].pressed:

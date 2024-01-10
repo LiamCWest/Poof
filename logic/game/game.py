@@ -10,6 +10,7 @@ from logic.song.timingPoints import TimingPoint, TimeSignature
 from ui.text import Text
 from ui.popup import Popup
 from ui.button import Button
+from graphics.particleSystem.shapedEmitter import ShapedEmitter
 import json
 import hashlib
 
@@ -24,12 +25,12 @@ popups = {}
 def init():
     global started, popups, popupOpen
     started = True
-    
+    genericParticles = ShapedEmitter(None, None, Vector2(2,2), 250, 15, 5)
     popupOpen = False
     pW = 500
     popups = {
         "pause": Popup(Vector2((1280-pW)/2, 0), pW, 650, (0,0,0), None,
-                [Button("Resume", 50, 162, 400, 100, (80, 93, 112), (255, 255, 255), resume, particles=True, particlesOnOver=True, textFontPath= "ROGFONTS-REGULAR.ttf", scaler= 1.1),
+                [Button("Resume", 50, 162, 400, 100, (80, 93, 112), (255, 255, 255), resume, particles=genericParticles, particlesOnOver=True, textFontPath= "ROGFONTS-REGULAR.ttf", scaler= 1.1),
                 Button("Main Menu", 50, 275, 400, 100, (80, 93, 112), (255, 255, 255), lambda: gui.setScreen("main"), textFontPath= "ROGFONTS-REGULAR.ttf", scaler = 1.1),
                 Button("Settings", 50, 387, 400, 100, (80, 93, 112), (255, 255 ,255), lambda: gui.setScreen("settings"), textFontPath= "ROGFONTS-REGULAR.ttf", scaler = 1.1),
                 Button("Quit", 50, 500, 400, 100, (80, 93, 112), (255, 255, 255), quit, textFontPath= "ROGFONTS-REGULAR.ttf", scaler = 1.1),],

@@ -9,6 +9,7 @@ from utils.vector2 import Vector2
 from logic.level.level import Level
 from logic.song.timingPoints import TimeSignature, TimingPoint
 from objects.tile import Tile
+from graphics.particleSystem.shapedEmitter import ShapedEmitter
 
 popups = []
 def show():
@@ -23,19 +24,20 @@ def show():
     
     popupOpen = False
     nLW = 500
+    genericParticles = ShapedEmitter(None, None, Vector2(2,2), 250, 15, 5)
     popups = {
         "newLevel": Popup(Vector2((1280-nLW)/2, 0), nLW, 650, (0,0,0), None,
                         [
-                            InputBox("Level Name", (nLW-300)/2, 150, 300, 50, (255, 0, 0), (0,0,0), 30),
-                            InputBox("Song File", (nLW-300)/2, 225, 300, 50, (255, 0, 0), (0,0,0), 30),
-                            InputBox("Offset", (nLW-300)/2, 325, 140, 50, (255, 0, 0), (0,0,0), 30, numOnly=True),
-                            InputBox("BPM", (nLW-300)/2, 375, 140, 50, (255, 0, 0), (0,0,0), 30, numOnly=True),
-                            InputBox("Num", (nLW)/2+10, 325, 140, 50, (255, 0, 0), (0,0,0), 30, numOnly=True),
-                            InputBox("Denom", (nLW)/2+10, 375, 140, 50, (255, 0, 0), (0,0,0), 30, numOnly=True),
-                            Button("Create", (nLW-125)/2, 475, 125, 50, (255, 0, 0), (0,0,0), createLevel),
-                            Button("Close", (nLW-125)/2, 550, 125, 50, (255, 0, 0), (0,0,0), popupClose),
+                            InputBox("Level Name", (nLW-400)/2, 150, 400, 50, (80, 93, 112), (255,255,255), 30, scaler = 1.1),
+                            InputBox("Song File", (nLW-400)/2, 225, 400, 50, (80, 93, 112), (255,255,255), 30, scaler = 1.1),
+                            InputBox("Offset", (nLW-400)/2, 325, 175, 50, (80, 93, 112), (255,255,255), 30, numOnly=True, scaler = 1.1),
+                            InputBox("BPM", (nLW-400)/2, 375, 175, 50, (80, 93, 112), (255,255,255), 30, numOnly=True, scaler = 1.1),
+                            InputBox("Num", (nLW)/2 + 25, 325, 175, 50, (80, 93, 112), (255,255,255), 30, numOnly=True, scaler = 1.1),
+                            InputBox("Denom", (nLW)/2 + 25, 375, 175, 50, (80, 93, 112), (255,255,255), 30, numOnly=True, scaler = 1.1),
+                            Button("Create", (nLW-400)/2, 475, 400, 50, (80, 93, 112), (255,255,255), createLevel, particles = genericParticles, particlesOnOver = True, scaler = 1.1),
+                            Button("Close", (nLW-400)/2, 550, 400, 50, (80, 93, 112), (255,255,255), popupClose, scaler = 1.1),
                          ],
-                        [Text("New Level", nLW/2, 75, (255, 0, 0), 40, fontPath = "ROGFONTS-REGULAR.ttf")]),
+                        [Text("New Level", nLW/2, 75, (255, 255, 255), 60, fontPath = "ROGFONTS-REGULAR.ttf")]),
     }
 
 isLE = False

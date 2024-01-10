@@ -4,8 +4,8 @@ import random
 import input.input as input
 
 class Emitter:
-    def __init__(self, position, velocity, emitRate, lifeTime, size=5, limit = 200):
-        self.position = position
+    def __init__(self, pos, velocity, emitRate, lifeTime, size=5, limit = 200):
+        self.pos = pos
         self.velocity = velocity
         self.emitRate = emitRate
         self.lifeTime = lifeTime
@@ -20,12 +20,15 @@ class Emitter:
             self.particles.append(self.makeParticle())
 
     def makeParticle(self):
-        return Particle(self.position, Vector2(random.uniform(-1, 1), random.uniform(-1, 1)) * self.velocity, self.lifeTime, self.size)
+        return Particle(self.pos, Vector2(random.uniform(-1, 1), random.uniform(-1, 1)) * self.velocity, self.lifeTime, self.size)
 
     def update(self):
-        if input.getRealTime() - self.lastSpawnTime > (1/self.emitRate):
-            self.emit()
-            self.lastSpawnTime = input.getRealTime()
+        t = input.getRealTime() - self.lastSpawnTime
+        if t <= (1/self.emitRate) * 5:
+            while t > (1/self.emitRate):
+                self.emit()
+                t -= 1/self.emitRate
+        self.lastSpawnTime = input.getRealTime()
         for particle in self.particles:
             particle.update()
             if particle.lifeTime <= 0:

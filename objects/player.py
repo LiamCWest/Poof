@@ -108,14 +108,14 @@ class Player:
                     state.glideStartPos = tile.pos
                     state.glideDir = move[0]
 
-                    nextMoveTime = float("inf")
+                    nextPressTime = float("inf")
                     j = i + 1
                     while j < len(self.moves):
-                        if self.moves[j][2] == True:
-                            nextMoveTime = self.moves[j][1] #get the time of the next press move
+                        if self.moves[j][2]:
+                            nextPressTime = self.moves[j][1] #get the time of the next press move
                             break
                         j += 1
-                    glideEndTime = state.time #calculate the glide until that time
+                    glideEndTime = min(state.time, nextPressTime) #calculate the glide until that time
 
                     glideTimeOffset = move[1] - tile.disappearTime #the time off of the perfect glide time that you're gliding
                     
@@ -130,42 +130,51 @@ class Player:
                         if timeInRange + glideTimeOffset > glideEndTime:
                             break
                     
-                    tileHit = None
+                    isTileHit = False
                     for i, glide in enumerate(glidePositions[:-1]): #check if you hit a tile while you were gliding
                         pos = state.glideStartPos + move[0].multiply(i)
-                        tilesHit = level.getTilesOverlapping(pos, glide, glidePositions[i + 1]) #i + 2 because slice
+                        tilesHit = level.getTilesOverlapping(pos, glide, glidePositions[i + 1])
                         for tile2 in tilesHit:
                             if tile2 == tile:
                                 continue
                             timeHit = max(tile2.appearedTime - level.appearLength, glide)
                             if timeHit > state.time:
                                 continue
+                            
                             tileHit = tile2
+                            state.pos = tileHit.pos
+                            
+                            lastMoveIndex = i
+                            nextMoveIndex = i + 1
+                            timeInLastRange = glidePositions[lastMoveIndex]
+                            timeInNextRange = glidePositions[nextMoveIndex]
+                            lastDistance = lastMoveIndex - 0.5
+                            nextDistance = nextMoveIndex - 0.5
+                            state.visiblePos = state.glideStartPos + move[0].multiply(min(lastMoveIndex, lerp(lastDistance, nextDistance, timeInLastRange, timeInNextRange, state.time), lastMoveIndex))
+                            
+                            state.gliding = False #and you're on a tile so you're not gliding anymore
+                            state.glideStartPos = None
+                            state.glideDir = None
+                            currentTile = tileHit
+                            isTileHit = True
                             break
                         else:
                             continue
                         break
-                    
-                    if tileHit is not None: #if you hit a tile, your pos is on that tile
-                        state.pos = tileHit.pos
-                        state.visiblePos = state.pos
                         
-                        state.gliding = False #and you're on a tile so you're not gliding anymore
-                        state.glideStartPos = None
-                        state.glideDir = None
-                        currentTile = tileHit
+                    if isTileHit:
                         continue
                     
-                    #else you're still gliding
-                    lastMoveIndex = bisect.bisect_right(glidePositions, state.time) - 1
+                    #else you're still gliding                        
+                    lastMoveIndex = bisect.bisect_right(glidePositions, glideEndTime) - 1
+                    nextMoveIndex = lastMoveIndex + 1
                     state.pos = state.glideStartPos + move[0].multiply(lastMoveIndex) #pos goes to glide pos
                     
-                    '''timeInLastRange = glidePositions[lastMoveIndex][1]
-                    timeInNextRange = glidePositions[nextMoveIndex][1]
-                    lastDistance = glidePositions[lastMoveIndex][0] - 0.5
-                    nextDistance = glidePositions[nextMoveIndex][0] - 0.5
-                    state.visiblePos = state.glideStartPos + move[0].multiply(lerp(lastDistance, nextDistance, timeInLastRange, timeInNextRange, state.time))'''
-                    state.visiblePos = state.pos
+                    timeInLastRange = glidePositions[lastMoveIndex]
+                    timeInNextRange = glidePositions[nextMoveIndex]
+                    lastDistance = max(lastMoveIndex - 0.5, 0)
+                    nextDistance = nextMoveIndex - 0.5
+                    state.visiblePos = state.glideStartPos + move[0].multiply(lerp(lastDistance, nextDistance, timeInLastRange, timeInNextRange, state.time))
                     
                     currentTile = None #you're not on a tile cause you're gliding
                     

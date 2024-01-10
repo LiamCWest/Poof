@@ -346,9 +346,9 @@ def init():
     adjustTimingPointValues()
     
 def hide():
+    global selectedTile, lastTimingPoint, initailized
     gui.clear()
     songPlayer.unload()
     initailized = False
-    global selectedTile, lastTimingPoint
     selectedTile = None
     lastTimingPoint = None

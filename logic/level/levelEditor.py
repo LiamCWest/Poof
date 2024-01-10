@@ -285,14 +285,13 @@ def init():
     fontSize = 20
 
     # top bar #
-    numButtons = 11
+    numButtons = 10
     w = buttonSize*numButtons # width of the top bar
     topBar = Toolbar(Vector2(numButtons, 1), Vector2((gui.screen.get_width()-w)//2, 0), w, buttonSize) # toolbar for the top bar
 
     modes = ["move", "select", "platform", "wall", "rest", "delete"] # possible modes
     topbarButtons = { # buttons on the top bar
         "save": lambda: level.save(levelF), 
-        "load": lambda: loadLevel("level_data.json"),
         "delete\npoint": lambda: deletePoint(),
     }
     bpmText = Text("BPM", buttonSize/2, buttonSize/4, (0,0,0), fontSize, bgColor=(100, 100, 255), width = buttonSize, height = buttonSize/2) # text for bpm
@@ -347,9 +346,9 @@ def init():
     adjustTimingPointValues()
     
 def hide():
+    global selectedTile, lastTimingPoint, initailized
     gui.clear()
     songPlayer.unload()
     initailized = False
-    global selectedTile, lastTimingPoint
     selectedTile = None
     lastTimingPoint = None

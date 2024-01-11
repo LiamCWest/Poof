@@ -18,8 +18,8 @@ import pygame
 popupOpen = False
 hColor = (150, 150, 255)
 
-def updateFactors(factor):
-    level.factor = factor
+popupOpen = False
+hColor = (150, 150, 255)
 
 def selectMode(option):
     global selectedMode
@@ -71,28 +71,28 @@ def checkInput():
     if input.keyActionBindings["timeForwards"].justPressed:
         oldTime = songPlayer.getPos()
         songPlayer.seek(min(timingPoints.getNextBeat(level.timingPoints, oldTime, divisor), songPlayer.getSongLength()))
-        delta = songPlayer.getPos() - oldTime
-        if selectedTile:
-            newTile = selectedTile.copy()
-            newTile.appearedTime += delta
-            newTile.disappearTime += delta
-            if level.isTileValid(newTile, selectedTile):
-                level.removeTileAt(selectedTile.pos, selectedTile.appearedTime)
-                selectedTile = newTile.copy()
-                level.addTile(selectedTile)
+        #delta = songPlayer.getPos() - oldTime
+        #if selectedTile:                  TURNS OUT TO BE QUITE ANNOYING TO MAKE A LEVEL AND YOUR TILES MOVE ON YOU
+        #    newTile = selectedTile.copy()
+        #    newTile.appearedTime += delta
+        #    newTile.disappearTime += delta
+        #    if level.isTileValid(newTile, selectedTile):
+        #        level.removeTileAt(selectedTile.pos, selectedTile.appearedTime)
+        #        selectedTile = newTile.copy()
+        #        level.addTile(selectedTile)
         
     if input.keyActionBindings["timeBackwards"].justPressed:
         oldTime = songPlayer.getPos()
         songPlayer.seek(max(0, timingPoints.getPreviousBeat(level.timingPoints, oldTime, divisor)))
-        delta = songPlayer.getPos() - oldTime
-        if selectedTile:
-            newTile = selectedTile.copy()
-            newTile.appearedTime += delta
-            newTile.disappearTime += delta
-            if level.isTileValid(newTile, selectedTile):
-                level.removeTileAt(selectedTile.pos, selectedTile.appearedTime)
-                selectedTile = newTile.copy()
-                level.addTile(selectedTile)
+        #delta = songPlayer.getPos() - oldTime
+        #if selectedTile:
+        #    newTile = selectedTile.copy()
+        #    newTile.appearedTime += delta
+        #    newTile.disappearTime += delta
+        #    if level.isTileValid(newTile, selectedTile):
+        #        level.removeTileAt(selectedTile.pos, selectedTile.appearedTime)
+        #        selectedTile = newTile.copy()
+        #        level.addTile(selectedTile)
 
 levelPos = Vector2(0, 0)
 def update():
@@ -125,13 +125,15 @@ def update():
         if selectedMode == "select" and input.mouseBindings["lmb"].justPressed:
             selectedTile = level.getTileAt(level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos), songPlayer.getPos())
         
-        if selectedMode in ["platform", "wall", "rest"] and input.mouseBindings["lmb"].justPressed:
+        if selectedMode in ["platform", "glide", "rest"] and input.mouseBindings["lmb"].justPressed:
             tilePos = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
             tileTime = timingPoints.getNearestBeat(level.timingPoints, songPlayer.getPos(), divisor)
             if level.getTileAt(tilePos, tileTime) is None:
-                level.addTile(Tile(tilePos, None, tileTime, tileTime, selectedMode))
+                tile = Tile(tilePos, None, tileTime, tileTime, selectedMode)
+                if selectedMode == "glide":
+                    tile.divisor = 1
+                level.addTile(tile)
                 selectedTile = level.getTileAt(tilePos, tileTime)
-                selectedTile.factor = level.factor
             
         if selectedMode == "delete" and input.mouseBindings["lmb"].justPressed:
             tilePos = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
@@ -289,7 +291,7 @@ def init():
     w = buttonSize*numButtons # width of the top bar
     topBar = Toolbar(Vector2(numButtons, 1), Vector2((gui.screen.get_width()-w)//2, 0), w, buttonSize) # toolbar for the top bar
 
-    modes = ["move", "select", "platform", "wall", "rest", "delete"] # possible modes
+    modes = ["move", "select", "platform", "glide", "rest", "delete"] # possible modes
     topbarButtons = { # buttons on the top bar
         "save": lambda: level.save(levelF), 
         "delete\npoint": lambda: deletePoint(),

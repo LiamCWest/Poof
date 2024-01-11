@@ -49,10 +49,6 @@ def start(load, isLevelEditor = False):
 def hide():
     pass
 
-def updateFactors(factor):
-    for button in buttons:
-        button.factor = factor
-
 def update():
     global buttons, popups, popupOpen
     if not popupOpen:

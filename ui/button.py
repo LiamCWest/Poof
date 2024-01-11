@@ -6,12 +6,11 @@ from graphics.particleSystem.shapedEmitter import ShapedEmitter
 from utils.vector2 import Vector2
 from utils.polygon import Polygon
 from ui.text import Text
-from utils.resizingFuncs import drawRectResized
 from graphics.particleSystem.toggleableEmitter import ToggleableShapedEmitter
 
 class Button:
-    def __init__(self, text, x, y, width, height, color, textColor, onClick, onRelease = lambda: None,z = 0, particles = False, textSize = 40, scaler = 1.25, hColor = None, textFont = "Arial", particlesOnOver = False, textFontPath = "ROGFONTS-REGULAR.ttf"):
-        self.text = Text(text, x + width//2, y+height//2, textColor, textSize, font = textFont, fontPath = textFontPath)
+    def __init__(self, text, x, y, width, height, color, textColor, onClick, onRelease = lambda: None,z = 0, particles = False, textSize = 40, scaler = 1.25, hColor = None, particlesOnOver = False, textFontPath = "ROGFONTS-REGULAR.ttf"):
+        self.text = Text(text, x + width//2, y+height//2, textColor, textSize, fontPath = textFontPath)
         self.x = x
         self.y = y
         self.width = width
@@ -22,7 +21,6 @@ class Button:
         self.scale = 1
         self.scaler = scaler
         self.emitter = None
-        self.factor = 1
         self.z = z
         self.particles = particles
         self.held = False
@@ -52,18 +50,15 @@ class Button:
         width = self.width * self.scale
         height = self.height * self.scale
         if self.particles:
-            self.emitter.factor = self.factor
             self.emitter.draw(screen, pos)
-        rect = drawRectResized(screen, self.color, x, y, width, height, self.factor)
-        #pygame.draw.rect(screen, self.color, (x*self.factor, y*self.factor, width*self.factor, height*self.factor))
-        self.text.factor = self.factor
+        rect = pygame.draw.rect(screen, self.color, (x, y, width, height))
         self.text.scale = self.scale
         self.text.draw(rect, pos)
         
     def isOver(self, pos, pos2):
         if pos is None:
             return False
-        return (pos2.x * self.factor) < pos.x < ((pos2.x + self.width)*self.factor) and (pos2.y * self.factor) < pos.y < ((pos2.y + self.height) * self.factor)
+        return pos2.x < pos.x < (pos2.x + self.width) and pos2.y < pos.y < pos2.y + self.height
     
     def update(self, pos = Vector2(0, 0)):
         if self.particles:

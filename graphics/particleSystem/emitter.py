@@ -12,7 +12,6 @@ class Emitter:
         self.size = size
         self.limit = limit
         self.particles = []
-        self.factor = 1
         self.lastSpawnTime = 0
 
     def emit(self):
@@ -36,7 +35,6 @@ class Emitter:
             
     def draw(self, win, pos = Vector2(0,0)):
         for particle in self.particles:
-            particle.factor = self.factor
             particle.draw(win, pos)
 
     def reset(self):

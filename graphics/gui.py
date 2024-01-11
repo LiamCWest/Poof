@@ -1,4 +1,5 @@
 import pygame
+import ctypes
 
 from ui.menus import mainMenu, settingsMenu, levelMenu
 import logic.level.levelEditor as levelEditor
@@ -12,8 +13,10 @@ activeScreen = None
 activeScreenName = None
 screenStack = Stack()
 def init():
+    ctypes.windll.user32.SetProcessDPIAware() #makes window not scale with display scaling
+    
     global screen, screens, activeScreen, activeScreenName
-    screen = pygame.display.set_mode((1280, 720))
+    screen = pygame.display.set_mode((1280, 720), pygame.SCALED)
     screen.fill((255, 255, 255))
     
     screens = {"main": mainMenu, "game": game, "settings": settingsMenu, "levelEditor": levelEditor, "levelMenu": levelMenu}
@@ -45,9 +48,9 @@ def checkInput():
         elif activeScreenName == "game":
             activeScreen.pause()
 
-def drawText(text, x, y, size, color, font, cutOff = None):
+def drawText(text, x, y, size, color, fontPath, cutOff = None):
     global screen
-    text_surface = font.render(text, True, color)
+    text_surface = pygame.font.Font(fontPath, size).render(text, True, color)
     text_rect = text_surface.get_rect(center=(x, y))
 
     if cutOff:
@@ -65,16 +68,9 @@ def clear():
 def update():
     global activeScreen
     checkInput()
-    #factor = resizeFactor()
     if activeScreen: 
-        #activeScreen.updateFactors(factor)
         activeScreen.update()
     draw()
-    
-def resizeFactor():
-    global screen
-    factor = min(screen.get_width()/1280, screen.get_height()/720)
-    return factor
     
 def draw():
     global activeScreen

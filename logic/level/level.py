@@ -10,7 +10,7 @@ import json
 import hashlib
 
 class Level:
-    deathTimeBuffer = 3
+    deathTimeBuffer = 0.5
     def __init__(self, tiles, appearLength, disappearLength, songPath, timingPoints, playerStartPos = None, playerStartTime = None):
         self.win = None
         self.appearLength = appearLength
@@ -21,7 +21,6 @@ class Level:
         self.tileAnim = Animation(tileEvents, 0)
         self.pos = Vector2(0, 0)
         self.tileSize = Vector2(100, 100)
-        self.factor = 1
         
         self.playerStartPos = playerStartPos
         self.playerStartTime = playerStartTime
@@ -61,22 +60,18 @@ class Level:
         songPlayer.unpause()
         self.tileAnim.restart(songPlayer.getPos())        
     
-    def draw(self, win, timeSourceTime, topLeftPos, tileSize, drawPlayer = False, playerState = None, drawGrid = False, gridLineThickness = 2):
-        
-        for tile in self.tiles:
-            tile.factor = self.factor
-            
-        if drawGrid:
-            self.tileAnim.updateTime(timeSourceTime, win, topLeftPos.divide(self.factor), tileSize)
+    def draw(self, win, timeSourceTime, topLeftPos, tileSize, drawPlayer = False, freezeTilesOnDeath = False, playerState = None, drawGrid = False, gridLineThickness = 2):            
+        if drawPlayer and freezeTilesOnDeath and playerState.deathTime is not None and playerState.deathTime < timeSourceTime:
+            levelTime = playerState.deathTime
         else:
-            self.tileAnim.updateTime(timeSourceTime, win, topLeftPos, tileSize)
+            levelTime = timeSourceTime
+        
+        self.tileAnim.updateTime(levelTime, win, topLeftPos, tileSize)
         
         if self.player is not None and drawPlayer:
-            self.player.factor = self.factor
             self.player.draw(win, playerState)
         
         if drawGrid:
-            tileSize = tileSize.multiply(self.factor)
             ltHalf = gridLineThickness / 2
             screenSize = Vector2(gui.screen.get_size()[0], gui.screen.get_size()[1])
             topLeftMod = self.tilePosToScreenPos(topLeftPos, Vector2(0, 0)) % tileSize
@@ -99,6 +94,15 @@ class Level:
             if tile.pos == pos:
                 return tile
         return None
+    
+    def getTilesOverlapping(self, pos, startTime, endTime):
+        tiles = []
+        for i in self.tileAnim.tree.overlap(startTime, endTime):
+            tile = i.data[1]
+            if tile.pos == pos:
+                tiles.append(tile)
+        tiles.sort(key=lambda tile: tile.appearedTime)
+        return tiles
             
     def isTileValid(self, tile, oldTile):
         if tile.appearedTime < 0 or tile.disappearTime < 0 or tile.appearedTime > songPlayer.getSongLength():
@@ -113,8 +117,8 @@ class Level:
 
     def save(self, levelFile):
         tileValues = [event.data[1].toValues() for event in self.tileAnim.tree]
-        noV2sTiles = [[tile[0].toTuple(), tile[1], tile[2], tile[3], tile[4]] for tile in tileValues]
-            
+        noV2sTiles = [[tile[0].toTuple(), tile[1], tile[2], tile[3], tile[4], tile[5]] for tile in tileValues]
+    
         timingPoints = [point.toValues() for point in self.timingPoints]
             
         levelData = {
@@ -160,7 +164,7 @@ class Level:
                 print("Level file corrupted")
                 return None
             tiles = loaded_data['tiles']
-            tilesV2 = [Tile(Vector2.from_tuple(tile[0]), tile[1], tile[2], tile[3], tile[4]) for tile in tiles]
+            tilesV2 = [Tile(Vector2.from_tuple(tile[0]), tile[1], tile[2], tile[3], tile[4], tile[5]) for tile in tiles]
             appearLength = loaded_data['appearLength']
             disappearLength = loaded_data['disappearLength']
             songPath = loaded_data['songPath']

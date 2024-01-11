@@ -10,9 +10,6 @@ from utils.vector2 import Vector2
 from graphics.particleSystem.toggleableEmitter import ToggleableShapedEmitter
 from copy import deepcopy
 
-global factor 
-factor = 1
-
 def show():
     gui.clear()
     update()
@@ -33,12 +30,6 @@ def startGame():
     def load(level):
         game.loadLevel(level)
         gui.setScreen("game")
-
-def updateFactors(factor):
-    for object in objects:
-        object.factor = factor
-    for text in texts:
-        text.factor = factor
         
 def update():
     for object in objects:

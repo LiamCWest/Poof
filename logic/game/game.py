@@ -74,18 +74,23 @@ def checkSignature(data, signature):
 def checkInput():
     if input.keyActionBindings["left"].justPressed:
         level.player.move(Vector2(-1, 0), input.keyActionBindings["left"].songTimeLastPressed)
+    elif input.keyActionBindings["left"].justReleased:
+        level.player.stopMove(Vector2(-1, 0), input.keyActionBindings["left"].songTimeLastReleased)
     
     if input.keyActionBindings["right"].justPressed:
         level.player.move(Vector2(1, 0), input.keyActionBindings["right"].songTimeLastPressed)
+    elif input.keyActionBindings["right"].justReleased:
+        level.player.stopMove(Vector2(1, 0), input.keyActionBindings["right"].songTimeLastReleased)
         
     if input.keyActionBindings["up"].justPressed:
         level.player.move(Vector2(0, -1), input.keyActionBindings["up"].songTimeLastPressed)
+    elif input.keyActionBindings["up"].justReleased:
+        level.player.stopMove(Vector2(0, -1), input.keyActionBindings["up"].songTimeLastReleased)
         
     if input.keyActionBindings["down"].justPressed:
         level.player.move(Vector2(0, 1), input.keyActionBindings["down"].songTimeLastPressed)
-
-def updateFactors(factor):
-    level.factor = factor
+    elif input.keyActionBindings["down"].justReleased:
+        level.player.stopMove(Vector2(0, 1), input.keyActionBindings["down"].songTimeLastReleased)
 
 win = False
 won = False
@@ -141,19 +146,15 @@ def draw():
     timeSourceTime = songPlayer.getPos()
     
     playerState = level.player.calculateState(level, timeSourceTime)
-    playerFallTime = 1
-    if playerState.deathTime is None:
-        level.draw(gui.screen, timeSourceTime, playerState.visiblePos - Player.offset, level.tileSize, drawPlayer=True, playerState=playerState)
-    elif playerState.deathTime + level.deathTimeBuffer >= timeSourceTime:
-        level.player.fallingScaler = easeInPow(1, 0, playerState.deathTime, playerState.deathTime + playerFallTime, 2, timeSourceTime)
-        level.draw(gui.screen, timeSourceTime, playerState.visiblePos - Player.offset, level.tileSize, drawPlayer=True, playerState=playerState)
+    if playerState.deathTime is None or playerState.deathTime + level.deathTimeBuffer >= timeSourceTime:
+        level.draw(gui.screen, timeSourceTime, playerState.visiblePos - Player.offset, level.tileSize, drawPlayer=True, playerState=playerState, freezeTilesOnDeath=True)
     else:
         level.restart()
     
-    accText.text = f"{int(playerState.acc * 1000)}ms"
+    accText.text = f"Acc: {int(playerState.acc * 1000)}ms   Offset: {int(abs(playerState.offset) * 1000)}ms"
     accText.draw()
     
     for popup in popups.values():
         popup.draw()
         
-accText = Text("0ms", 100, 100)
+accText = Text("", 600, 100)

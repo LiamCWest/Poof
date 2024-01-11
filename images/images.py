@@ -11,6 +11,8 @@ images = {
     "debug": None,
     
     "platform": None,
+    "glide": None,
+    "rest": None,
     
     "player_left": None,
     "player_up": None,
@@ -20,14 +22,14 @@ images = {
     "player_up_moving": None,
     "player_right_moving": None,
     "player_down_moving": None,
-    
-    "rest": None
 }
 
 def init():
     global images
     images["debug"] = loadImage("debug.png")
     images["platform"] = loadImage("platform.png")
+    images["glide"] = loadImage("glide.png")
+    images["rest"] = loadImage("rest.png")
     
     images["player_left"] = loadImage("player/player_left.png")
     images["player_up"] = loadImage("player/player_up.png")
@@ -37,5 +39,3 @@ def init():
     images["player_up_moving"] = loadImage("player/player_up_moving.png")
     images["player_right_moving"] = loadImage("player/player_right_moving.png")
     images["player_down_moving"] = loadImage("player/player_down_moving.png")
-    
-    images["rest"] = loadImage("rest.png")

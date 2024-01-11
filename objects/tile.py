@@ -1,5 +1,6 @@
 from images import images
 import pygame
+import graphics.gui
 
 class Tile:
     def __init__(self, pos, color, appearedTime = 0, disappearTime = 0, type = "platform", divisor = None):
@@ -18,7 +19,7 @@ class Tile:
         if self.type == "platform":
             return images.images["platform"]
         elif self.type == "glide":
-            return images.images["debug"] #TODO: make sprite
+            return images.images["glide"]
         else:
             return images.images["rest"]
     
@@ -48,6 +49,13 @@ class Tile:
         
         pos = ((self.pos - topLeftPos) * tileSize + tileSize.multiply(1 - scale).divide(2)).toTuple()
         win.blit(pygame.transform.scale(self.getTypeImage(), tileSize.multiply(scale).toTuple()), pos)
+        
+        if self.type == "glide":
+            textPos = (self.pos.add(0.5) - topLeftPos) * tileSize
+            x = textPos.x
+            y = textPos.y
+            defaultSize = 50
+            graphics.gui.drawText(str(self.divisor), x, y, int(defaultSize * scale), (62, 62, 62), "ROG")
         
     def copy(self):
         return Tile(self.pos, self.color, self.appearedTime, self.disappearTime, self.type, self.divisor)

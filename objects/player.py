@@ -101,8 +101,7 @@ class Player:
         currentTile = tile #Otherwise that's the tile you're on
 
         for i, move in enumerate(self.moves): #run through all the moves
-            moveTime = move[1]
-            if moveTime > searchTime:
+            if move[1] > searchTime:
                 return state #If you've reached the time you want to, then you are alive and at your current pos
             
             if not move[2]: # if the move is a key release
@@ -112,11 +111,11 @@ class Player:
                     return state
                 else: #else dont care about releases
                     continue
-                
-            state.direction = move[0] #the direction you're moving is the direction you're moving, obviously
             
             #the move must now be a press
-            tile = level.getTileAt(state.pos, moveTime) #get the tile that you moved off of
+            state.direction = move[0] #the direction you're moving is the direction you're moving, obviously
+            
+            tile = level.getTileAt(state.pos, move[1]) #get the tile that you moved off of
             if tile != currentTile:
                 state.deathTime = currentTile.disappearTime + level.disappearLength #If you're not on the same tile as before when you start moving, then you died
                 state.animState = "dead"
@@ -127,10 +126,18 @@ class Player:
                 glideStartPos = tile.pos
                 glideDir = move[0]
 
-                nextPressTime = float("inf")
-                if i + 1 < len(self.moves):
-                    nextPressTime = self.moves[i + 1][1] #get the time of the next press move
-                glideEndTime = min(state.time, nextPressTime) #wanna calculate the glide until the glide should end
+                nextImportantMoveTime = float("inf")
+                j = i + 1
+                while j < len(self.moves):
+                    testedMove = self.moves[j]
+                    if testedMove[0] == move[0] and not testedMove[2]: #glide should end when you release the dash direction
+                        nextImportantMoveTime = testedMove[1]
+                        break
+                    if testedMove[2]: #or when you press another key
+                        nextImportantMoveTime = testedMove[1] #get the time of the next press move
+                        break
+                    j += 1
+                glideEndTime = min(state.time, nextImportantMoveTime) #wanna calculate the glide until the glide should end
                 glideTimeOffset = move[1] - tile.disappearTime #the time off of the "perfect" glide time that you're gliding
                 
                 timeAtGlideDistances = [] #an array of all the times you will be various distances away from the glide start pos
@@ -229,9 +236,9 @@ class Player:
                 else:
                     state.animState = "walking"
                 
-                tile = level.getTileAt(state.pos, moveTime)
+                tile = level.getTileAt(state.pos, move[1])
                 if tile is None:
-                    state.deathTime = moveTime #If you move to nothing then you die at the time of your move
+                    state.deathTime = move[1] #If you move to nothing then you die at the time of your move
                     state.animState = "dead"
                     return state
                 

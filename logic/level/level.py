@@ -142,6 +142,14 @@ class Level:
     def tilePosToScreenPos(self, tilePos, topLeftPos):
         return self.tileSize * (topLeftPos - tilePos)
     
+    def endTile(self):
+        max = (0, 0)
+        for i,tile in enumerate(self.tiles):
+            if tile.disappearTime > max[1]:
+                max = (i, tile.disappearTime)
+                
+        return self.tiles[max[0]]
+    
     @classmethod
     def fromFile(cls, levelFile):
         with open(levelFile, 'r') as file:

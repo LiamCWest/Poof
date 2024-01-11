@@ -19,11 +19,13 @@ level = None
 playing = False
 started = False
 playWait = False
+levelF = None
 
-title = "Pause"
 popups = {}
 def init():
-    global started, popups, popupOpen
+    global started, popups, popupOpen, win, won
+    win = False
+    won = False
     started = True
     genericParticles = ShapedEmitter(None, None, Vector2(2,2), 250, 15, 5)
     popupOpen = False
@@ -34,7 +36,13 @@ def init():
                 Button("Main Menu", 50, 275, 400, 100, (80, 93, 112), (255, 255, 255), lambda: gui.setScreen("main"), textFontPath= "ROGFONTS-REGULAR.ttf", scaler = 1.1),
                 Button("Settings", 50, 387, 400, 100, (80, 93, 112), (255, 255 ,255), lambda: gui.setScreen("settings"), textFontPath= "ROGFONTS-REGULAR.ttf", scaler = 1.1),
                 Button("Quit", 50, 500, 400, 100, (80, 93, 112), (255, 255, 255), quit, textFontPath= "ROGFONTS-REGULAR.ttf", scaler = 1.1),],
-                [Text(title, 250, 80, (255, 255, 255), 100, fontPath= "ROGFONTS-REGULAR.ttf"),]),
+                [Text("Pause", 250, 80, (255, 255, 255), 100, fontPath= "ROGFONTS-REGULAR.ttf"),]),
+        "win": Popup(Vector2((1280-pW)/2, 0), pW, 650, (0,0,0), None,
+                [Button("Restart", 50, 162, 400, 100, (80, 93, 112), (255, 255, 255), restart, particles=genericParticles, particlesOnOver=True, textFontPath= "ROGFONTS-REGULAR.ttf", scaler= 1.1),
+                Button("Main Menu", 50, 275, 400, 100, (80, 93, 112), (255, 255, 255), lambda: gui.setScreen("main"), textFontPath= "ROGFONTS-REGULAR.ttf", scaler = 1.1),
+                Button("Settings", 50, 387, 400, 100, (80, 93, 112), (255, 255 ,255), lambda: gui.setScreen("settings"), textFontPath= "ROGFONTS-REGULAR.ttf", scaler = 1.1),
+                Button("Quit", 50, 500, 400, 100, (80, 93, 112), (255, 255, 255), quit, textFontPath= "ROGFONTS-REGULAR.ttf", scaler = 1.1),],
+                [Text("You Win!", 250, 80, (255, 255, 255), 80, fontPath= "ROGFONTS-REGULAR.ttf"),]),
     }
 
 def show():
@@ -42,15 +50,23 @@ def show():
     if not started: 
         init()
     if not popupOpen: play()
-    
+
+def restart():
+    global levelF
+    popupClose()
+    loadLevel(levelF)
+    play()
+
 def hide():
     gui.clear()
 
 def loadLevel(levelFile):
-    global level
+    global level, endTile, levelF
+    levelF = levelFile
     songPlayer.unload()
     init()
     level = Level.fromFile(levelFile)
+    endTile = level.endTile()
     
 def checkSignature(data, signature):
     return hashlib.sha256(json.dumps(data).encode()).hexdigest() == signature
@@ -71,13 +87,27 @@ def checkInput():
 def updateFactors(factor):
     level.factor = factor
 
+win = False
+won = False
+def checkWin():
+    global level, endTile, win, popups, popupOpen, playing, won
+    if level.player.calculateState(level, songPlayer.getPos()).pos == endTile.pos and not won:
+        win = True
+    if win and endTile.disappearTime <= songPlayer.getPos():
+        win = False
+        songPlayer.pause()
+        playing = False
+        popupOpen = True
+        popups["win"].show()
+        won = True
+
 def update():
     global playing, popupOpen, popups, playWait
     if playing and not popupOpen:
         checkInput()
     for popup in popups.values():
         popup.update()
-        
+    checkWin()
     if playWait and popups["pause"].closed:
         playWait = False
         play()
@@ -93,8 +123,8 @@ def pause():
 def popupClose():
     global popups, popupOpen
     popupOpen = False
-    for popup in popups.values():
-        if popup.open: popup.hide()
+    for name, popup in popups.items():
+        if popup.open and name != "win": popup.hide()
 
 def resume():
     global playWait

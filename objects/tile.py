@@ -55,7 +55,7 @@ class Tile:
             x = textPos.x
             y = textPos.y
             defaultSize = 50
-            graphics.gui.drawText(str(self.divisor), x, y, int(defaultSize * scale), (62, 62, 62), "ROG")
+            graphics.gui.drawText(str(self.divisor), x, y, int(defaultSize * scale), (62, 62, 62), "Encode Sans Bold")
         
     def copy(self):
         return Tile(self.pos, self.color, self.appearedTime, self.disappearTime, self.type, self.divisor)

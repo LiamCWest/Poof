@@ -4,11 +4,14 @@ import ctypes
 from ui.menus import mainMenu, settingsMenu, levelMenu
 import logic.level.levelEditor as levelEditor
 from logic.game import game
+from utils.stack import Stack
+import input.input as input
 
 screen = None
 screens = None
 activeScreen = None
 activeScreenName = None
+screenStack = Stack()
 def init():
     ctypes.windll.user32.SetProcessDPIAware() #makes window not scale with display scaling
     
@@ -19,21 +22,35 @@ def init():
     screens = {"main": mainMenu, "game": game, "settings": settingsMenu, "levelEditor": levelEditor, "levelMenu": levelMenu}
     setScreen("main")
 
-def setScreen(name):
-    global activeScreen, activeScreenName
+def setScreen(name, back = False):
+    global activeScreen, activeScreenName, screenStack
     
     if activeScreen:
         activeScreen.hide()
     
+    if not back: screenStack.push(activeScreenName)
     activeScreenName = name
     activeScreen = screens[activeScreenName]
     
     activeScreen.show()
 
-def drawText(text, x, y, size, color, font = "Arial", cutOff = None):
+def back():
+    global screenStack
+    if screenStack.peek: setScreen(screenStack.pop(), back = True)
+
+def checkInput():
+    if input.specialKeyBindings["escape"].justPressed:
+        if activeScreenName not in ["game", "main"]:
+            if activeScreen.popupOpen:
+                activeScreen.popupClose()
+            else:
+                back()
+        elif activeScreenName == "game":
+            activeScreen.pause()
+
+def drawText(text, x, y, size, color, fontPath, cutOff = None):
     global screen
-    font = pygame.font.SysFont(font, size)
-    text_surface = font.render(text, True, color)
+    text_surface = pygame.font.Font(fontPath, size).render(text, True, color)
     text_rect = text_surface.get_rect(center=(x, y))
 
     if cutOff:
@@ -50,6 +67,7 @@ def clear():
     
 def update():
     global activeScreen
+    checkInput()
     if activeScreen: 
         activeScreen.update()
     draw()

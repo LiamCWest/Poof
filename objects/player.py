@@ -25,6 +25,7 @@ class Player:
     def __init__(self, startPos, startTime):
         self.startPos = startPos
         self.startTime = startTime
+        self.fallingScaler = 1
                 
         self.moves = [] #Tuple of (diff, time, isPress)
         

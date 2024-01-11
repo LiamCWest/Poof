@@ -172,7 +172,6 @@ def signData(data):
     return signature
 
 def checkSignature(data, signature):
-    return True
     return signature == signData(data)
 
 def rangeOverlapsWithRange(range1, range2):

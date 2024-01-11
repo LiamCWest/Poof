@@ -21,4 +21,3 @@ with open (level, 'r') as file:
             json.dump({"data": loaded_data, "signature": newSig}, file)
     else:
         print("Level file is valid")
-        

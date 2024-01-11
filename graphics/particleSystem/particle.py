@@ -1,6 +1,7 @@
 import pygame
 from graphics.animation import Animation, AnimEvent
 import input.input as input
+from utils.vector2 import Vector2
 
 class Particle:
     def __init__(self, position, velocity, lifeTime, size=5, color = (255, 255, 255)):
@@ -20,8 +21,11 @@ class Particle:
     def update(self):
         self.anim.updateTime(input.getRealTime())
         
-    def draw(self, win):
-        draw_rect_alpha(win, self.color, self.position.toTuple() + (self.size, self.size))
+    def draw(self, win, pos = Vector2(0,0)):
+        newpos =  self.position + pos
+        newpos.x -= self.size/2
+        newpos.y -= self.size/2
+        draw_rect_alpha(win, self.color, newpos.toTuple() + (self.size, self.size))
         
 def draw_rect_alpha(surface, color, rect):
     shape_surf = pygame.Surface(pygame.Rect(rect).size, pygame.SRCALPHA)

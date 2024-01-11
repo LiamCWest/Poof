@@ -2,6 +2,7 @@ from graphics import gui
 from ui.button import Button
 from ui.text import Text
 from logic.game import game
+import input.input as input
 
 def show():
     gui.clear()
@@ -22,4 +23,5 @@ def update():
         
 title = "Settings Menu"
 objects = []
-texts = [Text(title, 400, 150, (255, 0, 0), 100)]
+texts = [Text(title, 640, 80, (255, 255, 255), 100)]
+popupOpen = False

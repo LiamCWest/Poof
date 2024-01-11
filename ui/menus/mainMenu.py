@@ -6,6 +6,9 @@ from ui.menus import levelMenu
 from ui.inputBox import InputBox
 from logic.level import levelEditor as LE
 from logic.game import game
+from utils.vector2 import Vector2
+from graphics.particleSystem.toggleableEmitter import ToggleableShapedEmitter
+from copy import deepcopy
 
 def show():
     gui.clear()
@@ -22,8 +25,7 @@ def draw():
         text.draw()
 
 def startGame():
-    hide()
-    levelMenu.setLoad(lambda level: load(level))
+    levelMenu.start(lambda level: load(level))
     gui.setScreen("levelMenu")
     def load(level):
         game.loadLevel(level)
@@ -33,26 +35,20 @@ def update():
     for object in objects:
         object.update()
         
-    if objects[5].returned:
-        objects[5].accept()
-        
 def settings():
-    hide()
     gui.setScreen("settings")
     
 def levelEditor():
-    hide()
-    levelMenu.setLoad(lambda level: load(level))
+    levelMenu.start(lambda level: load(level), isLevelEditor=True)
     gui.setScreen("levelMenu")
     def load(level):
         LE.loadLevel(level)
         gui.setScreen("levelEditor")
         
 title = "Main Menu"
-objects = [Button("Start", 200, 262, 200, 100, (0, 255, 0), (255, 0, 0), startGame, particles=True),
-           Button("Settings", 200, 375, 200, 100, (0, 255, 0), (255, 0 ,0), settings),
-           Button("Level Editor", 200, 487, 200, 100, (0, 255, 0), (255, 0, 0), levelEditor),
-           Button("Quit", 200, 600, 200, 100, (0, 255, 0), (255, 0, 0), quit),
-           Scrollbar(800, 75, 20, 400, "h", None, 7, True),
-           InputBox("INPUT",800, 600, 200, 100, (0, 255, 0), (255, 0, 0))]
-texts = [Text(title, 400, 150, (255, 0, 0), 100)]
+emitter = ToggleableShapedEmitter(None, None, Vector2(4,4), 250, 25, 10, edges = "V")
+objects = [Button("Start", 200, 200, 880, 100, (80, 93, 112), (255, 255, 255), startGame, particles=deepcopy(emitter), textFontPath= "ROGFONTS-REGULAR.ttf", particlesOnOver=True, scaler = 1.05),
+           Button("Settings", 200, 320, 880, 100, (80, 93, 112), (255, 255, 255), settings, particles=deepcopy(emitter), textFontPath= "ROGFONTS-REGULAR.ttf", particlesOnOver=True, scaler = 1.05),
+           Button("Level Editor", 200, 440, 880, 100, (80, 93, 112), (255, 255, 255), levelEditor, particles=deepcopy(emitter), textFontPath= "ROGFONTS-REGULAR.ttf", particlesOnOver=True, scaler = 1.05),
+           Button("Quit", 200, 560, 880, 100, (80, 93, 112), (255, 255, 255), quit, particles=deepcopy(emitter), textFontPath= "ROGFONTS-REGULAR.ttf", particlesOnOver=True, scaler = 1.05),]
+texts = [Text(title, 640, 100, (255, 255, 255), 100, fontPath= "ROGFONTS-REGULAR.ttf")]

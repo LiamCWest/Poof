@@ -11,7 +11,8 @@ def getPath(name):
     return str(fontPath)
 
 fontPaths = {
-    "ROG": "ROGFONTS-REGULAR.ttf"
+    "ROG": "ROGFONTS-REGULAR.ttf",
+    "Encode Sans": "EncodeSans_Condensed-SemiBold.ttf"
 }
 
 cachedFonts = {} #indexed by tuple (name, size)

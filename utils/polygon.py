@@ -8,7 +8,6 @@ class Polygon:
         self.points = points
         self.color = color
         self.calc()
-        self.factor = 1
         self.scale = 1
 
     def calc(self):
@@ -22,7 +21,7 @@ class Polygon:
         for i in range(len(self.points)):
             point = Vector2.from_tuple(self.points[i])
             # scale
-            point = point.multiply(self.factor * self.scale)
+            point = point.multiply(self.scale)
             # translate
             point += self.pos + pos
             points.append(point.toTuple())

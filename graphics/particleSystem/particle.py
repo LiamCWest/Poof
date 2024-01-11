@@ -11,7 +11,6 @@ class Particle:
         self.anim = Animation([self.anim_event], input.getRealTime(), repeatType="oneShot", length=self.lifeTime)
         self.size = size
         self.color = color
-        self.factor = 1
 
     def updatePos(self, time):
         self.lifeTime -= time
@@ -22,7 +21,7 @@ class Particle:
         self.anim.updateTime(input.getRealTime())
         
     def draw(self, win):
-        draw_rect_alpha(win, self.color, self.position.multiply(self.factor).toTuple() + (self.size * self.factor, self.size * self.factor))
+        draw_rect_alpha(win, self.color, self.position.toTuple() + (self.size, self.size))
         
 def draw_rect_alpha(surface, color, rect):
     shape_surf = pygame.Surface(pygame.Rect(rect).size, pygame.SRCALPHA)

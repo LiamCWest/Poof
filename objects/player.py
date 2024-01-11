@@ -4,7 +4,6 @@ import bisect
 from utils.vector2 import Vector2
 from utils.binarySearch import binarySearch
 from graphics.animation import *
-from utils.resizingFuncs import blitResized
 from logic.song.timingPoints import getNextBeat, getPreviousBeat, getNearestBeat
 
 class PlayerState:
@@ -15,6 +14,9 @@ class PlayerState:
         self.direction = None #a vector2
         self.animState = None #standing, walking, gliding, dead
         self.acc = None
+        self.offset = None
+        self.movesMade = None
+        self.accMovesMade = None
         self.deathTime = None
 
 class Player:
@@ -48,8 +50,11 @@ class Player:
             }
         img = imgs[state.direction]
         
-        blitResized(win, img, self.offset, size, self.factor)
-        #win.blit(pygame.transform.scale(img, size.toTuple()), (size * self.offset).toTuple())
+        if state.deathTime is not None:
+            deadScale = easeInPow(1, 0, state.deathTime, state.deathTime + 0.3, 2, state.time)
+        else:
+            deadScale = 1
+        win.blit(pygame.transform.scale(img, (size * deadScale, size * deadScale)), self.offset.add((1 - deadScale) / 2).multiply(size).toTuple())
         
     def move(self, diff, time):
         self.moves.append((diff, time, True))
@@ -62,12 +67,19 @@ class Player:
             return None #cant have a state if the player isnt in the level yet
         
         def calculateAcc(currentAcc, movesMade, tileTime, time):
-            thisAcc = abs(tileTime - time)
-            return (currentAcc * (movesMade - 1) + thisAcc) / movesMade #weighted average           
+            thisAcc = abs(time - tileTime)
+            return (currentAcc * (movesMade - 1) + thisAcc) / movesMade #weighted average
+        
+        def calculateOffset(currentOffset, movesMade, tileTime, time):
+            thisOffset = time - tileTime
+            return (currentOffset * (movesMade - 1) + thisOffset) / movesMade #another weighted average
         
         state = PlayerState() #create an empty state
         state.time = searchTime #this is the time of the state, obviously
         state.acc = 0
+        state.offset = 0
+        state.movesMade = 0
+        state.accMovesMade = 0
         
         state.pos = self.startPos.copy() #state pos starts at the player's start pos
         state.visiblePos = self.startPos.copy() #same with visual pos
@@ -115,14 +127,8 @@ class Player:
                 glideDir = move[0]
 
                 nextPressTime = float("inf")
-                j = i + 1
-                while j < len(self.moves):
-                    '''if self.moves[j][2]:
-                        nextPressTime = self.moves[j][1] #get the time of the next press move
-                        break'''
-                    nextPressTime = self.moves[j][1] #get the time of the next press move
-                    break
-                    j += 1
+                if i + 1 < len(self.moves):
+                    nextPressTime = self.moves[i + 1][1] #get the time of the next press move
                 glideEndTime = min(state.time, nextPressTime) #wanna calculate the glide until the glide should end
                 glideTimeOffset = move[1] - tile.disappearTime #the time off of the "perfect" glide time that you're gliding
                 
@@ -158,6 +164,12 @@ class Player:
                         lastDistance = lastMoveIndex - 0.5
                         nextDistance = nextMoveIndex - 0.5
                         state.visiblePos = glideStartPos + move[0].multiply(min(lastMoveIndex, lerp(lastDistance, nextDistance, timeAtLastPos, timeAtNextPos, state.time), lastMoveIndex))
+                        
+                        state.movesMade += 1
+                        if tile.type != "rest":
+                            state.accMovesMade += 1
+                            state.acc = calculateAcc(state.acc, state.accMovesMade, tile2.appearedTime, timeHit) #update acc and offset
+                            state.offset = calculateOffset(state.offset, state.accMovesMade, tile2.appearedTime, timeHit)
                         
                         #if you've passed the time where you have visibly landed on the tile, you're standing. else, you're gliding
                         if state.time > timeAtNextPos:
@@ -209,6 +221,8 @@ class Player:
                 y = easeOutPow(lastPos.y, thisPos.y, lastTime, thisTime, 3, state.time)
                 state.visiblePos = Vector2(x, y)
                 
+                
+                #if you've passed the time when the interp ends, you're standing. otherwise, you're walking
                 if state.time > thisTime:
                     state.animState = "standing"
                 else:
@@ -219,6 +233,12 @@ class Player:
                     state.deathTime = moveTime #If you move to nothing then you die at the time of your move
                     state.animState = "dead"
                     return state
+                
+                state.movesMade += 1
+                if tile.type != "rest":
+                    state.accMovesMade += 1
+                    state.acc = calculateAcc(state.acc, state.accMovesMade, tile.appearedTime, move[1])
+                    state.offset = calculateOffset(state.offset, state.accMovesMade, tile.appearedTime, move[1])
                 
                 currentTile = tile #Otherwise that's the tile you're on
             

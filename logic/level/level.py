@@ -10,7 +10,7 @@ import json
 import hashlib
 
 class Level:
-    deathTimeBuffer = 0.25
+    deathTimeBuffer = 0.5
     def __init__(self, tiles, appearLength, disappearLength, songPath, timingPoints, playerStartPos = None, playerStartTime = None):
         self.win = None
         self.appearLength = appearLength
@@ -21,7 +21,6 @@ class Level:
         self.tileAnim = Animation(tileEvents, 0)
         self.pos = Vector2(0, 0)
         self.tileSize = Vector2(100, 100)
-        self.factor = 1
         
         self.playerStartPos = playerStartPos
         self.playerStartTime = playerStartTime
@@ -61,21 +60,18 @@ class Level:
         songPlayer.unpause()
         self.tileAnim.restart(songPlayer.getPos())        
     
-    def draw(self, win, timeSourceTime, topLeftPos, tileSize, drawPlayer = False, playerState = None, drawGrid = False, gridLineThickness = 2):
-        for tile in self.tiles:
-            tile.factor = self.factor
-            
-        if drawGrid:
-            self.tileAnim.updateTime(timeSourceTime, win, topLeftPos.divide(self.factor), tileSize)
+    def draw(self, win, timeSourceTime, topLeftPos, tileSize, drawPlayer = False, freezeTilesOnDeath = False, playerState = None, drawGrid = False, gridLineThickness = 2):            
+        if drawPlayer and freezeTilesOnDeath and playerState.deathTime is not None and playerState.deathTime < timeSourceTime:
+            levelTime = playerState.deathTime
         else:
-            self.tileAnim.updateTime(timeSourceTime, win, topLeftPos, tileSize)
+            levelTime = timeSourceTime
+        
+        self.tileAnim.updateTime(levelTime, win, topLeftPos, tileSize)
         
         if self.player is not None and drawPlayer:
-            self.player.factor = self.factor
             self.player.draw(win, playerState)
         
         if drawGrid:
-            tileSize = tileSize.multiply(self.factor)
             ltHalf = gridLineThickness / 2
             screenSize = Vector2(gui.screen.get_size()[0], gui.screen.get_size()[1])
             topLeftMod = self.tilePosToScreenPos(topLeftPos, Vector2(0, 0)) % tileSize

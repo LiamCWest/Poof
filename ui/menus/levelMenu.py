@@ -17,10 +17,6 @@ def setLoad(load):
 def hide():
     pass
 
-def updateFactors(factor):
-    for button in levelButtons:
-        button.factor = factor
-
 def update():
     for button in levelButtons:
         button.update()

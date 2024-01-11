@@ -15,7 +15,6 @@ class Text:
         self.font = font
         self.size = size
         self.scale = 1
-        self.factor = 1
         self.z = z
         self.lines = text.split('\n')  # Split text into lines
 
@@ -34,4 +33,4 @@ class Text:
         totalHeight = lineHeight * len(self.lines)
         for i, line in enumerate(self.lines):
             y_offset = self.y + pos.y - totalHeight/2 + lineHeight/2 + i * lineHeight  # Calculate y position for each line
-            gui.drawText(line, self.x * self.factor + pos.x, y_offset, int(self.size * self.factor * self.scale), self.color, self.font, cutOff)
+            gui.drawText(line, self.x + pos.x, y_offset, int(self.size * self.scale), self.color, self.font, cutOff)

@@ -50,16 +50,9 @@ def clear():
     
 def update():
     global activeScreen
-    #factor = resizeFactor()
     if activeScreen: 
-        #activeScreen.updateFactors(factor)
         activeScreen.update()
     draw()
-    
-def resizeFactor():
-    global screen
-    factor = min(screen.get_width()/1280, screen.get_height()/720)
-    return factor
     
 def draw():
     global activeScreen

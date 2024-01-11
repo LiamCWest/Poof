@@ -7,9 +7,6 @@ from ui.inputBox import InputBox
 from logic.level import levelEditor as LE
 from logic.game import game
 
-global factor 
-factor = 1
-
 def show():
     gui.clear()
     update()
@@ -31,12 +28,6 @@ def startGame():
     def load(level):
         game.loadLevel(level)
         gui.setScreen("game")
-
-def updateFactors(factor):
-    for object in objects:
-        object.factor = factor
-    for text in texts:
-        text.factor = factor
         
 def update():
     for object in objects:

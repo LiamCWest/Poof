@@ -15,9 +15,6 @@ from ui.scrollbar import Scrollbar
 import bisect
 import pygame
 
-def updateFactors(factor):
-    level.factor = factor
-
 def selectMode(option):
     global selectedMode
     topBar.objects[modes.index(selectedMode)].baseObj.color = (100, 100, 255)

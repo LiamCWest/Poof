@@ -50,9 +50,6 @@ def checkInput():
     elif input.keyActionBindings["down"].justReleased:
         level.player.stopMove(Vector2(0, 1), input.keyActionBindings["down"].songTimeLastReleased)
 
-def updateFactors(factor):
-    level.factor = factor
-
 def update():
     checkInput()
     
@@ -62,11 +59,11 @@ def draw():
     
     playerState = level.player.calculateState(level, timeSourceTime)
     if playerState.deathTime is None or playerState.deathTime + level.deathTimeBuffer >= timeSourceTime:
-        level.draw(gui.screen, timeSourceTime, playerState.visiblePos - Player.offset, level.tileSize, drawPlayer=True, playerState=playerState)
+        level.draw(gui.screen, timeSourceTime, playerState.visiblePos - Player.offset, level.tileSize, drawPlayer=True, playerState=playerState, freezeTilesOnDeath=True)
     else:
         level.restart()
     
-    accText.text = f"{int(playerState.acc * 1000)}ms"
+    accText.text = f"Acc: {int(playerState.acc * 1000)}ms   Offset: {int(abs(playerState.offset) * 1000)}ms"
     accText.draw()
         
-accText = Text("0ms", 100, 100)
+accText = Text("", 600, 100)

@@ -1,6 +1,5 @@
 from images import images
 import pygame
-from utils.resizingFuncs import blitResized
 
 class Tile:
     def __init__(self, pos, color, appearedTime = 0, disappearTime = 0, type = "platform", divisor = None):
@@ -48,7 +47,6 @@ class Tile:
         scale **= 5 #temp
         
         pos = ((self.pos - topLeftPos) * tileSize + tileSize.multiply(1 - scale).divide(2)).toTuple()
-        #blitResized(win, self.getTypeImage(), pos, scale, self.factor)
         win.blit(pygame.transform.scale(self.getTypeImage(), tileSize.multiply(scale).toTuple()), pos)
         
     def copy(self):

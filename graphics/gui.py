@@ -42,13 +42,13 @@ def back():
 
 def checkInput():
     if input.specialKeyBindings["escape"].justPressed:
-        if activeScreenName not in ["game", "main"]:
-            if activeScreen.popupOpen:
-                activeScreen.popupClose()
-            else:
+        if activeScreen.popupOpen:
+            activeScreen.popupClose()
+        else:
+            if activeScreenName not in ["game", "main"]:
                 back()
-        elif activeScreenName == "game":
-            activeScreen.pause()
+            elif activeScreenName == "game":
+                activeScreen.pause()
 
 def drawText(text, x, y, size, color, font, cutOff = None):
     global screen

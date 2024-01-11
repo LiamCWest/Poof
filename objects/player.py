@@ -123,6 +123,7 @@ class Player:
             
             if tile is not None and tile.type == "glide": #if you move off a glide tile
                 gliding = True #all of the stuff that's obviously happening cause you're gliding
+                currentTile = None #you're not on a tile cause you're gliding
                 glideStartPos = tile.pos
                 glideDir = move[0]
 
@@ -211,8 +212,6 @@ class Player:
                 state.visiblePos = glideStartPos + move[0].multiply(lerp(lastDistance, nextDistance, timeAtLastPos, timeAtNextPos, glideEndTime))
                 
                 state.animState = "gliding"
-                
-                currentTile = None #you're not on a tile cause you're gliding
                 
             else: #else move normally
                 gliding = False

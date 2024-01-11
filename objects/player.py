@@ -116,14 +116,13 @@ class Player:
             state.direction = move[0] #the direction you're moving is the direction you're moving, obviously
             
             tile = level.getTileAt(state.pos, move[1]) #get the tile that you moved off of
-            if tile != currentTile:
+            if tile != currentTile and currentTile is not None:
                 state.deathTime = currentTile.disappearTime + level.disappearLength #If you're not on the same tile as before when you start moving, then you died
                 state.animState = "dead"
                 return state
             
             if tile is not None and tile.type == "glide": #if you move off a glide tile
                 gliding = True #all of the stuff that's obviously happening cause you're gliding
-                currentTile = None #you're not on a tile cause you're gliding
                 glideStartPos = tile.pos
                 glideDir = move[0]
 
@@ -210,6 +209,8 @@ class Player:
                 lastDistance = max(lastMoveIndex - 0.5, 0)
                 nextDistance = nextMoveIndex - 0.5
                 state.visiblePos = glideStartPos + move[0].multiply(lerp(lastDistance, nextDistance, timeAtLastPos, timeAtNextPos, glideEndTime))
+                
+                currentTile = None
                 
                 state.animState = "gliding"
                 

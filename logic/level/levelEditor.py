@@ -286,7 +286,7 @@ def genMetronome():
     if metronomeSize > buttonSize/2: metronomeSize = buttonSize/2
     for i in range(metronomeLen):
         metronome.append(Polygon.fromRect((i*metronomeSize, (buttonSize/2-metronomeSize)/2, metronomeSize, metronomeSize), (100, 100, 255)))
-    metronome.append(Text("1", metronomeSize/2, metronomeSize/2+(buttonSize/2-metronomeSize)/2, (0,0,0), round(metronomeSize*0.66), width=metronomeSize, height=metronomeSize))
+    metronome.append(Text("1", metronomeSize/2, metronomeSize/2+(buttonSize/2-metronomeSize)/2, (0,0,0), round(metronomeSize*0.66), width=metronomeSize, height=metronomeSize, font="Encode Sans"))
     if bottomBar.grid[0][2]:
         bottomBar.grid[0][2].baseObj = metronome
 
@@ -316,17 +316,17 @@ def init():
         "save": lambda: level.save(levelF), 
         "delete\npoint": lambda: deletePoint(),
     }
-    bpmText = Text("BPM", buttonSize/2, buttonSize/4, (0,0,0), fontSize, bgColor=(100, 100, 255), width = buttonSize, height = buttonSize/2) # text for bpm
-    bpmBox = InputBox("", 0, buttonSize/2, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1, clearOnInput=False, numOnly=True, hColor=hColor) # input box for bpm
+    bpmText = Text("BPM", buttonSize/2, buttonSize/4, (0,0,0), fontSize, bgColor=(100, 100, 255), width = buttonSize, height = buttonSize/2, font="Encode Sans") # text for bpm
+    bpmBox = InputBox("", 0, buttonSize/2, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1, clearOnInput=False, numOnly=True, hColor=hColor, textFont="Encode Sans") # input box for bpm
     bpm = [bpmText, bpmBox] # bpm text and input box
-    timeSigNum = InputBox("", 0, 0, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1, clearOnInput=False, numOnly=True, hColor=hColor) # input box for time signature numerator
-    timeSigDenom = InputBox("", 0, buttonSize/2, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1, clearOnInput=False, numOnly=True, hColor=hColor) # input box for time signature denominator
+    timeSigNum = InputBox("", 0, 0, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1, clearOnInput=False, numOnly=True, hColor=hColor, textFont="Encode Sans") # input box for time signature numerator
+    timeSigDenom = InputBox("", 0, buttonSize/2, buttonSize, buttonSize/2, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1, clearOnInput=False, numOnly=True, hColor=hColor, textFont="Encode Sans") # input box for time signature denominator
     timeSig = [timeSigNum, timeSigDenom] # time signature numerator and denominator
 
     # fuction to create buttons for the toolbar, could probably be moved somewhere else. ToolbarOption.fromButton?
     barButton = lambda option, func: Button(
         option, 0, 0, buttonSize, buttonSize, (100, 100, 255), 
-        (0, 0, 0), onRelease=func, textSize = fontSize, scaler=1, hColor=hColor
+        (0, 0, 0), onRelease=func, textSize = fontSize, scaler=1, hColor=hColor, textFont="Encode Sans"
     )
     # adding modes and buttons to the toolbar
     for i, mode in enumerate(modes):
@@ -354,12 +354,12 @@ def init():
     divisorSize = bottomBar.width/(3*len(divisors))
     if divisorSize > buttonSize/2: divisorSize=buttonSize/2
     for i, d in enumerate(divisors):
-        divisorSelector.append(Button(str(d), i*divisorSize, (buttonSize/2-divisorSize)/2, divisorSize, divisorSize, (100, 100, 255), (0,0,0), onRelease=lambda x=d: selectDivisor(x), textSize = 30, scaler=1, hColor=hColor))
+        divisorSelector.append(Button(str(d), math.floor(i*divisorSize), math.floor((buttonSize/2-divisorSize)/2), math.ceil(divisorSize), math.ceil(divisorSize), (100, 100, 255), (0,0,0), onRelease=lambda x=d: selectDivisor(x), textSize = 30, scaler=1, hColor=hColor, textFont="Encode Sans"))
     selectDivisor(1)
     
     inBoxWidth = math.floor(bottomBar.width/3)-10
     inBoxHeight = math.floor(bottomBar.height/2)-6
-    inBox = InputBox("", 5, 3, inBoxWidth, inBoxHeight, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1, clearOnInput=False, numOnly=True, hColor=hColor)
+    inBox = InputBox("", 5, 3, inBoxWidth, inBoxHeight, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1, clearOnInput=False, numOnly=True, hColor=hColor, textFont="Encode Sans")
     
     genMetronome()
     selectMetBeat(1)

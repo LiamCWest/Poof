@@ -14,7 +14,7 @@ from graphics.particleSystem.shapedEmitter import ShapedEmitter
 popups = []
 def show():
     global levels, buttons, popupOpen, popups
-    if isLE: buttons.append(Button("New Level", gui.screen.get_width()/2-150, 500, 300, 50, (255,0,0), (0,0,0), newLevel))
+    if isLE: buttons.append(Button("New Level", gui.screen.get_width()/2-150, 500, 300, 50, (255,0,0), (0,0,0), onRelease=newLevel))
     else: buttons = []
     levels = getLevels("levels")
     levelButtons = []
@@ -34,8 +34,8 @@ def show():
                             InputBox("BPM", (nLW-400)/2, 375, 175, 50, (80, 93, 112), (255,255,255), 30, numOnly=True, scaler = 1.1),
                             InputBox("Num", (nLW)/2 + 25, 325, 175, 50, (80, 93, 112), (255,255,255), 30, numOnly=True, scaler = 1.1),
                             InputBox("Denom", (nLW)/2 + 25, 375, 175, 50, (80, 93, 112), (255,255,255), 30, numOnly=True, scaler = 1.1),
-                            Button("Create", (nLW-400)/2, 475, 400, 50, (80, 93, 112), (255,255,255), createLevel, particles = genericParticles, particlesOnOver = True, scaler = 1.1),
-                            Button("Close", (nLW-400)/2, 550, 400, 50, (80, 93, 112), (255,255,255), popupClose, scaler = 1.1),
+                            Button("Create", (nLW-400)/2, 475, 400, 50, (80, 93, 112), (255,255,255), onRelease=createLevel, particles = genericParticles, particlesOnOver = True, scaler = 1.1),
+                            Button("Close", (nLW-400)/2, 550, 400, 50, (80, 93, 112), (255,255,255), onRelease=popupClose, scaler = 1.1),
                          ],
                         [Text("New Level", nLW/2, 75, (255, 255, 255), 60, font = "ROG")]),
     }
@@ -68,7 +68,7 @@ def genLevelButton(level, i):
     rowLength = 5
     x = 100 + (i % rowLength) * 200
     y = 100 + (i // rowLength) * 150
-    return Button(getLevelName(level), x, y, 200, 200, (0,0,0), (255,255,255), lambda: loadLevel(level))
+    return Button(getLevelName(level), x, y, 200, 200, (0,0,0), (255,255,255), onRelease=lambda: loadLevel(level))
 
 def newLevel():
     global popups, popupOpen

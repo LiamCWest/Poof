@@ -24,7 +24,7 @@ class Scrollbar:
         
         buttonWidth = self.width if self.orientation == "v" else self.sliderWidth
         buttonHeight = self.sliderWidth if self.orientation == "v" else self.width
-        self.slider = Button("", self.x, self.y, buttonWidth, buttonHeight, self.fg, self.fg, lambda: None)
+        self.slider = Button("", self.x, self.y, buttonWidth, buttonHeight, self.fg, self.fg)
         
     def draw(self, screen, pos = Vector2(0,0)):
         x = self.x + pos.x

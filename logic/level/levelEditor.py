@@ -14,6 +14,7 @@ from utils.polygon import Polygon
 from ui.scrollbar import Scrollbar
 import bisect
 import pygame
+import math
 
 popupOpen = False
 hColor = (150, 150, 255)
@@ -99,6 +100,7 @@ def update():
     checkInput()
     metronomeUpdate()
     timingPointUpdate()
+    inBoxUpdate()
     topBar.update()
     bottomBar.update()
     
@@ -140,6 +142,24 @@ def update():
             tileTime = timingPoints.getNearestBeat(level.timingPoints, songPlayer.getPos(), divisor)
             level.removeTileAt(tilePos, tileTime)
             selectedTile = None
+
+lastIn = ""
+lastTile = None
+def inBoxUpdate():
+    global lastIn, lastTile, inBox
+    if selectedTile and selectedTile.type == "glide":
+        if lastIn != inBox.output and inBox.output != "" and selectedTile == lastTile:
+            if all(c.isdigit() for c in inBox.output):
+                selectedTile.divisor = int(inBox.output)
+            else:
+                inBox.changeText(str(selectedTile.divisor))
+        elif selectedTile != lastTile:
+            inBox.changeText(str(selectedTile.divisor))
+    else:
+        inBox.changeText("")
+        
+    lastIn = inBox.output
+    lastTile = selectedTile
 
 lastTimingPoint = None
 def timingPointUpdate():
@@ -278,7 +298,7 @@ def deletePoint():
 
 initailized = False
 def init():
-    global topBar, bottomBar, modes, divisorSelector, divisors, scrollbar, selectedMode, divisor, initailized, lastScrollbarValue, metronome, metronomeSize, buttonSize, bpm, timeSig
+    global topBar, bottomBar, modes, divisorSelector, divisors, scrollbar, selectedMode, divisor, initailized, lastScrollbarValue, metronome, metronomeSize, buttonSize, bpm, timeSig, inBox
     if initailized: return
     initailized = True
     # vars
@@ -306,7 +326,7 @@ def init():
     # fuction to create buttons for the toolbar, could probably be moved somewhere else. ToolbarOption.fromButton?
     barButton = lambda option, func: Button(
         option, 0, 0, buttonSize, buttonSize, (100, 100, 255), 
-        (0, 0, 0), func, textSize = fontSize, scaler=1, hColor=hColor
+        (0, 0, 0), onRelease=func, textSize = fontSize, scaler=1, hColor=hColor
     )
     # adding modes and buttons to the toolbar
     for i, mode in enumerate(modes):
@@ -334,19 +354,24 @@ def init():
     divisorSize = bottomBar.width/(3*len(divisors))
     if divisorSize > buttonSize/2: divisorSize=buttonSize/2
     for i, d in enumerate(divisors):
-        divisorSelector.append(Button(str(d), i*divisorSize, (buttonSize/2-divisorSize)/2, divisorSize, divisorSize, (100, 100, 255), (0,0,0), lambda x=d: selectDivisor(x), textSize = 30, scaler=1, hColor=hColor))
+        divisorSelector.append(Button(str(d), i*divisorSize, (buttonSize/2-divisorSize)/2, divisorSize, divisorSize, (100, 100, 255), (0,0,0), onRelease=lambda x=d: selectDivisor(x), textSize = 30, scaler=1, hColor=hColor))
     selectDivisor(1)
-        
+    
+    inBoxWidth = math.floor(bottomBar.width/3)-10
+    inBoxHeight = math.floor(bottomBar.height/2)-6
+    inBox = InputBox("", 5, 3, inBoxWidth, inBoxHeight, (100, 100, 255), (0, 0, 0), fontSize, True, scaler=1, clearOnInput=False, numOnly=True, hColor=hColor)
+    
     genMetronome()
     selectMetBeat(1)
     
     #adding to bottom bar
     bottomBar.addOption(ToolbarOption("scrollbar", scrollbar), Vector2(0,1))
     bottomBar.addOption(ToolbarOption("divisor", divisorSelector), Vector2(0,0))
+    bottomBar.addOption(ToolbarOption("inBox", inBox), Vector2(1,0))
     bottomBar.addOption(ToolbarOption("metronome", metronome), Vector2(2,0))
     
     adjustTimingPointValues()
-    
+
 def hide():
     global selectedTile, lastTimingPoint, initailized
     gui.clear()

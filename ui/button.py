@@ -9,8 +9,8 @@ from ui.text import Text
 from graphics.particleSystem.toggleableEmitter import ToggleableShapedEmitter
 
 class Button:
-    def __init__(self, text, x, y, width, height, color, textColor, onClick, onRelease = lambda: None,z = 0, particles = False, textSize = 40, scaler = 1.25, hColor = None, particlesOnOver = False, textFontPath = "ROGFONTS-REGULAR.ttf"):
-        self.text = Text(text, x + width//2, y+height//2, textColor, textSize, fontPath = textFontPath)
+    def __init__(self, text, x, y, width, height, color, textColor, onClick, onRelease = lambda: None,z = 0, particles = False, textSize = 40, scaler = 1.25, hColor = None, particlesOnOver = False, textFont = "ROG"):
+        self.text = Text(text, x + width//2, y+height//2, textColor, textSize, font = textFont)
         self.x = x
         self.y = y
         self.width = width

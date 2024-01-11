@@ -6,6 +6,7 @@ import logic.level.levelEditor as levelEditor
 from logic.game import game
 from utils.stack import Stack
 import input.input as input
+from fonts.fonts import getFont
 
 screen = None
 screens = None
@@ -48,9 +49,9 @@ def checkInput():
         elif activeScreenName == "game":
             activeScreen.pause()
 
-def drawText(text, x, y, size, color, fontPath, cutOff = None):
+def drawText(text, x, y, size, color, font, cutOff = None):
     global screen
-    text_surface = pygame.font.Font(fontPath, size).render(text, True, color)
+    text_surface = getFont(font, size).render(text, True, color)
     text_rect = text_surface.get_rect(center=(x, y))
 
     if cutOff:

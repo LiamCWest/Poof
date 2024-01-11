@@ -47,8 +47,8 @@ def levelEditor():
         
 title = "Main Menu"
 emitter = ToggleableShapedEmitter(None, None, Vector2(4,4), 250, 25, 10, edges = "V")
-objects = [Button("Start", 200, 200, 880, 100, (80, 93, 112), (255, 255, 255), startGame, particles=deepcopy(emitter), textFontPath= "ROGFONTS-REGULAR.ttf", particlesOnOver=True, scaler = 1.05),
-           Button("Settings", 200, 320, 880, 100, (80, 93, 112), (255, 255, 255), settings, particles=deepcopy(emitter), textFontPath= "ROGFONTS-REGULAR.ttf", particlesOnOver=True, scaler = 1.05),
-           Button("Level Editor", 200, 440, 880, 100, (80, 93, 112), (255, 255, 255), levelEditor, particles=deepcopy(emitter), textFontPath= "ROGFONTS-REGULAR.ttf", particlesOnOver=True, scaler = 1.05),
-           Button("Quit", 200, 560, 880, 100, (80, 93, 112), (255, 255, 255), quit, particles=deepcopy(emitter), textFontPath= "ROGFONTS-REGULAR.ttf", particlesOnOver=True, scaler = 1.05),]
-texts = [Text(title, 640, 100, (255, 255, 255), 100, fontPath= "ROGFONTS-REGULAR.ttf")]
+objects = [Button("Start", 200, 200, 880, 100, (80, 93, 112), (255, 255, 255), startGame, particles=deepcopy(emitter), textFont= "ROG", particlesOnOver=True, scaler = 1.05),
+           Button("Settings", 200, 320, 880, 100, (80, 93, 112), (255, 255, 255), settings, particles=deepcopy(emitter), textFont= "ROG", particlesOnOver=True, scaler = 1.05),
+           Button("Level Editor", 200, 440, 880, 100, (80, 93, 112), (255, 255, 255), levelEditor, particles=deepcopy(emitter), textFont= "ROG", particlesOnOver=True, scaler = 1.05),
+           Button("Quit", 200, 560, 880, 100, (80, 93, 112), (255, 255, 255), quit, particles=deepcopy(emitter), textFont= "ROG", particlesOnOver=True, scaler = 1.05),]
+texts = [Text(title, 640, 100, (255, 255, 255), 100, font= "ROG")]

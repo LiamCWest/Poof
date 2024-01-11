@@ -32,17 +32,17 @@ def init():
     pW = 500
     popups = {
         "pause": Popup(Vector2((1280-pW)/2, 0), pW, 650, (0,0,0), None,
-                [Button("Resume", 50, 162, 400, 100, (80, 93, 112), (255, 255, 255), resume, particles=genericParticles, particlesOnOver=True, textFontPath= "ROGFONTS-REGULAR.ttf", scaler= 1.1),
-                Button("Main Menu", 50, 275, 400, 100, (80, 93, 112), (255, 255, 255), lambda: gui.setScreen("main"), textFontPath= "ROGFONTS-REGULAR.ttf", scaler = 1.1),
-                Button("Settings", 50, 387, 400, 100, (80, 93, 112), (255, 255 ,255), lambda: gui.setScreen("settings"), textFontPath= "ROGFONTS-REGULAR.ttf", scaler = 1.1),
-                Button("Quit", 50, 500, 400, 100, (80, 93, 112), (255, 255, 255), quit, textFontPath= "ROGFONTS-REGULAR.ttf", scaler = 1.1),],
-                [Text("Pause", 250, 80, (255, 255, 255), 100, fontPath= "ROGFONTS-REGULAR.ttf"),]),
+                [Button("Resume", 50, 162, 400, 100, (80, 93, 112), (255, 255, 255), resume, particles=genericParticles, particlesOnOver=True, textFont= "ROG", scaler= 1.1),
+                Button("Main Menu", 50, 275, 400, 100, (80, 93, 112), (255, 255, 255), lambda: gui.setScreen("main"), textFont= "ROG", scaler = 1.1),
+                Button("Settings", 50, 387, 400, 100, (80, 93, 112), (255, 255 ,255), lambda: gui.setScreen("settings"), textFont= "ROG", scaler = 1.1),
+                Button("Quit", 50, 500, 400, 100, (80, 93, 112), (255, 255, 255), quit, textFont= "ROG", scaler = 1.1),],
+                [Text("Pause", 250, 80, (255, 255, 255), 100, font= "ROG"),]),
         "win": Popup(Vector2((1280-pW)/2, 0), pW, 650, (0,0,0), None,
-                [Button("Restart", 50, 162, 400, 100, (80, 93, 112), (255, 255, 255), restart, particles=genericParticles, particlesOnOver=True, textFontPath= "ROGFONTS-REGULAR.ttf", scaler= 1.1),
-                Button("Main Menu", 50, 275, 400, 100, (80, 93, 112), (255, 255, 255), lambda: gui.setScreen("main"), textFontPath= "ROGFONTS-REGULAR.ttf", scaler = 1.1),
-                Button("Settings", 50, 387, 400, 100, (80, 93, 112), (255, 255 ,255), lambda: gui.setScreen("settings"), textFontPath= "ROGFONTS-REGULAR.ttf", scaler = 1.1),
-                Button("Quit", 50, 500, 400, 100, (80, 93, 112), (255, 255, 255), quit, textFontPath= "ROGFONTS-REGULAR.ttf", scaler = 1.1),],
-                [Text("You Win!", 250, 80, (255, 255, 255), 80, fontPath= "ROGFONTS-REGULAR.ttf"),]),
+                [Button("Restart", 50, 162, 400, 100, (80, 93, 112), (255, 255, 255), restart, particles=genericParticles, particlesOnOver=True, textFont= "ROG", scaler= 1.1),
+                Button("Main Menu", 50, 275, 400, 100, (80, 93, 112), (255, 255, 255), lambda: gui.setScreen("main"), textFont= "ROG", scaler = 1.1),
+                Button("Settings", 50, 387, 400, 100, (80, 93, 112), (255, 255 ,255), lambda: gui.setScreen("settings"), textFont= "ROG", scaler = 1.1),
+                Button("Quit", 50, 500, 400, 100, (80, 93, 112), (255, 255, 255), quit, textFont= "ROG", scaler = 1.1),],
+                [Text("You Win!", 250, 80, (255, 255, 255), 80, font= "ROG"),]),
     }
 
 def show():

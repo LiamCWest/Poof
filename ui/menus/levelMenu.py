@@ -37,7 +37,7 @@ def show():
                             Button("Create", (nLW-400)/2, 475, 400, 50, (80, 93, 112), (255,255,255), createLevel, particles = genericParticles, particlesOnOver = True, scaler = 1.1),
                             Button("Close", (nLW-400)/2, 550, 400, 50, (80, 93, 112), (255,255,255), popupClose, scaler = 1.1),
                          ],
-                        [Text("New Level", nLW/2, 75, (255, 255, 255), 60, fontPath = "ROGFONTS-REGULAR.ttf")]),
+                        [Text("New Level", nLW/2, 75, (255, 255, 255), 60, font = "ROG")]),
     }
 
 isLE = False

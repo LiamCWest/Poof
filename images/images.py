@@ -1,10 +1,10 @@
 import pathlib
 import pygame.image as image
-texturePath = pathlib.Path(__file__).parent
+imagesPath = pathlib.Path(__file__).parent
 
 def loadImage(name):
-    global texturePath
-    imagePath = texturePath/name
+    global imagesPath
+    imagePath = imagesPath/name
     return image.load(str(imagePath)).convert_alpha()
 
 images = {

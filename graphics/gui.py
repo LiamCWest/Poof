@@ -1,5 +1,6 @@
 import pygame
 import ctypes
+import platform
 
 from ui.menus import mainMenu, settingsMenu, levelMenu
 import logic.level.levelEditor as levelEditor
@@ -14,7 +15,7 @@ activeScreen = None
 activeScreenName = None
 screenStack = Stack()
 def init():
-    ctypes.windll.user32.SetProcessDPIAware() #makes window not scale with display scaling
+    if platform.system() == "Windows": ctypes.windll.user32.SetProcessDPIAware() #makes window not scale with display scaling
     
     global screen, screens, activeScreen, activeScreenName
     screen = pygame.display.set_mode((1280, 720), pygame.SCALED)

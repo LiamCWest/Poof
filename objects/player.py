@@ -16,9 +16,6 @@ class PlayerState:
         self.animState = None #standing, walking, gliding, dead
         self.acc = None
         self.deathTime = None
-        self.gliding = False
-        self.glideStartPos = None
-        self.glideDir = None
 
 class Player:
     offset = Vector2(5.9, 3.1) #TODO: Don't hardcode these values
@@ -68,17 +65,20 @@ class Player:
             thisAcc = abs(tileTime - time)
             return (currentAcc * (movesMade - 1) + thisAcc) / movesMade #weighted average           
         
-        state = PlayerState()
-        state.time = searchTime
-        state.countedMovesMade = 0
+        state = PlayerState() #create an empty state
+        state.time = searchTime #this is the time of the state, obviously
         state.acc = 0
         
-        state.pos = self.startPos.copy()
-        state.visiblePos = self.startPos.copy()
-        currentTile = None
+        state.pos = self.startPos.copy() #state pos starts at the player's start pos
+        state.visiblePos = self.startPos.copy() #same with visual pos
         
-        state.direction = Vector2(0, 1)
+        state.direction = Vector2(0, 1) #default values
         state.animState = "standing"
+        
+        currentTile = None #values that are kinda player state but not important enough to actually be in state
+        gliding = False
+        glideStartPos = None
+        glideDir = None
         
         tile = level.getTileAt(state.pos, self.startTime)
         if tile is None:
@@ -87,87 +87,90 @@ class Player:
             return #If there's no tile at the start then you die at the start
         currentTile = tile #Otherwise that's the tile you're on
 
-        for i, move in enumerate(self.moves):
+        for i, move in enumerate(self.moves): #run through all the moves
             moveTime = move[1]
             if moveTime > searchTime:
                 return state #If you've reached the time you want to, then you are alive and at your current pos
             
-            if not move[2]: #if your last move is a key release
-                if state.gliding and state.glideDir == move[0]: #if you release the glide while you're gliding, that means you must be over the void and die
+            if not move[2]: # if the move is a key release
+                if gliding and glideDir == move[0]: #if you release the glide while you're gliding, that means you must be over the void and die
                     state.deathTime = move[1]
                     state.animState = "dead"
                     return state
                 else: #else dont care about releases
                     continue
                 
-            state.direction = move[0]
+            state.direction = move[0] #the direction you're moving is the direction you're moving, obviously
             
             #the move must now be a press
-            tile = level.getTileAt(state.pos, moveTime)
+            tile = level.getTileAt(state.pos, moveTime) #get the tile that you moved off of
             if tile != currentTile:
                 state.deathTime = currentTile.disappearTime + level.disappearLength #If you're not on the same tile as before when you start moving, then you died
                 state.animState = "dead"
                 return state
             
             if tile is not None and tile.type == "glide": #if you move off a glide tile
-                state.gliding = True
-                state.glideStartPos = tile.pos
-                state.glideDir = move[0]
+                gliding = True #all of the stuff that's obviously happening cause you're gliding
+                glideStartPos = tile.pos
+                glideDir = move[0]
 
                 nextPressTime = float("inf")
                 j = i + 1
                 while j < len(self.moves):
-                    if self.moves[j][2]:
+                    '''if self.moves[j][2]:
                         nextPressTime = self.moves[j][1] #get the time of the next press move
-                        break
+                        break'''
+                    nextPressTime = self.moves[j][1] #get the time of the next press move
+                    break
                     j += 1
-                glideEndTime = min(state.time, nextPressTime) #calculate the glide until that time
-                glideTimeOffset = move[1] - tile.disappearTime #the time off of the perfect glide time that you're gliding
+                glideEndTime = min(state.time, nextPressTime) #wanna calculate the glide until the glide should end
+                glideTimeOffset = move[1] - tile.disappearTime #the time off of the "perfect" glide time that you're gliding
                 
-                glidePositions = []
-                glidePositions.append(move[1])
+                timeAtGlideDistances = [] #an array of all the times you will be various distances away from the glide start pos
+                timeAtGlideDistances.append(move[1]) #you are at your current pos at your current time, obviously
                 
-                timeInRange = getPreviousBeat(level.timingPoints, tile.disappearTime, tile.divisor * 2)
+                timeInRange = getPreviousBeat(level.timingPoints, tile.disappearTime, tile.divisor * 2) #get half a beat offset, because you actually move on offbeats
                 while True:
                     timeInRange = getNextBeat(level.timingPoints, timeInRange, tile.divisor * 2)
-                    timeInRange = getNextBeat(level.timingPoints, timeInRange, tile.divisor * 2)
-                    glidePositions.append(timeInRange + glideTimeOffset)
-                    if timeInRange + glideTimeOffset > glideEndTime:
+                    timeInRange = getNextBeat(level.timingPoints, timeInRange, tile.divisor * 2) #go one beat forward
+                    timeAtGlideDistances.append(timeInRange + glideTimeOffset) #add your new time
+                    if timeInRange + glideTimeOffset > glideEndTime: #if you've glided past the end time, then no need to care about what happens later
                         break
                 
                 isTileHit = False
-                for i, glide in enumerate(glidePositions[:-1]): #check if you hit a tile while you were gliding
-                    pos = state.glideStartPos + move[0].multiply(i)
-                    tilesHit = level.getTilesOverlapping(pos, glide, glidePositions[i + 1])
-                    for tile2 in tilesHit:
-                        if tile2 == tile:
+                for i, glide in enumerate(timeAtGlideDistances[:-1]): #loop over all the positions you would be at while gliding
+                    pos = glideStartPos + move[0].multiply(i) #get the position
+                    tilesHit = level.getTilesOverlapping(pos, glide, timeAtGlideDistances[i + 1]) #check if there were any tiles while you were on that position
+                    for tile2 in tilesHit: #loop over all the tiles
+                        if tile2 == tile: #if its the tile you start on, dont care
                             continue
                         timeHit = max(tile2.appearedTime - level.appearLength, glide)
-                        if timeHit > state.time:
+                        if timeHit > state.time: #if its after the current time, dont care
                             continue
                         
-                        tileHit = tile2
-                        state.pos = tileHit.pos
+                        state.pos = tile2.pos #the position you're at after landing on the tile
                         
+                        #do some stupid interpolation to get the visible pos, because it lags behind the actual pos for reasons
                         lastMoveIndex = i
                         nextMoveIndex = i + 1
-                        timeInLastRange = glidePositions[lastMoveIndex]
-                        timeInNextRange = glidePositions[nextMoveIndex]
+                        timeAtLastPos = timeAtGlideDistances[lastMoveIndex]
+                        timeAtNextPos = timeAtGlideDistances[nextMoveIndex]
                         lastDistance = lastMoveIndex - 0.5
                         nextDistance = nextMoveIndex - 0.5
-                        state.visiblePos = state.glideStartPos + move[0].multiply(min(lastMoveIndex, lerp(lastDistance, nextDistance, timeInLastRange, timeInNextRange, state.time), lastMoveIndex))
+                        state.visiblePos = glideStartPos + move[0].multiply(min(lastMoveIndex, lerp(lastDistance, nextDistance, timeAtLastPos, timeAtNextPos, state.time), lastMoveIndex))
                         
-                        if state.time > timeInNextRange:
+                        #if you've passed the time where you have visibly landed on the tile, you're standing. else, you're gliding
+                        if state.time > timeAtNextPos:
                             state.animState = "standing"
                         else:
                             state.animState = "gliding"
                         
-                        state.gliding = False #and you're on a tile so you're not gliding anymore
-                        state.glideStartPos = None
-                        state.glideDir = None
-                        currentTile = tileHit
+                        gliding = False #and you're on a tile so you're not gliding anymore
+                        glideStartPos = None
+                        glideDir = None
+                        currentTile = tile2 #and you're on a tile
                         isTileHit = True
-                        break
+                        break #stupid mess to break out of these 2 loops and then continue the 3rd loop cause python doesn't have labeled breaks
                     else:
                         continue
                     break
@@ -176,26 +179,28 @@ class Player:
                     continue
                 
                 #else you're still gliding                        
-                lastMoveIndex = bisect.bisect_right(glidePositions, glideEndTime) - 1
+                lastMoveIndex = len(timeAtGlideDistances) - 2 #because of how timeAtGlideDistances works, the 2nd last entry is always the index of the last move
                 nextMoveIndex = lastMoveIndex + 1
-                state.pos = state.glideStartPos + move[0].multiply(lastMoveIndex) #pos goes to glide pos
+                state.pos = glideStartPos + move[0].multiply(lastMoveIndex) #pos goes to glide pos
                 
-                timeInLastRange = glidePositions[lastMoveIndex]
-                timeInNextRange = glidePositions[nextMoveIndex]
+                #more lerp stuff
+                timeAtLastPos = timeAtGlideDistances[lastMoveIndex]
+                timeAtNextPos = timeAtGlideDistances[nextMoveIndex]
                 lastDistance = max(lastMoveIndex - 0.5, 0)
                 nextDistance = nextMoveIndex - 0.5
-                state.visiblePos = state.glideStartPos + move[0].multiply(lerp(lastDistance, nextDistance, timeInLastRange, timeInNextRange, glideEndTime))
+                state.visiblePos = glideStartPos + move[0].multiply(lerp(lastDistance, nextDistance, timeAtLastPos, timeAtNextPos, glideEndTime))
                 
                 state.animState = "gliding"
                 
                 currentTile = None #you're not on a tile cause you're gliding
                 
             else: #else move normally
-                state.gliding = False
-                state.glideStartPos = None
-                state.glideDir = None
+                gliding = False
+                glideStartPos = None
+                glideDir = None
                 state.pos += move[0] #Make the move you were trying to make
 
+                #morier interp stuff
                 lastPos = state.pos - move[0]
                 lastTime = move[1]
                 thisPos = state.pos
@@ -204,7 +209,7 @@ class Player:
                 y = easeOutPow(lastPos.y, thisPos.y, lastTime, thisTime, 3, state.time)
                 state.visiblePos = Vector2(x, y)
                 
-                if state.time > lastTime:
+                if state.time > thisTime:
                     state.animState = "standing"
                 else:
                     state.animState = "walking"
@@ -218,8 +223,9 @@ class Player:
                 currentTile = tile #Otherwise that's the tile you're on
             
         tile = level.getTileAt(state.pos, searchTime) #If your last move was made before the search time
-        if tile != currentTile and not state.gliding:
+        if tile != currentTile and not gliding:
             state.deathTime = currentTile.disappearTime + level.disappearLength #If you're not on the same tile as before, then you died
             state.animState = "dead"
             return state
+        
         return state

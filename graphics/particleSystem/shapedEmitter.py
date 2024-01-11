@@ -13,5 +13,6 @@ class ShapedEmitter(Emitter):
                 pos = self.shape.randomPointOnEdge()
             else:
                 pos = self.shape.randomPointOnParallelRectangleSides(self.edges)
-            vel = self.shape.dirAt(pos) * self.velocity
+            dir = self.shape.dirAt(pos)
+            vel = dir * self.velocity
             return Particle(pos + self.pos, vel, self.lifeTime, self.size)

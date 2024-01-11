@@ -24,7 +24,7 @@ def show():
     
     popupOpen = False
     nLW = 500
-    genericParticles = ShapedEmitter(None, None, Vector2(2,2), 500, 15, 5)
+    genericParticles = ShapedEmitter(None, None, Vector2(2,2), 750, 15, 5)
     popups = {
         "newLevel": Popup(Vector2((1280-nLW)/2, 0), nLW, 650, (0,0,0), None,
                         [

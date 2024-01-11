@@ -67,10 +67,10 @@ class Vector2:
         if length == 0:
             return Vector2(0, 0)
         else:
-            return Vector2(self.x / length, self.y / length)
+            return self.divide(length)
 
     def length(self):
-        return (self.x**2 + self.y**2)**0.5
+        return math.sqrt(math.pow(self.x,2) + math.pow(self.y,2))
     
     def toTuple(self):
         return (self.x, self.y)
@@ -83,6 +83,9 @@ class Vector2:
     
     def floor(self):
         return Vector2(math.floor(self.x), math.floor(self.y))
+    
+    def distance(self, other):
+        return (self - other).length()
     
     @classmethod
     def from_tuple(cls, tuple):

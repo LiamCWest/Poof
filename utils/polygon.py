@@ -41,10 +41,15 @@ class Polygon:
     def calcNormals(self):
         for edge in self.edges:
             self.normals.append(edge.normal())
-            
+    
+    def weightedRandomEdge(self, edges):
+        #random edge of polygon, weighted by length
+        weights = [edge.p1.distance(edge.p2) for edge in edges]
+        return random.choices(edges, weights)[0]
+    
     def randomPointOnEdge(self):
         #random position along edge of polygon
-        edge = random.choice(self.edges)
+        edge = self.weightedRandomEdge(self.edges)
         x = random.uniform(edge.p1.x, edge.p2.x)
         y = random.uniform(edge.p1.y, edge.p2.y)
         return Vector2(x,y)+self.pos
@@ -54,9 +59,9 @@ class Polygon:
             print("Don't use this function on non-quadrilateral shapes")
         
         if H_or_V == "H":
-            edge = random.choice([self.edges[0],self.edges[2]])
+            edge = self.weightedRandomEdge([self.edges[0],self.edges[2]])
         else:
-            edge = random.choice([self.edges[1],self.edges[3]])
+            edge = self.weightedRandomEdge([self.edges[1],self.edges[3]])
         
         x = random.uniform(edge.p1.x, edge.p2.x)
         y = random.uniform(edge.p1.y, edge.p2.y)
@@ -64,7 +69,7 @@ class Polygon:
             
     def dirAt(self, pos):
         #angle from pos to center of polygon as a vector2 (normalized)
-        return (pos-self.pos).multiply(-1).normalize().invert()
+        return (pos-self.pos).normalize()
 
     def getWidth(self):
         #width of polygon

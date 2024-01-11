@@ -27,7 +27,7 @@ def init():
     win = False
     won = False
     started = True
-    genericParticles = ShapedEmitter(None, None, Vector2(2,2), 250, 15, 5)
+    genericParticles = ShapedEmitter(None, None, Vector2(2,2), 500, 15, 5)
     popupOpen = False
     pW = 500
     popups = {

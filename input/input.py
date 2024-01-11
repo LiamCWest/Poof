@@ -229,17 +229,16 @@ keyActionBindings = {
     "up": ButtonEvent("'w'"),
     "right": ButtonEvent("'d'"),
     "down": ButtonEvent("'s'"),
-    "dash": ButtonEvent("Key.shift"),
     
     #Editor bindings
-    "moveTileLeft": ButtonEvent(("<37>", "<65361>"), None, "shift"),
-    "moveTileUp": ButtonEvent(("<38>", "<65362>"), None, "shift"),
-    "moveTileRight": ButtonEvent(("<39>", "<65363>"), None, "shift"),
-    "moveTileDown": ButtonEvent(("<40>", "<65364>"), None, "shift"),
-    "increaseTileLength": ButtonEvent(("<38>", "<65362>"), "shift"),
-    "decreaseTileLength": ButtonEvent(("<40>", "<65364>"), "shift"),
-    "timeBackwards": ButtonEvent(("<37>", "<65361>"), "shift"),
-    "timeForwards": ButtonEvent(("<39>", "<65363>"), "shift"),
+    "moveTileLeft": ButtonEvent(("<37>", "<65361>", "'a'"), None, "shift"),
+    "moveTileUp": ButtonEvent(("<38>", "<65362>", "'w'"), None, "shift"),
+    "moveTileRight": ButtonEvent(("<39>", "<65363>", "'d'"), None, "shift"),
+    "moveTileDown": ButtonEvent(("<40>", "<65364>", "'s'"), None, "shift"),
+    "increaseTileLength": ButtonEvent(("<38>", "<65362>", "'w'"), "shift"),
+    "decreaseTileLength": ButtonEvent(("<40>", "<65364>", "'s'"), "shift"),
+    "timeBackwards": ButtonEvent(("<37>", "<65361>", "'a'"), "shift"),
+    "timeForwards": ButtonEvent(("<39>", "<65363>", "'d'"), "shift"),
     "play": ButtonEvent("<32>"),
 }
 

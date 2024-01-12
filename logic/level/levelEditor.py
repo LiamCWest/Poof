@@ -127,15 +127,16 @@ def update():
         if selectedMode == "select" and input.mouseBindings["lmb"].justPressed:
             selectedTile = level.getTileAt(level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos), songPlayer.getPos())
         
-        if selectedMode in ["platform", "glide", "rest"] and input.mouseBindings["lmb"].justPressed:
-            tilePos = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
-            tileTime = timingPoints.getNearestBeat(level.timingPoints, songPlayer.getPos(), divisor)
-            if level.getTileAt(tilePos, tileTime) is None:
-                tile = Tile(tilePos, None, tileTime, tileTime, selectedMode)
-                if selectedMode == "glide":
-                    tile.divisor = 1
-                level.addTile(tile)
-                selectedTile = level.getTileAt(tilePos, tileTime)
+        if selectedMode in ["platform", "glide", "glide\npath", "rest"] and input.mouseBindings["lmb"].justPressed:
+            if selectedMode != "glide\npath": 
+                tilePos = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
+                tileTime = timingPoints.getNearestBeat(level.timingPoints, songPlayer.getPos(), divisor)
+                if level.getTileAt(tilePos, tileTime) is None:
+                    tile = Tile(tilePos, None, tileTime, tileTime, selectedMode)
+                    if selectedMode == "glide":
+                        tile.divisor = 1
+                    level.addTile(tile)
+                    selectedTile = level.getTileAt(tilePos, tileTime)
             
         if selectedMode == "delete" and input.mouseBindings["lmb"].justPressed:
             tilePos = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
@@ -307,11 +308,11 @@ def init():
     fontSize = 20
 
     # top bar #
-    numButtons = 10
+    numButtons = 11
     w = buttonSize*numButtons # width of the top bar
     topBar = Toolbar(Vector2(numButtons, 1), Vector2((gui.screen.get_width()-w)//2, 0), w, buttonSize) # toolbar for the top bar
 
-    modes = ["move", "select", "platform", "glide", "rest", "delete"] # possible modes
+    modes = ["move", "select", "platform", "rest", "glide", "glide\npath", "delete"] # possible modes
     topbarButtons = { # buttons on the top bar
         "save": lambda: level.save(levelF), 
         "delete\npoint": lambda: deletePoint(),

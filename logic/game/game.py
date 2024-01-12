@@ -23,7 +23,7 @@ levelF = None
 
 popups = {}
 def init():
-    global started, popups, popupOpen, win, won
+    global started, popups, popupOpen, win, won, accText
     win = False
     won = False
     started = True
@@ -40,7 +40,8 @@ def init():
                 [Button("Restart", 50, 275, 400, 100, (80, 93, 112), (255, 255, 255), onRelease=restart, particles=genericParticles, particlesOnOver=True, textFont= "ROG", scaler= 1.1),
                 Button("Main Menu", 50, 387, 400, 100, (80, 93, 112), (255, 255, 255), onRelease=lambda: gui.setScreen("main"), textFont= "ROG", scaler = 1.1),
                 Button("Settings", 50, 500, 400, 100, (80, 93, 112), (255, 255 ,255), onRelease=lambda: gui.setScreen("settings"), textFont= "ROG", scaler = 1.1)],
-                [Text("You Win!", 250, 80, (255, 255, 255), 80, font= "ROG"),]),
+                [Text("You Win!", 250, 80, (255, 255, 255), 80, font= "ROG"),
+                 Text("", 250, 191, (255, 255, 255), 40, font= "ROG"),]),
     }
 
 def show():
@@ -58,13 +59,16 @@ def restart():
 def hide():
     gui.clear()
 
+endTime = None
+endPositions = None
 def loadLevel(levelFile):
-    global level, endTile, levelF
+    global level, endTime, endPositions, levelF
     levelF = levelFile
     songPlayer.unload()
     init()
     level = Level.fromFile(levelFile)
-    endTile = level.endTile()
+    endTime = level.getEndTime()
+    endPositions = level.getEndPositions()
     
 def checkSignature(data, signature):
     return hashlib.sha256(json.dumps(data).encode()).hexdigest() == signature
@@ -90,19 +94,27 @@ def checkInput():
     elif input.keyActionBindings["down"].justReleased:
         level.player.stopMove(Vector2(0, 1), input.keyActionBindings["down"].songTimeLastReleased)
 
-win = False
 won = False
 def checkWin():
-    global level, endTile, win, popups, popupOpen, playing, won
-    if level.player.calculateState(level, songPlayer.getPos()).pos == endTile.pos and not won:
-        win = True
-    if win and endTile.disappearTime <= songPlayer.getPos():
-        win = False
-        songPlayer.pause()
-        playing = False
-        popupOpen = True
+    global level, endPositions, endTime, popups, popupOpen, playing, won
+    timeSourceTime = songPlayer.getPos()
+    playerState = level.player.calculateState(level, timeSourceTime)
+    if playerState.pos not in endPositions:
+        return
+    
+    if playerState.deathTime is not None and playerState.deathTime <= endTime:
+        return
+
+    if playerState.time <= endTime:
+        return
+        
+    playing = False
+    popupOpen = True
+    won = True
+    songPlayer.pause()
+    if not popups["win"].open:
+        popups["win"].texts[-1].text = accText.text #kinda questionable
         popups["win"].show()
-        won = True
 
 def update():
     global playing, popupOpen, popups, playWait
@@ -140,8 +152,10 @@ def play():
     playing = True
 
 def draw():
-    global accText
+    global accText, endTime, won
     timeSourceTime = songPlayer.getPos()
+    if endTime < timeSourceTime and won:
+        timeSourceTime = endTime
     
     playerState = level.player.calculateState(level, timeSourceTime)
     if playerState.deathTime is None or playerState.deathTime + level.deathTimeBuffer >= timeSourceTime:
@@ -149,10 +163,10 @@ def draw():
     else:
         level.restart()
     
-    accText.text = f"Acc: {int(playerState.acc * 1000)}ms   Offset: {int(abs(playerState.offset) * 1000)}ms"
+    accText.text = f"Acc: {int(playerState.acc * 1000)}ms\nOffset: {int(playerState.offset * 1000)}ms"
     accText.draw()
     
     for popup in popups.values():
         popup.draw()
         
-accText = Text("", 600, 100)
+accText = Text("", 640, 75, (255, 255, 255), 30)

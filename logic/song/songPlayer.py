@@ -19,16 +19,22 @@ def getSongLength():
 def unpause():
     mixer.music.unpause()
     
+    global isSeekPos
+    isSeekPos = False
+    
 def pause():
     mixer.music.pause()
 
 seekPos = 0 #when play is called, it resets mixer.music.get_pos() to 0, so this is the time that was passed into seek so it can be added later
+isSeekPos = False
 def seek(position):
     position = min(max(0, position), getSongLength()) #so position can't be outside the valid range
     
-    global lastPos, seekPos
+    global lastPos, seekPos, isSeekPos
     lastPos = position #reset lastPos
     seekPos = position #set seekPos
+    if not getIsPlaying():
+        isSeekPos = True
     
     wasPlaying = getIsPlaying() #so it can keep being paused
     oldVolume = getVolume()
@@ -40,7 +46,10 @@ def seek(position):
 
 lastPos = float("-inf") #for whatever reason, the time returned by music.get_pos() can sometimes go backwards, so this makes it not do that
 def getPos():
-    global lastPos
+    global lastPos, seekPos, isSeekPos
+    if isSeekPos:
+        return seekPos
+
     currentPos = mixer.music.get_pos() / 1000 + seekPos
     
     lastPos = max(lastPos, currentPos)

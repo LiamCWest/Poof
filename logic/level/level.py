@@ -17,7 +17,6 @@ class Level:
         self.disappearLength = disappearLength
         
         tileEvents = [self.createEventFromTile(tile) for tile in tiles]
-        self.tiles = tiles
         self.tileAnim = Animation(tileEvents, 0)
         self.pos = Vector2(0, 0)
         self.tileSize = Vector2(100, 100)
@@ -146,13 +145,13 @@ class Level:
     def tilePosToScreenPos(self, tilePos, topLeftPos):
         return self.tileSize * (topLeftPos - tilePos)
     
-    def endTile(self):
-        max = (0, 0)
-        for i,tile in enumerate(self.tiles):
-            if tile.disappearTime > max[1]:
-                max = (i, tile.disappearTime)
-                
-        return self.tiles[max[0]]
+    def getEndTime(self):
+        return math.nextafter(self.tileAnim.tree.end(), float("-inf")) - self.disappearLength
+    
+    def getEndPositions(self):
+        endIntervals =  self.tileAnim.tree.at(math.nextafter(self.tileAnim.tree.end(), float("-inf")))
+        endTiles = [i.data[1].pos for i in endIntervals]
+        return endTiles
     
     @classmethod
     def fromFile(cls, levelFile):

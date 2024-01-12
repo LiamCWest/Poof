@@ -23,8 +23,10 @@ class Tile:
             return images.images["platform"]
         elif self.type == "glide":
             return images.images["glide"]
-        else:
+        elif self.type == "rest":
             return images.images["rest"]
+        else:
+            return images.images["glidePath"]
     
     def getScaleFromAppearAnimTime(self, timeIntoAppearAnim, appearLength): #temp, to be replaced with proper animation
         return timeIntoAppearAnim / appearLength

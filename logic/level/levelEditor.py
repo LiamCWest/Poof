@@ -131,15 +131,16 @@ def update():
             selectedTile = level.getTileAt(level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos), songPlayer.getPos())
         
         if selectedMode in ["platform", "glide", "glide\npath", "rest"] and input.mouseBindings["lmb"].justPressed:
-            if selectedMode != "glide\npath": 
-                tilePos = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
-                tileTime = timingPoints.getNearestBeat(level.timingPoints, songPlayer.getPos(), divisor)
-                if level.getTileAt(tilePos, tileTime) is None:
-                    tile = Tile(tilePos, None, tileTime, tileTime, selectedMode)
-                    if selectedMode == "glide":
-                        tile.divisor = 1
-                    level.addTile(tile)
-                    selectedTile = level.getTileAt(tilePos, tileTime)
+            tilePos = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)
+            tileTime = timingPoints.getNearestBeat(level.timingPoints, songPlayer.getPos(), divisor)
+            if level.getTileAt(tilePos, tileTime) is None:
+                tile = Tile(tilePos, None, tileTime, tileTime, selectedMode)
+                if selectedMode == "glide":
+                    tile.divisor = 1
+                if selectedMode == "glide\npath":
+                    tile.type = "glidePath"
+                level.addTile(tile)
+                selectedTile = level.getTileAt(tilePos, tileTime)
             
         if selectedMode == "delete" and input.mouseBindings["lmb"].justPressed:
             tilePos = level.screenPosToRoundedTilePos(input.mousePos.pos, levelPos)

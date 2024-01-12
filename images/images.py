@@ -14,6 +14,7 @@ images = {
     
     "platform": None,
     "glide": None,
+    "glidePath": None,
     "rest": None,
     
     "player_left": None,
@@ -31,6 +32,7 @@ def init():
     images["debug"] = loadImage("debug.png")
     images["platform"] = loadImage("platform.png")
     images["glide"] = loadImage("glide.png")
+    images["glidePath"] = loadImage("glidePath.png")
     images["rest"] = loadImage("rest.png")
     
     images["player_left"] = loadImage("player/player_left.png")

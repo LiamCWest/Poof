@@ -158,6 +158,8 @@ class Player:
                     pos = glideStartPos + move[0].multiply(i) #get the position
                     tilesHit = level.getTilesOverlapping(pos, glide, timeAtGlideDistances[i + 1]) #check if there were any tiles while you were on that position
                     for tile2 in tilesHit: #loop over all the tiles
+                        if tile2.type == "glidePath": #TODO: MAKE GLIDE PATHS WORK PROPERLY
+                            continue
                         if tile2 == tile: #if its the tile you start on, dont care
                             continue
                         timeHit = max(tile2.appearedTime - level.appearLength, glide)

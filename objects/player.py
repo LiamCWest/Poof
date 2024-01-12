@@ -7,6 +7,8 @@ from utils.vector2 import Vector2
 from utils.binarySearch import binarySearch
 from graphics.animation import *
 from logic.song.timingPoints import getNextBeat, getPreviousBeat, getNearestBeat
+from graphics.particleSystem.emitter import Emitter
+from graphics.particleSystem.toggleableEmitter import ToggleableEmitter
 
 class PlayerState:
     def __init__(self):
@@ -28,12 +30,17 @@ class Player:
         self.startPos = startPos
         self.startTime = startTime
         self.fallingScaler = 1
+        
+        self.emitter = ToggleableEmitter(self.startPos, (1,1), 100, 15, 5, 20, [(1,1),(1,1)])
                 
         self.moves = [] #Tuple of (diff, time, isPress)
         
     def draw(self, win, state): 
         if state is None:
             return
+        
+        self.emitter.pos = state.pos
+        self.emitter.update()
         
         size = 100
         
@@ -44,6 +51,14 @@ class Player:
                 Vector2(1, 0): images.images["player_right_moving"],
                 Vector2(0, 1): images.images["player_down_moving"]
             }
+            particleDirections = {
+                Vector2(-1, 0): [(-0.5,-1),(-0.2,0.2)],
+                Vector2(0, -1): [(-0.2,0.2),(-0.5,-1)],
+                Vector2(1, 0): [(0.5,1),(0.2,-0.2)],
+                Vector2(0, 1): [(-0.2,0.2),(0.5,1)]
+            }
+            self.emitter.directionRange = particleDirections[state.direction]
+            self.emitter.go = True
         else:
             imgs = {
                 Vector2(-1, 0): images.images["player_left"],
@@ -51,12 +66,14 @@ class Player:
                 Vector2(1, 0): images.images["player_right"],
                 Vector2(0, 1): images.images["player_down"]
             }
+            self.emitter.go = True
         img = imgs[state.direction]
         
         if state.deathTime is not None:
             deadScale = easeInPow(1, 0, state.deathTime, state.deathTime + 0.3, 2, state.time)
         else:
             deadScale = 1
+        self.emitter.draw(win,state.pos)
         win.blit(pygame.transform.scale(img, (size * deadScale, size * deadScale)), self.offset.add((1 - deadScale) / 2).multiply(size).toTuple())
         
     def move(self, diff, time):

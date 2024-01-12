@@ -1,5 +1,5 @@
+# external imports
 import pygame.mixer as mixer
-import logic.song.timingPoints as timingPoints
 
 songLength = None
 def load(songPath):

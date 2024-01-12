@@ -1,13 +1,16 @@
-from utils.vector2 import Vector2
-from objects.player import Player
-from graphics.animation import *
-from utils.polygon import Polygon
+# external imports
+import hashlib
+import json
+
+# internal imports
 import graphics.gui as gui
 import logic.song.songPlayer as songPlayer
 from logic.song.timingPoints import TimeSignature, TimingPoint
+from utils.vector2 import Vector2
+from utils.polygon import Polygon
+from objects.player import Player
 from objects.tile import Tile
-import json
-import hashlib
+from graphics.animation import *
 
 class Level:
     deathTimeBuffer = 0.5

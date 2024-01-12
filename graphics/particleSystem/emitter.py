@@ -1,6 +1,9 @@
+# external imports
+import random
+
+# internal imports
 from graphics.particleSystem.particle import Particle
 from utils.vector2 import Vector2
-import random
 import input.input as input
 
 class Emitter:

@@ -1,3 +1,4 @@
+# internal imports
 from graphics import gui
 from ui.button import Button
 from ui.text import Text

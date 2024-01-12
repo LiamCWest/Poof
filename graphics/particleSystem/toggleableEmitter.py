@@ -1,3 +1,4 @@
+# internal imports
 from graphics.particleSystem.shapedEmitter import ShapedEmitter
 import input.input as input
 

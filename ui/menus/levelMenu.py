@@ -1,6 +1,7 @@
+# external imports
 import os
 
-from graphics import gui
+# internal imports
 from ui.button import Button
 from ui.popup import Popup
 from ui.inputBox import InputBox
@@ -9,6 +10,7 @@ from utils.vector2 import Vector2
 from logic.level.level import Level
 from logic.song.timingPoints import TimeSignature, TimingPoint
 from objects.tile import Tile
+from graphics import gui
 from graphics.particleSystem.shapedEmitter import ShapedEmitter
 
 popups = []

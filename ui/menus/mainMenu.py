@@ -1,4 +1,7 @@
-from graphics import gui
+# external imports
+from copy import deepcopy
+
+# internal imports
 from ui.button import Button
 from ui.text import Text
 from ui.scrollbar import Scrollbar
@@ -7,8 +10,8 @@ from ui.inputBox import InputBox
 from logic.level import levelEditor as LE
 from logic.game import game
 from utils.vector2 import Vector2
+from graphics import gui
 from graphics.particleSystem.toggleableEmitter import ToggleableShapedEmitter
-from copy import deepcopy
 
 def show():
     gui.clear()

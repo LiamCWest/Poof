@@ -1,8 +1,9 @@
+# external imports
+import pygame
+
+# internal imports
 import graphics.gui as gui
 from utils.vector2 import Vector2
-from pygame.font import Font
-
-import pygame
 
 class Text:
     def __init__(self, text, x, y, color=(0, 0, 0), size=25, bgColor=None, width=0, height=0, z=0, font = "ROG"):

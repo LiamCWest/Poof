@@ -1,13 +1,15 @@
+# external imports
 import pygame
 import ctypes
 import platform
 
-from ui.menus import mainMenu, settingsMenu, levelMenu
+# internal imports
 import logic.level.levelEditor as levelEditor
+import input.input as input
 from logic.game import game
 from utils.stack import Stack
-import input.input as input
 from fonts.fonts import getFont
+from ui.menus import mainMenu, settingsMenu, levelMenu
 
 screen = None
 screens = None

@@ -1,12 +1,11 @@
+# external imports
 import pygame
-import input.input as input
 
-from graphics import gui
-from graphics.particleSystem.shapedEmitter import ShapedEmitter
+# internal imports
+import input.input as input
 from utils.vector2 import Vector2
 from utils.polygon import Polygon
 from ui.text import Text
-from graphics.particleSystem.toggleableEmitter import ToggleableShapedEmitter
 
 class Button:
     def __init__(self, text, x, y, width, height, color, textColor, onClick = lambda: None, onRelease = lambda: None,z = 0, particles = False, textSize = 40, scaler = 1.25, hColor = None, particlesOnOver = False, textFont = "ROG"):

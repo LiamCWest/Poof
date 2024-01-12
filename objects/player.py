@@ -1,6 +1,8 @@
-from images import images
+# external imports
 import pygame
-import bisect
+
+# internal imports
+from images import images
 from utils.vector2 import Vector2
 from utils.binarySearch import binarySearch
 from graphics.animation import *

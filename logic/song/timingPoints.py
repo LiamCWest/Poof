@@ -1,5 +1,8 @@
-from utils.binarySearch import binarySearch
+# external imports
 import math
+
+# internal imports
+from utils.binarySearch import binarySearch
 
 class TimeSignature:
     def __init__(self, num, denom):

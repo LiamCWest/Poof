@@ -1,18 +1,18 @@
-from graphics import gui
-from objects.tile import Tile
-from objects.player import Player
-from utils.vector2 import Vector2
-from logic.level.level import Level
+# external imports
+import json
+import hashlib
+
+# internal imports
 import input.input as input
-from graphics.animation import easeInPow
 import logic.song.songPlayer as songPlayer
-from logic.song.timingPoints import TimingPoint, TimeSignature
+from logic.level.level import Level
+from objects.player import Player
 from ui.text import Text
 from ui.popup import Popup
 from ui.button import Button
+from graphics import gui
+from utils.vector2 import Vector2
 from graphics.particleSystem.shapedEmitter import ShapedEmitter
-import json
-import hashlib
 
 tiles = None
 level = None

@@ -1,5 +1,7 @@
+# external imports
 import pathlib
 import pygame.image as image
+
 imagesPath = pathlib.Path(__file__).parent
 
 def loadImage(name):

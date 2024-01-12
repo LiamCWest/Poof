@@ -1,9 +1,11 @@
+# external imports
+import pygame
+
+# internal imports
 from ui.button import Button
-from ui.text import Text
 from utils.polygon import Polygon
 from utils.vector2 import Vector2
 from input import input
-import pygame
 
 class InputBox(Button):
     def __init__(self, text, x, y, width, height, color, textColor, textSize = 40, sizeLocked = False, maxLength = 20, scaler = 1.25, clearOnInput = True, numOnly = False, hColor = None, textFont = "ROG"):

@@ -1,8 +1,11 @@
-from pynput import keyboard, mouse
+# external imports
 import pygame
+from pynput import keyboard, mouse
+from itertools import chain
+
+# internal imports
 import logic.song.songPlayer as songPlayer
 from utils.vector2 import Vector2
-from itertools import chain
 
 def getSongTime():
     return songPlayer.getPos() if songPlayer.getIsPlaying() else None

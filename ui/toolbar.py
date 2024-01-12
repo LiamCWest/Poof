@@ -1,8 +1,11 @@
+# external imports
+import pygame
+
+# internal imports
 from utils.vector2 import Vector2
 from utils.polygon import Polygon
 from ui.text import Text
 
-import pygame
 
 class Toolbar:
     def __init__(self, gridSize, pos, width, height):

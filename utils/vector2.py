@@ -1,3 +1,4 @@
+# external imports
 import math
 
 class Vector2:

@@ -1,3 +1,4 @@
+# external imports
 from pynput import keyboard, mouse
 
 def toKeyStr(key):

@@ -1,6 +1,9 @@
-from images import images
+# external imports
 import pygame
+
+# internal imports
 import graphics.gui
+from images import images
 
 class Tile:
     def __init__(self, pos, color, appearedTime = 0, disappearTime = 0, type = "platform", divisor = None):

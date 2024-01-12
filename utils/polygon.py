@@ -1,6 +1,9 @@
-from utils.vector2 import Vector2
+# external imports
 import random
 import pygame
+
+# internal imports
+from utils.vector2 import Vector2
 
 class Polygon:
     def __init__(self, points, color = (0,0,0)):

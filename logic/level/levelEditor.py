@@ -1,20 +1,23 @@
+# external imports
+import pygame
+import bisect
+import math
+
+# internal imports
+import input.input as input
+import graphics.gui as gui
+import logic.song.songPlayer as songPlayer
+import logic.song.timingPoints as timingPoints
+from logic.song.timingPoints import TimingPoint, TimeSignature
+from logic.level.level import Level
 from objects.tile import Tile
 from ui.button import Button
 from ui.toolbar import Toolbar, ToolbarOption
 from ui.inputBox import InputBox
 from ui.text import Text
-from utils.vector2 import Vector2
-import input.input as input
-from logic.level.level import Level
-import logic.song.songPlayer as songPlayer
-import logic.song.timingPoints as timingPoints
-from logic.song.timingPoints import TimingPoint, TimeSignature
-import graphics.gui as gui
-from utils.polygon import Polygon
 from ui.scrollbar import Scrollbar
-import bisect
-import pygame
-import math
+from utils.vector2 import Vector2
+from utils.polygon import Polygon
 
 popupOpen = False
 hColor = (150, 150, 255)

@@ -1,5 +1,7 @@
+# external imports
 import pathlib
 from pygame import font
+
 fontsPath = pathlib.Path(__file__).parent
 
 def getPath(name):

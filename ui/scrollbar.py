@@ -1,5 +1,8 @@
+# external imports
 import math
 import pygame
+
+# internal imports
 from ui.button import Button
 import input.input as input
 from utils.vector2 import Vector2

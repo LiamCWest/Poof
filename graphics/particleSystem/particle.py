@@ -1,7 +1,10 @@
+# external imports
 import pygame
+
+#internal imports
 from graphics.animation import Animation, AnimEvent
-import input.input as input
 from utils.vector2 import Vector2
+import input.input as input
 
 class Particle:
     def __init__(self, position, velocity, lifeTime, size=5, color = (255, 255, 255)):

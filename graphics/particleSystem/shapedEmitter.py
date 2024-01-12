@@ -1,3 +1,4 @@
+# internal imports
 from graphics.particleSystem.particle import Particle
 from graphics.particleSystem.emitter import Emitter
 

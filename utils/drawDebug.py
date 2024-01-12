@@ -1,3 +1,4 @@
+# external imports
 import pygame as pg
 
 def verifyTexture(filename):

@@ -1,6 +1,7 @@
+# internal imports
 import graphics.gui as gui
-from utils.vector2 import Vector2
 from graphics.animation import Animation, AnimEvent, lerp, easeInOutSin
+from utils.vector2 import Vector2
 from utils.polygon import Polygon
 import input.input as input
 

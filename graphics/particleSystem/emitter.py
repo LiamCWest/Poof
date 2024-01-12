@@ -7,7 +7,7 @@ from utils.vector2 import Vector2
 import input.input as input
 
 class Emitter:
-    def __init__(self, pos, velocity, emitRate, lifeTime, size=5, limit = 200, directionRange = [(1,1),(1,1)]):
+    def __init__(self, pos, velocity, emitRate, lifeTime, size=5, limit = 200):
         self.pos = pos
         self.velocity = velocity
         self.emitRate = emitRate
@@ -16,15 +16,13 @@ class Emitter:
         self.limit = limit
         self.particles = []
         self.lastSpawnTime = 0
-        self.directionRange = directionRange
 
     def emit(self):
         if len(self.particles) < self.limit:
             self.particles.append(self.makeParticle())
 
     def makeParticle(self):
-        dr = self.directionRange
-        return Particle(self.pos, Vector2(random.uniform(dr[0][0], dr[0][1]), random.uniform(dr[1][0], dr[1][1])) * self.velocity, self.lifeTime, self.size)
+        return Particle(self.pos, Vector2(random.uniform(-1, 1), random.uniform(-1, 1)) * self.velocity, self.lifeTime, self.size)
 
     def update(self):
         t = input.getRealTime() - self.lastSpawnTime

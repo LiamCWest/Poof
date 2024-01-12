@@ -1,4 +1,3 @@
-# internal imports
 from logic.game import gameManager
 
 def main():

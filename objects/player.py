@@ -155,18 +155,30 @@ class Player:
                 
                 isTileHit = False
                 for i, glide in enumerate(timeAtGlideDistances[:-1]): #loop over all the positions you would be at while gliding
-                    pos = glideStartPos + move[0].multiply(i) #get the position
-                    tilesHit = level.getTilesOverlapping(pos, glide, timeAtGlideDistances[i + 1]) #check if there were any tiles while you were on that position
-                    for tile2 in tilesHit: #loop over all the tiles
-                        if tile2.type == "glidePath": #TODO: MAKE GLIDE PATHS WORK PROPERLY
+                    pos = glideStartPos + move[0].multiply(i)
+                    
+                    tileHitTimeCheck = glide
+                    while tileHitTimeCheck < timeAtGlideDistances[i + 1] and tileHitTimeCheck < state.time:
+                        tileAtTime = level.getTileAt(pos, tileHitTimeCheck)
+                        if tileAtTime is None: #if you're not on any tile, die
+                            state.deathTime = tileHitTimeCheck
+                            state.animState = "dead"
+                            state.pos = pos
+                            lastMoveIndex = i
+                            nextMoveIndex = i + 1
+                            timeAtLastPos = timeAtGlideDistances[lastMoveIndex]
+                            timeAtNextPos = timeAtGlideDistances[nextMoveIndex]
+                            lastDistance = lastMoveIndex - 0.5
+                            nextDistance = nextMoveIndex - 0.5
+                            state.visiblePos = glideStartPos + move[0].multiply(min(lastMoveIndex, lerp(lastDistance, nextDistance, timeAtLastPos, timeAtNextPos, state.time), lastMoveIndex))
+                            return state
+                        if tileAtTime == tile: #if its the tile you start on, dont care
+                            tileHitTimeCheck = math.nextafter(tileAtTime.disappearTime + level.disappearLength, float("inf"))
                             continue
-                        if tile2 == tile: #if its the tile you start on, dont care
+                        if tileAtTime.type == "glidePath": #if you're gliding, dont care
+                            tileHitTimeCheck = math.nextafter(tileAtTime.disappearTime + level.disappearLength, float("inf"))
                             continue
-                        timeHit = max(tile2.appearedTime - level.appearLength, glide)
-                        if timeHit > state.time: #if its after the current time, dont care
-                            continue
-                        
-                        state.pos = tile2.pos #the position you're at after landing on the tile
+                        state.pos = tileAtTime.pos
                         
                         #do some stupid interpolation to get the visible pos, because it lags behind the actual pos for reasons
                         lastMoveIndex = i
@@ -180,8 +192,8 @@ class Player:
                         state.movesMade += 1
                         if tile.type != "rest":
                             state.accMovesMade += 1
-                            state.acc = calculateAcc(state.acc, state.accMovesMade, tile2.appearedTime, timeHit) #update acc and offset
-                            state.offset = calculateOffset(state.offset, state.accMovesMade, tile2.appearedTime, timeHit)
+                            state.acc = calculateAcc(state.acc, state.accMovesMade, tileAtTime.appearedTime, tileHitTimeCheck) #update acc and offset
+                            state.offset = calculateOffset(state.offset, state.accMovesMade, tileAtTime.appearedTime, tileHitTimeCheck)
                         
                         #if you've passed the time where you have visibly landed on the tile, you're standing. else, you're gliding
                         if state.time > timeAtNextPos:
@@ -192,7 +204,7 @@ class Player:
                         gliding = False #and you're on a tile so you're not gliding anymore
                         glideStartPos = None
                         glideDir = None
-                        currentTile = tile2 #and you're on a tile
+                        currentTile = tileAtTime #and you're on a tile
                         isTileHit = True
                         break #stupid mess to break out of these 2 loops and then continue the 3rd loop cause python doesn't have labeled breaks
                     else:

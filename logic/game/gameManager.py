@@ -1,5 +1,5 @@
 # external imports
-import pygame
+import pygame 
 
 # internal imports
 import graphics.gui as gui

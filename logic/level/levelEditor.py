@@ -1,80 +1,85 @@
 # external imports
-import pygame
-import bisect
-import math
+import pygame # import pygame as it is used for base game functionality
+import bisect # import bisect to add things to the middle of lists
+import math # import maath for additional mathimatical functions
 
 # internal imports
-import input.input as input
-import graphics.gui as gui
-import logic.song.songPlayer as songPlayer
-import logic.song.timingPoints as timingPoints
-from logic.song.timingPoints import TimingPoint, TimeSignature
-from logic.level.level import Level
-from objects.tile import Tile
-from ui.button import Button
-from ui.toolbar import Toolbar, ToolbarOption
-from ui.inputBox import InputBox
-from ui.text import Text
-from ui.scrollbar import Scrollbar
-from utils.vector2 import Vector2
-from utils.polygon import Polygon
+import input.input as input # import the input file for checking if keys are pressed
+import graphics.gui as gui # import the gui file to get the screen to draw to
+import logic.song.songPlayer as songPlayer # import the songPlayer file for song functions
+import logic.song.timingPoints as timingPoints # import the timingPoints file for timingPoint functions
+from logic.song.timingPoints import TimingPoint, TimeSignature # import TimingPoint and TimeSignature from the timing points file
+from logic.level.level import Level # import the Level class
+from objects.tile import Tile # import the Tile class
+from ui.button import Button # import the Button class
+from ui.toolbar import Toolbar, ToolbarOption # import the Toolbar and ToolbarOptions classes
+from ui.inputBox import InputBox # import the InputBox class
+from ui.text import Text # import the Text class
+from ui.scrollbar import Scrollbar # import the Scrollbar class
+from utils.vector2 import Vector2 # import the Vector2 class
+from utils.polygon import Polygon # import the Polygon clasa
 
-popupOpen = False
-hColor = (150, 150, 255)
+popupOpen = False # if the level editor has an open popup (not used, only because gui calls it)
+hColor = (150, 150, 255) # color of the highlight on buttons
 
-popupOpen = False
-hColor = (150, 150, 255)
-
+# select mode of input (move, select, platform, rest, glide, glide path, delete)
 def selectMode(option):
-    global selectedMode
-    topBar.objects[modes.index(selectedMode)].baseObj.color = (100, 100, 255)
-    selectedMode = option
-    topBar.objects[modes.index(selectedMode)].baseObj.color = (50, 50, 255)
+    global selectedMode # global variable for the selected mode
+    topBar.objects[modes.index(selectedMode)].baseObj.color = (100, 100, 255) # set the color of the previously selected mode to the default
+    selectedMode = option # set the selected mode to the new mode
+    topBar.objects[modes.index(selectedMode)].baseObj.color = (50, 50, 255) # set the color of the newly selected mode to the selected color
 
+# select divisor for the level editor, divisor is what length of tile you are placing
 def selectDivisor(d):
-    global divisor
-    divisorSelector[divisors.index(divisor)].color = (100, 100, 255)
-    divisor = d
-    divisorSelector[divisors.index(d)].color = (50, 50, 255)
+    global divisor # global variable for the divisor
+    divisorSelector[divisors.index(divisor)].color = (100, 100, 255) # set the color of the previously selected divisor to the default
+    divisor = d # set the divisor to the new divisor
+    divisorSelector[divisors.index(d)].color = (50, 50, 255) # set the color of the newly selected divisor to the selected color
 
-selectedTile = None
+selectedTile = None # the currently selected tile
+# check for input
 def checkInput():
-    global level, divisor, selectedTile
+    global level, divisor, selectedTile # global variables for the level, divisor, and selected tile
+    # check for play keybind input to play/pause the song
     if input.keyActionBindings["play"].justPressed:
-        if songPlayer.getIsPlaying():
-            songPlayer.pause()
-            songPlayer.seek(timingPoints.getNearestBeat(level.timingPoints, songPlayer.getPos(), divisor))
+        if songPlayer.getIsPlaying(): # if the song is playing, pause it
+            songPlayer.pause() # pause the song
+            songPlayer.seek(timingPoints.getNearestBeat(level.timingPoints, songPlayer.getPos(), divisor)) # seek to the nearest beat
         else:
+            # if the song is paused, play it
             songPlayer.unpause()
-       
+    
+    # check for input to move the selected tile
     if selectedTile:
-        if input.keyActionBindings["moveTileLeft"].justPressed:
-            selectedTile.pos += Vector2(-1, 0)
-        if input.keyActionBindings["moveTileRight"].justPressed:
-            selectedTile.pos += Vector2(1, 0)
-        if input.keyActionBindings["moveTileUp"].justPressed:
-            selectedTile.pos += Vector2(0, -1)
-        if input.keyActionBindings["moveTileDown"].justPressed:
-            selectedTile.pos += Vector2(0, 1)
+        if input.keyActionBindings["moveTileLeft"].justPressed: # if the move tile left keybind is pressed
+            selectedTile.pos += Vector2(-1, 0) # move the tile left
+        if input.keyActionBindings["moveTileRight"].justPressed: # if the move tile right keybind is pressed
+            selectedTile.pos += Vector2(1, 0) # move the tile right
+        if input.keyActionBindings["moveTileUp"].justPressed: # if the move tile up keybind is pressed
+            selectedTile.pos += Vector2(0, -1) # move the tile up
+        if input.keyActionBindings["moveTileDown"].justPressed: # if the move tile down keybind is pressed
+            selectedTile.pos += Vector2(0, 1) # move the tile down
         
-        if input.keyActionBindings["increaseTileLength"].justPressed:
-            newTileEndTime = timingPoints.getNextBeat(level.timingPoints, selectedTile.disappearTime, divisor)
-            newTile = selectedTile.copy()
-            newTile.disappearTime = newTileEndTime
-            if level.isTileValid(newTile, selectedTile):
-                level.removeTileAt(selectedTile.pos, selectedTile.appearedTime)
-                selectedTile = newTile.copy()
-                level.addTile(selectedTile)
-        if input.keyActionBindings["decreaseTileLength"].justPressed:
-            newTileEndTime = timingPoints.getPreviousBeat(level.timingPoints, selectedTile.disappearTime, divisor)
-            if newTileEndTime >= selectedTile.appearedTime:
-                level.removeTileAt(selectedTile.pos, selectedTile.appearedTime)
-                selectedTile.disappearTime = newTileEndTime
-                level.addTile(selectedTile)
+        # check for input to change the length of the selected tile
+        if input.keyActionBindings["increaseTileLength"].justPressed: # if the increase tile length keybind is pressed
+            newTileEndTime = timingPoints.getNextBeat(level.timingPoints, selectedTile.disappearTime, divisor) # get the next note point (beat/divisor)
+            newTile = selectedTile.copy() # copy the selected tile to prevent changing the original tile
+            newTile.disappearTime = newTileEndTime # set the disappear time of the new tile to the next note point (beat/divisor)
+            if level.isTileValid(newTile, selectedTile): # if the new tile is valid
+                level.removeTileAt(selectedTile.pos, selectedTile.appearedTime) # remove the old tile
+                selectedTile = newTile.copy() # set the selected tile to the new tile
+                level.addTile(selectedTile) # add the new tile to the level
+        if input.keyActionBindings["decreaseTileLength"].justPressed: # if the decrease tile length keybind is pressed
+            newTileEndTime = timingPoints.getPreviousBeat(level.timingPoints, selectedTile.disappearTime, divisor) # get the previous note point (beat/divisor)
+            if newTileEndTime >= selectedTile.appearedTime: # if the new tile end time is greater than the selected tile appeared time
+                level.removeTileAt(selectedTile.pos, selectedTile.appearedTime) # remove the old tile
+                selectedTile.disappearTime = newTileEndTime # set the disappear time of the selected tile to the new tile end time
+                level.addTile(selectedTile) # add the selected tile to the level
 
+    # check for input to change song time
     if input.keyActionBindings["timeForwards"].justPressed:
-        oldTime = songPlayer.getPos()
-        songPlayer.seek(min(timingPoints.getNextBeat(level.timingPoints, oldTime, divisor), songPlayer.getSongLength()))
+        oldTime = songPlayer.getPos() # set old time to current song time
+        songPlayer.seek(min(timingPoints.getNextBeat(level.timingPoints, oldTime, divisor), songPlayer.getSongLength())) # go to next note point (beat/divisor)
         #delta = songPlayer.getPos() - oldTime
         #if selectedTile:                  TURNS OUT TO BE QUITE ANNOYING TO MAKE A LEVEL AND YOUR TILES MOVE ON YOU
         #    newTile = selectedTile.copy()
@@ -86,8 +91,8 @@ def checkInput():
         #        level.addTile(selectedTile)
         
     if input.keyActionBindings["timeBackwards"].justPressed:
-        oldTime = songPlayer.getPos()
-        songPlayer.seek(max(0, timingPoints.getPreviousBeat(level.timingPoints, oldTime, divisor)))
+        oldTime = songPlayer.getPos() # set old time to current song time
+        songPlayer.seek(max(0, timingPoints.getPreviousBeat(level.timingPoints, oldTime, divisor))) # go to previous note point (beat/divisor)
         #delta = songPlayer.getPos() - oldTime
         #if selectedTile:
         #    newTile = selectedTile.copy()
@@ -98,19 +103,20 @@ def checkInput():
         #        selectedTile = newTile.copy()
         #        level.addTile(selectedTile)
 
-levelPos = Vector2(0, 0)
+levelPos = Vector2(0, 0) # position of the level relative to the screen, for mouse panning
+# update function for the level editor
 def update():
-    checkInput()
-    metronomeUpdate()
-    timingPointUpdate()
-    inBoxUpdate()
-    topBar.update()
-    bottomBar.update()
+    checkInput() # check for inputs
+    metronomeUpdate() # update the metronome oject
+    timingPointUpdate() # update the timingPoint input boxes
+    inBoxUpdate() # update the general input box
+    topBar.update() # update the top toolbar 
+    bottomBar.update() # update the bottom tool bar
     
-    global lastScrollbarValue, divisor
-    songLen = songPlayer.getSongLength()
-    if scrollbar.getValue() != lastScrollbarValue: 
-        songPos = songLen * scrollbar.getValue()
+    global lastScrollbarValue, divisor # global variables for the lastScrollbarValue and divisor
+    songLen = songPlayer.getSongLength() # set the songLength variable to the song length
+    if scrollbar.getValue() != lastScrollbarValue: # if the current scrollbar value is not the last scrollbar value, changne position in the song
+        songPos = songLen * scrollbar.getValue() # 
         roundedSongPos = timingPoints.getNearestBeat(level.timingPoints, songPos, divisor)
         songPlayer.seek(roundedSongPos)
         scrollbar.moveTo(roundedSongPos / songLen)

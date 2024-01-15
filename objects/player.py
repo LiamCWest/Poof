@@ -177,10 +177,11 @@ class Player:
                         if tileAtTime == tile: #if its the tile you start on, dont care
                             tileHitTimeCheck = math.nextafter(tileAtTime.disappearTime + level.disappearLength, float("inf"))
                             continue
-                        if tileAtTime.type == "glidePath": #if you're gliding, dont care
-                            tileHitTimeCheck = math.nextafter(tileAtTime.disappearTime + level.disappearLength, float("inf"))
+                        timeHit = max(tile2.appearedTime - level.appearLength, glide)
+                        if timeHit > state.time: #if its after the current time, dont care
                             continue
-                        state.pos = tileAtTime.pos
+                        
+                        state.pos = tile2.pos #the position you're at after landing on the tile
                         
                         #do some stupid interpolation to get the visible pos, because it lags behind the actual pos for reasons
                         lastMoveIndex = i
@@ -194,8 +195,8 @@ class Player:
                         state.movesMade += 1
                         if tile.type != "rest":
                             state.accMovesMade += 1
-                            state.acc = calculateAcc(state.acc, state.accMovesMade, tileAtTime.appearedTime, tileHitTimeCheck) #update acc and offset
-                            state.offset = calculateOffset(state.offset, state.accMovesMade, tileAtTime.appearedTime, tileHitTimeCheck)
+                            state.acc = calculateAcc(state.acc, state.accMovesMade, tile2.appearedTime, timeHit) #update acc and offset
+                            state.offset = calculateOffset(state.offset, state.accMovesMade, tile2.appearedTime, timeHit)
                         
                         #if you've passed the time where you have visibly landed on the tile, you're standing. else, you're gliding
                         if state.time > timeAtNextPos:
@@ -206,7 +207,7 @@ class Player:
                         gliding = False #and you're on a tile so you're not gliding anymore
                         glideStartPos = None
                         glideDir = None
-                        currentTile = tileAtTime #and you're on a tile
+                        currentTile = tile2 #and you're on a tile
                         isTileHit = True
                         break #stupid mess to break out of these 2 loops and then continue the 3rd loop cause python doesn't have labeled breaks
                     else:

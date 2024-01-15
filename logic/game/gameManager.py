@@ -2,30 +2,30 @@
 import pygame 
 
 # internal imports
-import graphics.gui as gui
-from input import input
-from images import images
+import graphics.gui as gui #for drawing
+from input import input #for input handling
+from images import images #for loading images
 
-def init():
-    pygame.init()
-    gui.init()
-    images.init()
-    input.init()
+def init(): #initializes the game
+    pygame.init() #initialize pygame
+    gui.init() #initialize the gui
+    images.init() #initialize the images
+    input.init() #initialize the input
 
-def gameLoop():
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-            input.handleEvent(event)
-        update()
+def gameLoop(): #the main game loop
+    while True: #loop forever
+        for event in pygame.event.get(): #for every pygame event
+            if event.type == pygame.QUIT: #if the user tries to quit
+                pygame.quit() #quit pygame
+                quit() #quit python
+            input.handleEvent(event) #else handle the event
+        update() #update the game
 
-def start():
-    gameLoop()
+def start(): #starts the game
+    gameLoop() #start the game loop
 
-def update():
-    input.updateFrameTimes()
+def update(): #updates the game
+    input.updateFrameTimes() #update the frame times in input
     
-    gui.update()
-    pygame.display.update()
+    gui.update() #update the gui
+    pygame.display.update() #update pygame

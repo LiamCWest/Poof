@@ -163,7 +163,9 @@ class Player:
                         if tileAtTime is None: #if you're not on any tile, die
                             state.deathTime = tileHitTimeCheck
                             state.animState = "dead"
-                            state.pos = pos
+                            state.pos = pos #set pos to where you died
+                            
+                            #interpolation for visible pos again
                             lastMoveIndex = i
                             nextMoveIndex = i + 1
                             timeAtLastPos = timeAtGlideDistances[lastMoveIndex]

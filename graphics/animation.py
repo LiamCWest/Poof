@@ -1,60 +1,72 @@
 # external imports
-import math
+import math #math
 import intervaltree
 
 class AnimEvent:
     def __init__(self, startTime, endTime, callback, data=None):
-        self.startTime = float(startTime)
-        self.endTime = float(endTime)
-        self.callback = callback
-        self.data = data
+        self.startTime = float(startTime) #the time that this animation starts
+        self.endTime = float(endTime) #the time it ends
+        self.callback = callback #the function it calls
+        self.data = data #any additional data
         
 class Animation:
     def __init__(self, events, timeSourceTime, repeatType = "oneShot", length = None, ignoreSameTimeUpdates = False):
+        #construct the intervalTree that stores all of the anim events
         intervals = []
         for i in events:
-            if i.startTime <= i.endTime:
+            if i.startTime <= i.endTime: #validate that the event has a length
                 intervals.append(self.toInterval(i))
         self.tree = intervaltree.IntervalTree(intervals)
         
+        #the time source time that this animation started at
+        #so it can be subtracted from times that are passed in later
         self.timeSourceStartTime = float(timeSourceTime)
         self.animTime = None
         
-        self.repeatTime = repeatType
+        #if the animation should loop or ping pong
+        self.repeatType = repeatType
         
+        #the length of the animation, set automatically if it is not passed in
         if length is None:
             self.length = self.tree.end()
         else:
             self.length = max(self.tree.end(), length)
-            
+        
+        #if the animation should ignore updates that don't change the time
         self.ignoreSameTimeUpdates = ignoreSameTimeUpdates
     
+    #turns an AnimEvent into an intervaltree.Interval
     def toInterval(self, event):
         return intervaltree.Interval(event.startTime, math.nextafter(event.endTime, float("inf")), (event.callback, event.data))
     
+    #adds an event to the animation
     def addEvent(self, event):
-        if event.startTime <= event.endTime:
+        if event.startTime <= event.endTime: #validate
             self.tree.add(self.toInterval(event))
-        
+    
+    #removes an event from the animation
     def removeEvent(self, event):
-        if event.startTime <= event.endTime:
+        if event.startTime <= event.endTime: #validate
             self.tree.remove(self.toInterval(event))
-        
+    
+    #gets all of the events that are happening at a certain time
     def getEventsAt(self, time):
         return self.tree.at(time)
-        
-    def updateTime(self, timeSourceTime, *args):        
-        oldAnimTime = self.animTime
+    
+    #updates the animation
+    def updateTime(self, timeSourceTime, *args): #args are passed to the callbacks  
+        oldAnimTime = self.animTime #the time that the animation was at before this update
         
         animTimeUnrepeated = float(timeSourceTime) - self.timeSourceStartTime
-        match self.repeatTime:
+        match self.repeatType: #set animTime based on the repeat type
             case "loop":
                 self.animTime = animTimeUnrepeated % self.length
             case "pingPong":
                 self.animTime = abs(animTimeUnrepeated % (self.length * 2) - self.length)
             case _:
                 self.animTime = animTimeUnrepeated
-                
+        
+        #set oldAnimTime to 
         if oldAnimTime is None:
             oldAnimTime = 0.
             if oldAnimTime == self.animTime:

@@ -1,47 +1,47 @@
 # external imports
-import pygame
-from pynput import keyboard, mouse
-from itertools import chain
+import pygame #for getting ticks
+from pynput import keyboard, mouse #for getting keyboard and mouse input
+from itertools import chain #for iterating through multiple iterators at the same time
 
 # internal imports
-import logic.song.songPlayer as songPlayer
-from utils.vector2 import Vector2
+import logic.song.songPlayer as songPlayer #for getting song time
+from utils.vector2 import Vector2 #for positions
 
-def getSongTime():
-    return songPlayer.getPos() if songPlayer.getIsPlaying() else None
+def getSongTime(): #returns the current song time in seconds
+    return songPlayer.getPos() if songPlayer.getIsPlaying() else None #return the current song time if the song is playing, else return None
     
-def getRealTime():
-    ticks = pygame.time.get_ticks()
-    return ticks / 1000 if ticks != 0 else None
+def getRealTime(): #returns the current real time in seconds
+    ticks = pygame.time.get_ticks() #get the current time in milliseconds
+    return ticks / 1000 if ticks != 0 else None #return the current time in seconds if it's not 0, else return None
 
-frameTime = None
-oldFrameTime = None
-def updateFrameTimes():
-    global frameTime, oldFrameTime
-    oldFrameTime = frameTime
-    frameTime = getRealTime()
+frameTime = None #the current frame time in seconds
+oldFrameTime = None #the previous frame time in seconds
+def updateFrameTimes(): #updates the frame times
+    global frameTime, oldFrameTime #globals
+    oldFrameTime = frameTime #set the old frame time to the current frame time
+    frameTime = getRealTime() #set the current frame time to the current real time
     
-def getFrameTime():
-    global frameTime
-    return frameTime
+def getFrameTime(): #gets the current frame time in seconds
+    global frameTime #globals
+    return frameTime #return the current frame time
 
-def getOldFrameTime():
-    global oldFrameTime
-    return oldFrameTime
+def getOldFrameTime(): #gets the previous frame time in seconds
+    global oldFrameTime #globals
+    return oldFrameTime #return the previous frame time
 
 class Event: #generic event
-    def __init__(self):
-        self.songTimeLastInvoked = None
-        self.realTimeLastInvoked = None
+    def __init__(self): #constructor
+        self.songTimeLastInvoked = None #the last time the event was invoked in song time
+        self.realTimeLastInvoked = None #the last time the event was invoked in real time
         
-        self.__justInvoked = False
+        self.__justInvoked = False #whether or not the event was just invoked
         
-    def getJustInvoked(self):
-        toReturn = self.__justInvoked
-        self.__justInvoked = False
-        if self.realTimeLastInvoked is None or getOldFrameTime() is None or self.realTimeLastInvoked < getOldFrameTime():
-            return False
-        return toReturn
+    def getJustInvoked(self): #whether or not the event was just invoked
+        toReturn = self.__justInvoked #the value to return
+        self.__justInvoked = False #reset just invoked to false cause you just checked
+        if self.realTimeLastInvoked is None or getOldFrameTime() is None or self.realTimeLastInvoked < getOldFrameTime(): #if it wasnt just invoked for other reasons
+            return False #return false
+        return toReturn #return if it was just invoked
     
     def setJustInvoked(self, val):
         self.__justInvoked = val

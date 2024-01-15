@@ -1,7 +1,7 @@
 # external imports
 import pygame # import pygame as it is used for base game functionality
 import bisect # import bisect to add things to the middle of lists
-import math # import maath for additional mathimatical functions
+import math # import math for additional mathimatical functions
 
 # internal imports
 import input.input as input # import the input file for checking if keys are pressed

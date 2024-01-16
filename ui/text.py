@@ -1,3 +1,5 @@
+#represents text on screen
+
 # external imports
 import pygame #import the pygame module
 

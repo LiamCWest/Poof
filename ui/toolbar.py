@@ -1,3 +1,5 @@
+#represents a toolbar, used in the level editor
+
 # external imports
 import pygame # import pygame library
 

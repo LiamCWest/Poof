@@ -1,33 +1,35 @@
+#a module that stores all the fonts used in the game in one easy location
+
 # external imports
-import pathlib
-from pygame import font
+import pathlib # for manipulating file paths
+from pygame import font # for loading fonts
 
-fontsPath = pathlib.Path(__file__).parent
+fontsPath = pathlib.Path(__file__).parent # get the path to the fonts folder
 
-def getPath(name):
-    global fontsPath, fontPaths
-    localFontPath = fontPaths.get(name)
-    if localFontPath is None:
-        return None
-    fontPath = fontsPath/localFontPath
-    return str(fontPath)
-
-fontPaths = {
-    "ROG": "ROGFONTS-REGULAR.ttf",
-    "Encode Sans": "EncodeSans_Condensed-SemiBold.ttf",
-    "Encode Sans Bold": "EncodeSans_Condensed-SemiBold.ttf"
+fontPaths = { # a dictionary of all the fonts that can be accessed
+    "ROG": "ROGFONTS-REGULAR.ttf", # the ROG font
+    "Encode Sans": "EncodeSans_Condensed-SemiBold.ttf", # the Encode Sans font
+    "Encode Sans Bold": "EncodeSans_Condensed-SemiBold.ttf" # the Encode Sans Bold font
 }
 
-cachedFonts = {} #indexed by tuple (name, size)
+def getPath(name): # gets the path to a font from a name
+    global fontsPath, fontPaths # globals
+    localFontPath = fontPaths.get(name) # get the local font path
+    if localFontPath is None: # if the font doesn't exist
+        return None # return none
+    fontPath = fontsPath/localFontPath #else get the path to the font
+    return str(fontPath) # return the path to the font as a string
+
+cachedFonts = {} #dict of all the cached fonts, indexed by tuple (name, size)
     
-def getFont(name, size):
-    global cachedFonts, fontPaths
+def getFont(name, size): # gets a font from a name and size
+    global cachedFonts, fontPaths # globals
     
-    fontPath = getPath(name)
-    if fontPath is None:
-        return None
+    fontPath = getPath(name) # get the path to the font
+    if fontPath is None: # if the font doesn't exist
+        return None # return none
     
-    if cachedFonts.get((name, size)) is None:
-        cachedFonts[(name, size)] = font.Font(fontPath, size)
+    if cachedFonts.get((name, size)) is None: # if the font isn't cached
+        cachedFonts[(name, size)] = font.Font(fontPath, size) # cache the font
         
-    return cachedFonts[(name, size)]
+    return cachedFonts[(name, size)] # return the cached font

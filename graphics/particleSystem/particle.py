@@ -1,3 +1,5 @@
+#represents a particle
+
 # external imports
 import pygame #import the pygame module
 

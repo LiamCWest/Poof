@@ -1,3 +1,5 @@
+#represents a particle emitter that can be turned on and off
+
 # internal imports
 from graphics.particleSystem.shapedEmitter import ShapedEmitter #import the ShapedEmitter class
 import input.input as input #import the input system

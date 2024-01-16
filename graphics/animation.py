@@ -1,3 +1,5 @@
+#represents an animatin, such as an idle animation or a walk animation or a popup moving down or-
+
 # external imports
 import math #math
 import intervaltree

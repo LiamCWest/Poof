@@ -1,3 +1,5 @@
+#a class for buttons that can take keyboard input
+
 # external imports
 import pygame #import the pygame module
 

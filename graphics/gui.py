@@ -1,3 +1,5 @@
+#the module that handles screen manipulation, as well as drawing text for some reason
+
 # external imports
 import pygame #import the pygame module
 import ctypes #import the ctypes module

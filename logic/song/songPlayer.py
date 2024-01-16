@@ -1,3 +1,5 @@
+#the module that handles song playing
+
 # external imports
 import pygame.mixer as mixer #for playing music
 

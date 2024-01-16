@@ -1,3 +1,5 @@
+#the module that handles input
+
 # external imports
 import pygame #for getting ticks
 from pynput import keyboard #for getting keyboard input

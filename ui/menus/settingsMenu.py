@@ -1,3 +1,5 @@
+#the settings menu of the game
+
 # internal imports
 from graphics import gui # import gui from graphics
 from ui.text import Text # import Text from ui.text

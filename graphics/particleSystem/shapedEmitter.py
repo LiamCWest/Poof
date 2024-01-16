@@ -1,3 +1,5 @@
+#represents a shaped emitter that emits particles from a polygon
+
 # internal imports
 from graphics.particleSystem.particle import Particle #import the particle object
 from graphics.particleSystem.emitter import Emitter #import the emitter object

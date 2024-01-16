@@ -1,3 +1,5 @@
+#the main menu of the game
+
 # external imports
 from copy import deepcopy #importy the deepcopy function
 

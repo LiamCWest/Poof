@@ -1,3 +1,5 @@
+#represents a particle emitter
+
 # external imports
 import random #imports the random module
 

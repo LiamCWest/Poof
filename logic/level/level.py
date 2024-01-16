@@ -1,3 +1,5 @@
+#a level in the game
+
 # external imports
 import hashlib #for level encoding
 import json #for level serialization

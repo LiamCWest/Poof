@@ -1,3 +1,5 @@
+#a timing point for timing songs, and various methods around it
+
 # external imports
 import math #math
 

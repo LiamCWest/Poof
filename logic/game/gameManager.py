@@ -1,3 +1,5 @@
+#the module that handles the main game loop and initialization of everything
+
 # external imports
 import pygame 
 

@@ -1,3 +1,5 @@
+#a player in the level
+
 # external imports
 import pygame #pygame
 

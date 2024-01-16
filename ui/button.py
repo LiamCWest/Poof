@@ -1,3 +1,5 @@
+#a class for a button
+
 # external imports
 import pygame #import pygame
 

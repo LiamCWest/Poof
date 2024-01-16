@@ -1,3 +1,5 @@
+#the game screen, where the level is played
+
 # internal imports
 import input.input as input #input system
 import logic.song.songPlayer as songPlayer #for playing song

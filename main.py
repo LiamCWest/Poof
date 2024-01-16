@@ -1,10 +1,36 @@
 #the main file, where everything starts
 
-from logic.game import gameManager # import the game manager
+#external imports
+import pygame
+import asyncio
 
-def main(): # main function, where everything starts
-    gameManager.init() # initialize the game manager
-    gameManager.start() # start the game manager
+# internal imports
+import graphics.gui as gui #for drawing
+from input import input #for input handling
+from images import images #for loading images
 
-if __name__ == "__main__": # if this file is being run directly
-    main() # run the main function
+async def main(): # main function, where everything starts
+    init() # initialize
+    while True: #loop forever
+        for event in pygame.event.get(): #for every pygame event
+            if event.type == pygame.QUIT: #if the user tries to quit
+                pygame.quit() #quit pygame
+                quit() #quit python
+            input.handleEvent(event) #else handle the event
+        update() #update the game
+        await asyncio.sleep(0) #wait for a frame
+
+def update(): #updates the game
+    input.updateFrameTimes() #update the frame times in input
+    
+    gui.update() #update the gui
+    pygame.display.update() #update pygame
+
+def init(): #initializes the game
+    pygame.init() #initialize pygame
+    gui.init() #initialize the gui
+    images.init() #initialize the images
+    input.init() #initialize the input
+
+# if __name__ == "__main__": # if this file is being run directly
+asyncio.run(main()) # run the main function

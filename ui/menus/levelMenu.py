@@ -14,6 +14,7 @@ from logic.song.timingPoints import TimeSignature, TimingPoint
 from objects.tile import Tile
 from graphics import gui
 from graphics.particleSystem.shapedEmitter import ShapedEmitter
+from logic.level import levelEditor as LE
 
 popups = []
 def show():
@@ -72,7 +73,7 @@ def genLevelButton(level, i):
     rowLength = 5
     x = 100 + (i % rowLength) * 200
     y = 100 + (i // rowLength) * 150
-    return Button(getLevelName(level), x, y, 200, 200, (0,0,0), (255,255,255), onRelease=lambda: loadLevel(level))
+    return Button(getLevelName(level), x, y, 200, 200, (0,0,0), (255,255,255), onRelease=lambda: loadLevel(level), textSize=20)
 
 def newLevel():
     global popups, popupOpen
@@ -92,8 +93,11 @@ def createLevel():
         timeSig = TimeSignature(num, denom)
         timingPoint = TimingPoint(offset, bpm, timeSig)
         
-        nLevel = Level([Tile(Vector2(0, 0), None, 0, offset, "platform")], 1, 1, song, [timingPoint], Vector2(0,0), 0)
-        nLevel.save("levels/" + levelName + ".json")
+        nLevel = Level([], 1, 1, song, [timingPoint], Vector2(0,0), 0)
+        levelFilePath = "levels/" + levelName + ".json"
+        nLevel.save(levelFilePath)
+        LE.loadLevel(levelFilePath)
+        gui.setScreen("levelEditor")
     
 def popupClose():
     global popups, popupOpen

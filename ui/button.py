@@ -10,7 +10,7 @@ from utils.polygon import Polygon #import the polygon class
 from ui.text import Text #import the text class
 
 class Button: #create a class for buttons
-    def __init__(self, text, x, y, width, height, color, textColor, onClick = lambda: None, onRelease = lambda: None,z = 0, particles = False, textSize = 40, scaler = 1.25, hColor = None, particlesOnOver = False, textFont = "ROG"): #initializes the button
+    def __init__(self, text, x, y, width, height, color, textColor, onClick = lambda: None, onRelease = lambda: None, particles = False, textSize = 40, scaler = 1.25, hColor = None, particlesOnOver = False, textFont = "ROG"): #initializes the button
         self.text = Text(text, x + width//2, y+height//2, textColor, textSize, font = textFont) #create the text object that will be displayed on the button
         self.x = x #set the x position
         self.y = y #set the y position
@@ -22,7 +22,6 @@ class Button: #create a class for buttons
         self.scale = 1 #set the scale of the button
         self.scaler = scaler #set the ratio by which the scale changes on hover
         self.emitter = None #set the emitter of the button to none (will be created later if needed)
-        self.z = z #set the z position (not used)
         self.particles = particles #set the particle emitter to be used by the button
         self.held = False #set if the button is held down 
         self.onRelease = onRelease #set the command to be executed when the button is released

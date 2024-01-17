@@ -7,7 +7,7 @@ from pygame import font # for loading fonts
 fontsPath = pathlib.Path(__file__).parent # get the path to the fonts folder
 
 fontPaths = { # a dictionary of all the fonts that can be accessed
-    "ROG": "ROGFONTS-REGULAR.ttf", # the ROG font
+    "ROG": "ROGFONTS-REGULAR.otf", # the ROG font
     "Encode Sans": "EncodeSans_Condensed-SemiBold.ttf", # the Encode Sans font
     "Encode Sans Bold": "EncodeSans_Condensed-SemiBold.ttf" # the Encode Sans Bold font
 }

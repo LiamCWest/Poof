@@ -71,7 +71,7 @@ class InputBox(Button): #create a class for buttons that can take keyboard input
                 self.active = False #deselect the select box
                 
             if input.mouseBindings["lmb"].justPressed: #if mouse is pressed
-                if not self.rect.collidepoint(pygame.mouse.get_pos()): #if the mouse is not colliding with the box
+                if not self.rect.collidepoint(input.mousePos.pos.x, input.mousePos.pos.y): #if the mouse is not colliding with the box
                     self.deselect() #deselect the input box
         
     def draw(self, win, pos = Vector2(0, 0)): #draws the box

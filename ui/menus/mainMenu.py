@@ -23,7 +23,6 @@ def hide(): #hides the screen
     gui.clear() #clear the screen
 
 def draw(): #draws all objects on the screen
-    objects.sort(key = lambda x : x.z) #sort the objects by their z position (not currently used but functional)
     for object in objects: #for each object in the menu
         object.draw(gui.screen) #draw the object
     for text in texts: #for each text in the menu

@@ -57,9 +57,24 @@ def checkInput(): #handle various inputs
             else: #if there is no current popup
                 activeScreen.pause() #pause the game and create the pause popup
 
-def drawText(text, x, y, size, color, font, cutOff = None): #this function draws text to the screen
+def drawText(text, x, y, size, color, font, cutOff = None, outline_color=(0,0,0), outline_size=1): #this function draws text to the screen
     global screen #get the screen from the global scope
-    text_surface = getFont(font, size).render(text, True, color) #create a new surface for the text font
+    if type(color) != list:
+        text_surface = getFont(font, size).render(text, True, color) #create a new surface for the text font
+    else:
+        #rotate through list of colors for each character
+        surfaces = [getFont(font, size).render(char, True, color[i % len(color)]) for i, char in enumerate(text)] #create a list of surfaces for each character
+        outline_surfaces = [getFont(font, size).render(char, True, outline_color) for char in text] #create a list of surfaces for the outline
+        width = sum(surface.get_width() for surface in surfaces) #get the width of the text
+        height = max(surface.get_height() for surface in surfaces) #get the height of the text
+        text_surface = pygame.Surface((width + 2 * outline_size, height + 2 * outline_size)) #create a new surface for the text
+        text_surface.set_colorkey((0, 0, 0))  # Set the color key to black for transparency
+        x_offset = outline_size #set the x offset to the outline size for the first character
+        for outline_surface, surface in zip(outline_surfaces, surfaces): #for each surface
+            for offset in [(ox, oy) for ox in range(-outline_size, outline_size+1) for oy in range(-outline_size, outline_size+1)]: #for each offset in the outline
+                text_surface.blit(outline_surface, (x_offset + offset[0], offset[1]+outline_size)) #blit the outline surface onto the text surface
+            text_surface.blit(surface, (x_offset, outline_size)) #blit the surface onto the text surface
+            x_offset += surface.get_width() #add the width of the surface to the x offset
     text_rect = text_surface.get_rect(center=(x, y)) #create the rectangle that contains the text
 
     if cutOff: #if the text will be cut off

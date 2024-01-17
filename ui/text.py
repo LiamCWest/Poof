@@ -8,7 +8,7 @@ import graphics.gui as gui #import the graphics module
 from utils.vector2 import Vector2 #import the vector2 class
 
 class Text: #create a displayable text object
-    def __init__(self, text, x, y, color=(0, 0, 0), size=25, bgColor=None, width=0, height=0, z=0, font = "ROG"): #initialize the text
+    def __init__(self, text, x, y, color=(0, 0, 0), size=25, bgColor=None, width=0, height=0, z=0, font = "ROG", outlineColor = (0,0,0), outlineSize = 0): #initialize the text
         self.text = text #set the message of the text
         self.x = x #set the x position
         self.y = y #set the y position
@@ -21,6 +21,8 @@ class Text: #create a displayable text object
         self.z = z #set the z of the text
         self.lines = text.split('\n')  # Split text into lines
         self.font = font #set the font of the text
+        self.outlineColor = outlineColor #set the outline color of the text
+        self.outlineSize = outlineSize #set the outline size of the text
 
     def getRect(self, pos): #get the rectangular size of the text
         font = pygame.font.SysFont(self.font, self.size) #locate and initialize the font
@@ -37,4 +39,4 @@ class Text: #create a displayable text object
         totalHeight = lineHeight * len(self.lines) #get the total height of the text
         for i, line in enumerate(self.lines): #for each line
             y_offset = self.y + pos.y - totalHeight/2 + lineHeight/2 + i * lineHeight  # Calculate y position for each line
-            gui.drawText(line, self.x + pos.x, y_offset, int(self.size * self.scale), self.color, self.font, cutOff) #draw each line of text
+            gui.drawText(line, self.x + pos.x, y_offset, int(self.size * self.scale), self.color, self.font, cutOff, self.outlineColor, self.outlineSize) #draw each line of text

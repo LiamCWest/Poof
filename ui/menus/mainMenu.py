@@ -49,10 +49,10 @@ def levelEditor(): #initializes the level editor
         LE.loadLevel(level) #load the inputted level
         gui.setScreen("levelEditor") #set the screen to the level editor
         
-title = "Main Menu" #set the title of the menu to "Main Menu"
+title = "POOF" #set the title of the menu to "Main Menu"
 emitter = ToggleableShapedEmitter(None, None, Vector2(4,4), 250, 25, 10, edges = "V") #create a reusable emitter for all the buttons
 objects = [Button("Start", 200, 200, 880, 100, (80, 93, 112), (255, 255, 255), onRelease=startGame, particles=deepcopy(emitter), textFont= "ROG", particlesOnOver=True, scaler = 1.05), #create the start button
            Button("Settings", 200, 320, 880, 100, (80, 93, 112), (255, 255, 255), onRelease=settings, particles=deepcopy(emitter), textFont= "ROG", particlesOnOver=True, scaler = 1.05), #settings button
            Button("Level Editor", 200, 440, 880, 100, (80, 93, 112), (255, 255, 255), onRelease=levelEditor, particles=deepcopy(emitter), textFont= "ROG", particlesOnOver=True, scaler = 1.05), #level editor button
            Button("Quit", 200, 560, 880, 100, (80, 93, 112), (255, 255, 255), onRelease=quit, particles=deepcopy(emitter), textFont= "ROG", particlesOnOver=True, scaler = 1.05),] #quit the game
-texts = [Text(title, 640, 100, (255, 255, 255), 100, font= "ROG")] #create a text object for the title
+texts = [Text(title, 640, 75, [(255, 50, 50),(255, 100, 100),(255, 150, 150),(255, 200, 200)], 150, font= "ROG", outlineColor=(1,1,1), outlineSize=4)] #create a text object for the title

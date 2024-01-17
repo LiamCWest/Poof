@@ -93,7 +93,7 @@ def createLevel():
         timeSig = TimeSignature(num, denom)
         timingPoint = TimingPoint(offset, bpm, timeSig)
         
-        nLevel = Level([], 1, 1, song, [timingPoint], Vector2(0,0), 0)
+        nLevel = Level([Tile(Vector2(0, 0), None, 0, offset, "platform")], 1, 1, song, [timingPoint], Vector2(0,0), 0)
         levelFilePath = "levels/" + levelName + ".json"
         nLevel.save(levelFilePath)
         LE.loadLevel(levelFilePath)

@@ -241,10 +241,10 @@ mouseScroll = MouseScrollEvent() #the mouse scroll
 
 keyActionBindings = { #all key action bindings (bindings that produce an action in game)
     #In game bindings
-    "left": ButtonEvent(("'a'", "<37>")), #moves player left
-    "up": ButtonEvent(("'w'", "<38>")), #moves player up
-    "right": ButtonEvent(("'d'", "<39>")), #moves player right
-    "down": ButtonEvent(("'s'", "<40>")), #moves player down
+    "left": ButtonEvent(("<37>", "<65361>", "'a'")), #moves player left
+    "up": ButtonEvent(("<38>", "<65362>", "'w'")), #moves player up
+    "right": ButtonEvent(("<39>", "<65363>", "'d'")), #moves player right
+    "down": ButtonEvent(("<40>", "<65364>", "'s'")), #moves player down
     
     #Editor bindings
     "moveTileLeft": ButtonEvent(("<37>", "<65361>", "'a'"), None, "shift"), #moves the selected tile left in editor

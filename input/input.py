@@ -219,6 +219,8 @@ characterBindings = { #all character keybindings (bindings that produce a charac
     "<": ButtonEvent("','", "shift", strict=True), #the character < (shift + ,)
     ">": ButtonEvent("'.'", "shift", strict=True), #the character > (shift + .)
     "?": ButtonEvent("'/'", "shift", strict=True), #the character ? (shift + /)
+    
+    " ": ButtonEvent("<32>", strict=False) #the character " " (only character not affected by shift)
 }
 
 specialKeyBindings = { #all special keybindings (bindings that don't produce a character when pressed, but aren't modifiers)

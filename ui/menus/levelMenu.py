@@ -86,7 +86,7 @@ def genLevelButton(level, i):
     x = 100 + (i % rowLength) * 200 #the x position of the button
     y = 100 + (i // rowLength) * 150 #the y position of the button
     # return a button for the level
-    return Button(getLevelName(level), x, y, 200, 200, (0,0,0), (255,255,255), onRelease=lambda: loadLevel(level), textSize=20)
+    return Button(getLevelName(level), x, y, 200, 200, (0,0,0), (255,255,255), onRelease=lambda: loadLevel(level), textSize=15)
 
 # open the new level popup
 def newLevel():
